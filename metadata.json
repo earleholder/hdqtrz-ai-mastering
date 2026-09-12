@@ -1,0 +1,8 @@
+{
+  "name": "HDQTRZ AI Mastering",
+  "description": "Professional Sound. Intelligent Mastering. AI-assisted audio mastering matching the HDQTRZ studio standard: 'Less is best. Preserve the soul of the song.'",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
