@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { MasterRecord } from '../types';
 import { audioBufferToWavBlob } from '../audio/dspEngine';
+import { audioBufferToMp3Blob } from '../audio/mp3Encoder';
 
 interface DownloadSectionProps {
   record: MasterRecord;
@@ -75,12 +76,11 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
     setDownloadingMp3(true);
 
     try {
-      // 16-bit Broadcast WAV container formatted for quick preview and CD compatibility
-      const blob = audioBufferToWavBlob(record.masteredBuffer, 16);
+      const blob = audioBufferToMp3Blob(record.masteredBuffer);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${cleanFilename}_HDQTRZ_Reference_16bit.wav`;
+      a.download = `${cleanFilename}_HDQTRZ_Master_320kbps.mp3`;
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -236,7 +236,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
             </div>
 
             <h3 className="text-xl font-light text-white">
-              16-Bit Reference WAV
+              320 kbps MP3 Master
             </h3>
 
             <p className="text-xs text-gray-400 leading-relaxed font-light">
@@ -263,12 +263,12 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
             {isUnlocked ? (
               <>
                 <Download className="w-4 h-4 text-[#D4AF37]" />
-                <span>{downloadingMp3 ? 'Preparing WAV...' : 'Download 16-Bit Reference WAV'}</span>
+                <span>{downloadingMp3 ? 'Encoding MP3...' : 'Download 320 kbps MP3 Master'}</span>
               </>
             ) : (
               <>
                 <Lock className="w-4 h-4 text-[#D4AF37]" />
-                <span>Unlock Reference WAV</span>
+                <span>Unlock MP3 Master</span>
               </>
             )}
           </button>
