@@ -94,6 +94,10 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
 
   const download16BitCd = () => {
     if (!record.masteredBuffer) return;
+    if (!isUnlocked && onUnlockMaster) {
+      onUnlockMaster();
+      return;
+    }
     const blob = audioBufferToWavBlob(record.masteredBuffer, 16);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -320,7 +324,7 @@ export const DownloadSection: React.FC<DownloadSectionProps> = ({
                 Instrumental, Acapella, and Clean radio edit batching workflow.
               </p>
               <span className="inline-block px-2 py-0.5 rounded bg-[#111111] text-[#D4AF37] text-[10px]">
-                Available on Pro Tier
+                Contact HDQTRZ Studio
               </span>
             </div>
           </div>
