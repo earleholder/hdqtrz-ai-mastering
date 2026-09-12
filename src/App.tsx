@@ -35,7 +35,7 @@ import { generateMasteringPlan, generateMasteringReport } from './audio/decision
 import { executeDspMastering } from './audio/dspEngine';
 import { findAuditionWindow } from './audio/auditionWindow';
 import { ShieldCheck, Sparkles, ExternalLink, Disc3 } from 'lucide-react';
-import { signOut } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { firebaseAuth } from './services/firebaseClient';
 
 type WorkflowStep = 'upload' | 'analysis' | 'preferences' | 'processing' | 'result';
@@ -109,6 +109,32 @@ export default function App() {
   const [showAdminAuthModal, setShowAdminAuthModal] = useState(false);
 
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
+
+  useEffect(() => onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
+    if (!firebaseUser) {
+      setIsAdminLoggedIn(false);
+      return;
+    }
+    try {
+      const token = await firebaseUser.getIdToken();
+      const response = await fetch('/api/admin/session', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!response.ok) throw new Error('Not authorized');
+      setIsAdminLoggedIn(true);
+      setUser((current) => ({
+        ...current,
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName || 'Earle Holder',
+        email: firebaseUser.email || 'earle.holder@gmail.com',
+        subscriptionTier: 'admin',
+        creditsRemaining: 9999,
+      }));
+    } catch {
+      setIsAdminLoggedIn(false);
+    }
+  }), []);
 
   // Handle uploaded audio
   const handleAudioReady = (buffer: AudioBuffer, metadata: TrackMetadata) => {
