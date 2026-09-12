@@ -161,7 +161,7 @@ export const Header: React.FC<HeaderProps> = ({
                   ? 'bg-[#18150D] border-[#D4AF37] text-[#D4AF37]'
                   : 'bg-[#1A1A1A] border-white/10 text-gray-300 hover:text-white hover:border-[#D4AF37]/50'
               }`}
-              title={isAdminLoggedIn ? 'Earle Holder (Admin - Unlimited Masters)' : 'Account & Credits'}
+              title={isAdminLoggedIn ? 'Earle Holder (Admin - No Charge)' : 'Account & Purchased Masters'}
             >
               <User className="w-3.5 h-3.5" />
             </button>
@@ -183,4 +183,3 @@ export const Header: React.FC<HeaderProps> = ({
     </nav>
   );
 };
-
