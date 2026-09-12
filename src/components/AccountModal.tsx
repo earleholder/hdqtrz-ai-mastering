@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, X, Shield, Key, CreditCard, Sparkles, Check } from 'lucide-react';
+import { User, X, Check, Download, LoaderCircle } from 'lucide-react';
 import { UserProfile } from '../types';
+import { firebaseAuth } from '../services/firebaseClient';
+import { downloadStoredFile, type StoredDelivery } from '../services/deliveryStorage';
 
 interface AccountModalProps {
   isOpen: boolean;
@@ -20,12 +22,31 @@ export const AccountModal: React.FC<AccountModalProps> = ({
   const [name, setName] = useState(user.name || '');
   const [email, setEmail] = useState(user.email || '');
   const [saved, setSaved] = useState(false);
+  const [deliveries, setDeliveries] = useState<StoredDelivery[]>([]);
+  const [deliveryStatus, setDeliveryStatus] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [activeDownload, setActiveDownload] = useState('');
 
   useEffect(() => {
     if (isOpen) {
       setName(user.name || '');
       setEmail(user.email || '');
       setSaved(false);
+      const firebaseUser = firebaseAuth.currentUser;
+      if (firebaseUser) {
+        setDeliveryStatus('loading');
+        void firebaseUser.getIdToken().then((token) => fetch('/api/deliveries', {
+          headers: { Authorization: `Bearer ${token}` },
+        })).then(async (response) => {
+          const body = await response.json();
+          if (!response.ok) throw new Error(body.error || 'Could not load downloads.');
+          setDeliveries((body.deliveries || []).sort((a: StoredDelivery, b: StoredDelivery) =>
+            String(b.createdAt || '').localeCompare(String(a.createdAt || ''))));
+          setDeliveryStatus('idle');
+        }).catch(() => setDeliveryStatus('error'));
+      } else {
+        setDeliveries([]);
+        setDeliveryStatus('idle');
+      }
     }
   }, [isOpen, user.name, user.email]);
 
@@ -36,6 +57,18 @@ export const AccountModal: React.FC<AccountModalProps> = ({
     onUpdateUser({ name: name.trim(), email: email.trim() });
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
+  };
+
+  const downloadDelivery = async (delivery: StoredDelivery, format: 'wav' | 'mp3') => {
+    const path = format === 'wav' ? delivery.wavPath : delivery.mp3Path;
+    const filename = path.split('/').pop() || `HDQTRZ_Master.${format}`;
+    const key = `${delivery.orderId}:${format}`;
+    setActiveDownload(key);
+    try {
+      await downloadStoredFile(path, filename);
+    } finally {
+      setActiveDownload('');
+    }
   };
 
   return (
@@ -124,6 +157,35 @@ export const AccountModal: React.FC<AccountModalProps> = ({
             </button>
           </div>
         </form>
+
+        <div className="space-y-3 border-t border-[#232333] pt-5">
+          <div>
+            <h4 className="text-sm font-semibold text-white">Purchased Masters</h4>
+            <p className="text-[11px] text-neutral-500">Secure WAV and MP3 downloads saved to this Google account.</p>
+          </div>
+          {deliveryStatus === 'loading' ? (
+            <div className="flex items-center gap-2 text-xs text-neutral-400"><LoaderCircle className="w-4 h-4 animate-spin" /> Loading downloads...</div>
+          ) : deliveryStatus === 'error' ? (
+            <p className="text-xs text-red-400">Downloads could not be loaded. Close and reopen your account to retry.</p>
+          ) : deliveries.length === 0 ? (
+            <p className="text-xs text-neutral-500">No purchased masters are saved yet.</p>
+          ) : deliveries.map((delivery) => (
+            <div key={delivery.orderId} className="p-3 rounded-xl bg-[#13131c] border border-[#232333] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-xs text-white truncate">{delivery.title}</p>
+                <p className="text-[10px] text-neutral-500">{delivery.createdAt ? new Date(delivery.createdAt).toLocaleDateString() : 'Paid master'}</p>
+              </div>
+              <div className="flex gap-2">
+                {(['wav', 'mp3'] as const).map((format) => {
+                  const key = `${delivery.orderId}:${format}`;
+                  return <button key={format} type="button" disabled={activeDownload === key} onClick={() => void downloadDelivery(delivery, format)} className="px-3 py-2 rounded-lg bg-[#1f1f2e] hover:bg-[#28283d] text-[#d4af37] text-[10px] font-bold uppercase flex items-center gap-1.5 disabled:opacity-50">
+                    <Download className="w-3 h-3" /> {activeDownload === key ? 'Preparing' : format}
+                  </button>;
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
