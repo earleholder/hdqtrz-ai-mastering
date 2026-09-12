@@ -36,10 +36,6 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   const [maxDurationMin, setMaxDurationMin] = useState(15);
   const [truePeakCeilingDb, setTruePeakCeilingDb] = useState(-1.0);
   const [retentionDays, setRetentionDays] = useState(30);
-  const [freeTrialAvailable, setFreeTrialAvailable] = useState(true);
-  const [payPerMasterUsd, setPayPerMasterUsd] = useState(9.99);
-  const [artistPlanMonthlyUsd, setArtistPlanMonthlyUsd] = useState(19.99);
-  const [proPlanMonthlyUsd, setProPlanMonthlyUsd] = useState(39.99);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Inbound inquiries state
@@ -481,50 +477,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           </div>
 
           <div className="space-y-1">
-            <label className="text-gray-400 block text-[11px] uppercase tracking-wider">Pay Per Master ($ USD)</label>
-            <input
-              type="number"
-              step="0.01"
-              value={payPerMasterUsd}
-              onChange={(e) => setPayPerMasterUsd(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-md bg-[#111111] border border-white/10 text-white font-mono focus:outline-none focus:border-[#D4AF37]"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-gray-400 block text-[11px] uppercase tracking-wider">Artist Plan ($ / mo)</label>
-            <input
-              type="number"
-              step="0.01"
-              value={artistPlanMonthlyUsd}
-              onChange={(e) => setArtistPlanMonthlyUsd(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-md bg-[#111111] border border-white/10 text-white font-mono focus:outline-none focus:border-[#D4AF37]"
-            />
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-gray-400 block text-[11px] uppercase tracking-wider">Professional Plan ($ / mo)</label>
-            <input
-              type="number"
-              step="0.01"
-              value={proPlanMonthlyUsd}
-              onChange={(e) => setProPlanMonthlyUsd(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-md bg-[#111111] border border-white/10 text-white font-mono focus:outline-none focus:border-[#D4AF37]"
-            />
+            <span className="text-gray-400 block text-[11px] uppercase tracking-wider">Customer Price</span>
+            <div className="w-full px-3 py-2 rounded-md bg-[#15130c] border border-[#D4AF37]/40 text-[#D4AF37] font-mono">
+              $9.99 per track · One-time payment
+            </div>
           </div>
         </div>
 
-        <div className="flex items-center justify-between pt-2">
-          <label className="flex items-center gap-2 text-xs text-gray-300 cursor-pointer font-light">
-            <input
-              type="checkbox"
-              checked={freeTrialAvailable}
-              onChange={(e) => setFreeTrialAvailable(e.target.checked)}
-              className="rounded border-white/10 text-[#D4AF37] focus:ring-[#D4AF37] bg-[#111111] w-4 h-4"
-            />
-            <span>Enable Free Trial Session for New Accounts</span>
-          </label>
-
+        <div className="flex items-center justify-end pt-2">
           <button
             type="submit"
             className="px-5 py-2.5 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2"
