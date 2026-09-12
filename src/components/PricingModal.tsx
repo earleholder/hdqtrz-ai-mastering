@@ -22,7 +22,7 @@ interface PricingModalProps {
   } | null;
   userCredits?: number;
   onUseCredit?: () => void;
-  onPaymentUnlocked?: (recordId: string) => void;
+  onPaymentUnlocked?: (recordId: string, orderId: string) => Promise<void> | void;
   isAdminLoggedIn?: boolean;
 }
 
@@ -71,7 +71,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
     );
     if (!result.unlocked || result.trackId !== trackToUnlock.id) throw new Error('The paid order did not match this track.');
     sessionStorage.removeItem(storageKey);
-    onPaymentUnlocked(trackToUnlock.recordId);
+    await onPaymentUnlocked(trackToUnlock.recordId, orderId);
   }, [onPaymentUnlocked, storageKey, trackToUnlock]);
 
   const checkPayment = useCallback(async () => {
@@ -125,7 +125,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
       const order = await authenticatedJson<{ orderId: string; checkoutUrl: string }>(
         firebaseUser,
         '/api/orders',
-        { method: 'POST', body: JSON.stringify({ trackId: trackToUnlock.id }) },
+        { method: 'POST', body: JSON.stringify({ trackId: trackToUnlock.id, title: trackToUnlock.title }) },
       );
       sessionStorage.setItem(storageKey, order.orderId);
       setCheckoutState('pending');
@@ -187,7 +187,7 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 <span className="text-xs text-gray-400"> / song</span>
               </div>
               <ul className="space-y-3 text-xs text-gray-200 font-light">
-                {['Complete 24-bit WAV studio master', '16-bit reference WAV deliverable', 'Full mastering diagnostics report', 'Secure automatic unlock for this song'].map((feature) => (
+                {['Complete 24-bit WAV studio master', '320 kbps MP3 master', 'Full mastering diagnostics report', 'Secure repeat downloads for this song'].map((feature) => (
                   <li key={feature} className="flex items-center gap-2.5">
                     <Check className="w-4 h-4 text-[#D4AF37] shrink-0" />
                     <span>{feature}</span>
