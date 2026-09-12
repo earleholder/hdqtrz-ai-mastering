@@ -8,7 +8,13 @@ import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, getFirestore } from 'firebase-admin/firestore';
 
 const PORT = Number(process.env.PORT || 3000);
-const PROJECT_ID = process.env.GOOGLE_CLOUD_PROJECT || 'gasdayforecast';
+const PROJECT_ID = process.env.FIREBASE_PROJECT_ID || process.env.GOOGLE_CLOUD_PROJECT || 'hdqtrz-ai-mastering';
+const ADMIN_EMAILS = new Set(
+  (process.env.ADMIN_EMAILS || 'earle.holder@gmail.com')
+    .split(',')
+    .map((email) => email.trim().toLowerCase())
+    .filter(Boolean),
+);
 const PAYMENT_LINK = 'https://buy.stripe.com/6oUaEY4Pm2bY1QlgjW77O02';
 const PRICE_CENTS = 999;
 const CURRENCY = 'usd';
@@ -178,6 +184,16 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json', limit: '
 });
 
 app.use(express.json({ limit: '32kb' }));
+
+app.post('/api/admin/session', requireFirebaseUser, (req: AuthenticatedRequest, res) => {
+  const user = req.verifiedUser!;
+  if (!ADMIN_EMAILS.has(user.email)) {
+    res.status(403).json({ error: 'This account is not authorized for studio administration.' });
+    return;
+  }
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ authorized: true, uid: user.uid, email: user.email });
+});
 
 app.post('/api/orders', requireFirebaseUser, async (req: AuthenticatedRequest, res) => {
   const trackId = req.body?.trackId;
