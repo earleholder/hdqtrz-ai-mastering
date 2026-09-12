@@ -197,8 +197,9 @@ app.post('/api/admin/session', requireFirebaseUser, (req: AuthenticatedRequest, 
 
 app.post('/api/orders', requireFirebaseUser, async (req: AuthenticatedRequest, res) => {
   const trackId = req.body?.trackId;
+  const title = req.body?.title;
   const user = req.verifiedUser!;
-  if (typeof trackId !== 'string' || !UUID_RE.test(trackId)) {
+  if (typeof trackId !== 'string' || !UUID_RE.test(trackId) || typeof title !== 'string' || !title.trim()) {
     res.status(400).json({ error: 'A valid track ID is required.' });
     return;
   }
@@ -208,6 +209,7 @@ app.post('/api/orders', requireFirebaseUser, async (req: AuthenticatedRequest, r
     uid: user.uid,
     email: user.email,
     trackId,
+    title: title.trim().slice(0, 160),
     amount: PRICE_CENTS,
     currency: CURRENCY,
     status: 'pending',
@@ -275,6 +277,50 @@ app.post('/api/orders/:orderId/consume', requireFirebaseUser, async (req: Authen
       error: code === 'ORDER_NOT_PAID' ? 'Payment is not ready to use.' : 'Order not found.',
     });
   }
+});
+
+app.post('/api/orders/:orderId/delivery', requireFirebaseUser, async (req: AuthenticatedRequest, res) => {
+  const orderId = req.params.orderId;
+  const { wavPath, mp3Path } = req.body || {};
+  const user = req.verifiedUser!;
+  const requiredPrefix = `masters/${user.uid}/${orderId}/`;
+  if (
+    !UUID_RE.test(orderId) ||
+    typeof wavPath !== 'string' || !wavPath.startsWith(requiredPrefix) || !wavPath.endsWith('.wav') ||
+    typeof mp3Path !== 'string' || !mp3Path.startsWith(requiredPrefix) || !mp3Path.endsWith('.mp3')
+  ) {
+    res.status(400).json({ error: 'Invalid delivery paths.' });
+    return;
+  }
+  const orderRef = db.collection('orders').doc(orderId);
+  const snapshot = await orderRef.get();
+  const order = snapshot.data();
+  if (!snapshot.exists || order?.uid !== user.uid || !['paid', 'consumed'].includes(order?.status)) {
+    res.status(404).json({ error: 'Paid order not found.' });
+    return;
+  }
+  await orderRef.update({ wavPath, mp3Path, deliveryReady: true, deliveryCreatedAt: FieldValue.serverTimestamp() });
+  res.json({ saved: true });
+});
+
+app.get('/api/deliveries', requireFirebaseUser, async (req: AuthenticatedRequest, res) => {
+  const snapshot = await db.collection('orders')
+    .where('uid', '==', req.verifiedUser!.uid)
+    .limit(100)
+    .get();
+  const deliveries = snapshot.docs.filter((document) => document.data().deliveryReady === true).map((document) => {
+    const order = document.data();
+    return {
+      orderId: document.id,
+      trackId: order.trackId,
+      title: order.title || 'HDQTRZ Master',
+      wavPath: order.wavPath,
+      mp3Path: order.mp3Path,
+      createdAt: order.deliveryCreatedAt?.toDate?.().toISOString?.() || null,
+    };
+  });
+  res.setHeader('Cache-Control', 'no-store');
+  res.json({ deliveries });
 });
 
 async function start() {
