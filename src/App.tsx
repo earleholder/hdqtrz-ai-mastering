@@ -37,6 +37,7 @@ import { findAuditionWindow } from './audio/auditionWindow';
 import { ShieldCheck, Sparkles, ExternalLink, Disc3 } from 'lucide-react';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { firebaseAuth } from './services/firebaseClient';
+import { uploadPaidDelivery } from './services/deliveryStorage';
 
 type WorkflowStep = 'upload' | 'analysis' | 'preferences' | 'processing' | 'result';
 
@@ -264,6 +265,24 @@ export default function App() {
     );
     setShowPricingModal(false);
     setTrackToUnlock(null);
+  };
+
+  const handlePaidDelivery = async (recordId: string, orderId: string) => {
+    const record = masterRecords.find((candidate) => candidate.id === recordId)
+      || (currentMasterRecord?.id === recordId ? currentMasterRecord : null);
+    const firebaseUser = firebaseAuth.currentUser;
+    if (!record?.masteredBuffer || !firebaseUser) {
+      throw new Error('The mastered audio or authenticated customer session is unavailable.');
+    }
+    const paths = await uploadPaidDelivery(firebaseUser.uid, orderId, record.title, record.masteredBuffer);
+    const token = await firebaseUser.getIdToken();
+    const response = await fetch(`/api/orders/${encodeURIComponent(orderId)}/delivery`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(paths),
+    });
+    if (!response.ok) throw new Error('Payment succeeded, but the permanent download could not be saved. Please retry verification.');
+    handleUnlockTrack(recordId);
   };
 
   // Remaster current track
@@ -573,9 +592,7 @@ export default function App() {
         onUseCredit={() => {
           handleUnlockTrack(trackToUnlock?.recordId);
         }}
-        onPaymentUnlocked={(recordId) => {
-          handleUnlockTrack(recordId);
-        }}
+        onPaymentUnlocked={handlePaidDelivery}
         onSelectPlan={() => {
           // Checkout is created by PricingModal only after authentication.
         }}
