@@ -87,20 +87,20 @@ export const AccountModal: React.FC<AccountModalProps> = ({
           </div>
           <div>
             <h3 className="font-display text-xl font-bold text-white">Creator Account</h3>
-            <p className="text-xs text-neutral-400">Manage your credentials, subscription, and credits</p>
+            <p className="text-xs text-neutral-400">Manage your profile and purchased masters</p>
           </div>
         </div>
 
-        {/* Plan / Subscription Status Banner */}
+        {/* Simple pay-per-track pricing status */}
         <div className="p-4 rounded-2xl bg-[#13131c] border border-[#232333] flex items-center justify-between">
           <div className="space-y-0.5">
-            <span className="text-[10px] uppercase font-bold text-neutral-500 font-mono-studio">Current Tier</span>
+            <span className="text-[10px] uppercase font-bold text-neutral-500 font-mono-studio">Mastering Service</span>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-white text-sm capitalize">
-                {user.subscriptionTier === 'admin' ? 'Studio Owner (Admin)' : `${user.subscriptionTier} Plan`}
+                {user.subscriptionTier === 'admin' ? 'Studio Owner Access' : '$9.99 per mastered track'}
               </span>
               <span className="px-2 py-0.5 rounded bg-[#1e1a12] text-[#d4af37] text-[10px] font-mono-studio border border-[#d4af37]/30">
-                {user.subscriptionTier === 'admin' ? 'Unlimited Masters' : `${user.creditsRemaining} credits left`}
+                {user.subscriptionTier === 'admin' ? 'No charge' : 'One-time payment'}
               </span>
             </div>
           </div>
@@ -112,7 +112,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
               }}
               className="px-3 py-1.5 rounded-lg bg-[#d4af37] text-black font-semibold text-xs hover:bg-[#e5b83b] transition-colors"
             >
-              Upgrade Plan
+              View Price
             </button>
           )}
         </div>
