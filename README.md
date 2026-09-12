@@ -23,9 +23,12 @@ View your app in AI Studio: https://ai.studio/apps/9ae79763-cfd8-425e-b1d4-e3e36
 
 - Enable Google sign-in in Firebase Authentication.
 - Create Firestore in production mode.
+- Enable Firebase Storage, then deploy `storage.rules` with `firebase deploy --only storage`.
 - Add each deployed domain to Authentication > Settings > Authorized domains.
 - The server uses Application Default Credentials on Google Cloud. For local development, authenticate with the Google Cloud CLI or provide standard Firebase Admin credentials through your environment. Never commit a private key.
 
 ## Deploy
 
 The app requires its Node/Express server for verified admin access, payment status, and Stripe webhooks. Deploy the repository as a server-backed service, set the variables documented in `.env.example`, run `npm run build`, and start it with `npm start`.
+
+Configure Stripe to send `checkout.session.completed` events to `/api/stripe/webhook` on the deployed domain. The verified webhook marks an order paid. The customer browser then uploads the 24-bit WAV and genuine 320 kbps MP3 to a private Firebase Storage path. Purchased files remain available under Creator Account while the customer is signed into the same Google account.
