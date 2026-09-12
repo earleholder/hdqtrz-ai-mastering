@@ -1,0 +1,20 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /masters/{userId}/{orderId}/{fileName} {
+      function ownsPaidOrder() {
+        let order = firestore.get(/databases/(default)/documents/orders/$(orderId)).data;
+        return request.auth != null
+          && request.auth.uid == userId
+          && order.uid == request.auth.uid
+          && (order.status == 'paid' || order.status == 'consumed');
+      }
+
+      allow read: if ownsPaidOrder();
+      allow create, update: if ownsPaidOrder()
+        && request.resource.size < 500 * 1024 * 1024
+        && (request.resource.contentType == 'audio/wav' || request.resource.contentType == 'audio/mpeg');
+      allow delete: if false;
+    }
+  }
+}
