@@ -156,11 +156,10 @@ export async function processMasteringDSP(
 
   onProgress?.('Encoding Master Audio Files...', 95);
 
-  // Encode to broadcast 24-bit WAV, standard 16-bit WAV, and reference deliverable
+  // Encode WAV deliverables. MP3 is encoded on demand after payment.
   const wav24Blob = audioBufferToWavBlob(finalBuffer, 24);
   const wav16Blob = audioBufferToWavBlob(finalBuffer, 16);
-  // High-compatibility reference container
-  const mp3Blob = new Blob([wav16Blob], { type: 'audio/wav' });
+  const mp3Blob = new Blob([], { type: 'audio/mpeg' });
 
   onProgress?.('Mastering Complete.', 100);
 
@@ -1038,4 +1037,3 @@ function writeString(view: DataView, offset: number, string: string) {
 }
 
 export const executeDspMastering = processMasteringDSP;
-
