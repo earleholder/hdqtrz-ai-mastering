@@ -6,24 +6,24 @@
     --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     --font-mono: 'JetBrains Mono', monospace;
 
-    --studio-bg: #06111f;
-    --studio-surface: #0b1c31;
-    --studio-surface-raised: #102640;
-    --studio-surface-hover: #16314f;
+    --studio-bg: #102640;
+    --studio-surface: #173653;
+    --studio-surface-raised: #1E4263;
+    --studio-surface-hover: #2D5878;
     --studio-text: #f7fbff;
-    --studio-text-secondary: #d2e2f1;
-    --studio-text-muted: #aac0d6;
+    --studio-text-secondary: #E5F2FF;
+    --studio-text-muted: #C4D9EB;
     --studio-cyan: #54e6ff;
     --studio-cyan-strong: #20c9e8;
     --studio-violet: #8b7cff;
-    --studio-border: rgba(109, 221, 255, 0.24);
+    --studio-border: rgba(126, 232, 255, 0.42);
   }
 
   body {
     font-family: var(--font-sans);
     background:
-      radial-gradient(circle at 15% 0%, rgba(32, 201, 232, 0.13), transparent 32rem),
-      radial-gradient(circle at 88% 18%, rgba(139, 124, 255, 0.12), transparent 34rem),
+      radial-gradient(circle at 15% 0%, rgba(32, 201, 232, 0.22), transparent 32rem),
+      radial-gradient(circle at 88% 18%, rgba(139, 124, 255, 0.20), transparent 34rem),
       var(--studio-bg);
     color: var(--studio-text);
     overflow-x: hidden;
