@@ -27,44 +27,44 @@ export const MasteringProgress: React.FC<MasteringProgressProps> = ({
     <div className="max-w-xl mx-auto py-10 px-4 space-y-8 text-center">
       {/* Spinning Studio Emblem */}
       <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
-        <div className="absolute inset-0 rounded-full border border-white/10 border-t-[#D4AF37] animate-spin" />
-        <div className="w-16 h-16 rounded-full bg-[#0A0A0A] border border-white/10 flex items-center justify-center">
-          <Disc3 className="w-8 h-8 text-[#D4AF37] animate-pulse" />
+        <div className="absolute inset-0 rounded-full border border-cyan-100/30 border-t-[#57E6FF] animate-spin" />
+        <div className="w-16 h-16 rounded-full bg-[#173653] border border-cyan-100/30 flex items-center justify-center">
+          <Disc3 className="w-8 h-8 text-[#57E6FF] animate-pulse" />
         </div>
       </div>
 
       {/* Headline */}
       <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#111111] border border-white/5 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[10px] uppercase tracking-[0.2em] text-[#57E6FF]">
           <span>04 / DSP Signal Processing Engine</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-light tracking-tight text-white">
           Mastering Your Track
         </h2>
-        <p className="text-gray-400 text-xs sm:text-sm font-light">
+        <p className="text-slate-200 text-xs sm:text-sm font-light">
           Calibrating to <strong className="text-white font-mono">{targetLufs} LUFS</strong> for <strong className="text-white">{genre}</strong>
         </p>
       </div>
 
       {/* Current Stage Label & Progress Bar */}
-      <div className="space-y-4 p-6 rounded-xl bg-[#0A0A0A] border border-white/10 text-left">
+      <div className="space-y-4 p-6 rounded-xl bg-[#173653] border border-cyan-100/30 text-left">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-[#D4AF37] font-medium flex items-center gap-2 text-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-ping" />
+          <span className="text-[#57E6FF] font-medium flex items-center gap-2 text-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#57E6FF] animate-ping" />
             {currentStage || 'Processing audio buffers...'}
           </span>
-          <span className="text-gray-400 font-mono text-xs">{Math.round(progressPct)}%</span>
+          <span className="text-slate-200 font-mono text-xs">{Math.round(progressPct)}%</span>
         </div>
 
-        <div className="h-1.5 w-full rounded bg-[#111111] overflow-hidden">
+        <div className="h-1.5 w-full rounded bg-[#1E4263] overflow-hidden">
           <div
             style={{ width: `${progressPct}%` }}
-            className="h-full bg-[#D4AF37] transition-all duration-300 rounded"
+            className="h-full bg-[#57E6FF] transition-all duration-300 rounded"
           />
         </div>
 
         {/* Step Checklist */}
-        <div className="space-y-2 pt-4 border-t border-white/5">
+        <div className="space-y-2 pt-4 border-t border-cyan-100/20">
           {stages.map((st, i) => {
             const isDone = progressPct >= st.minPct;
             const isCurrent = progressPct < st.minPct && (i === 0 || progressPct >= stages[i - 1].minPct);
@@ -73,27 +73,27 @@ export const MasteringProgress: React.FC<MasteringProgressProps> = ({
               <div
                 key={i}
                 className={`flex items-center justify-between text-xs py-1 transition-opacity ${
-                  isDone ? 'text-gray-300' : isCurrent ? 'text-[#D4AF37] font-medium' : 'text-gray-600'
+                  isDone ? 'text-slate-100' : isCurrent ? 'text-[#57E6FF] font-medium' : 'text-slate-300'
                 }`}
               >
                 <span className="flex items-center gap-2.5">
                   {isDone ? (
-                    <CheckCircle2 className="w-3.5 h-3.5 text-[#D4AF37]" />
+                    <CheckCircle2 className="w-3.5 h-3.5 text-[#57E6FF]" />
                   ) : isCurrent ? (
-                    <div className="w-3.5 h-3.5 border border-[#D4AF37] border-t-transparent rounded-full animate-spin" />
+                    <div className="w-3.5 h-3.5 border border-[#57E6FF] border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    <div className="w-3.5 h-3.5 rounded-full border border-white/10" />
+                    <div className="w-3.5 h-3.5 rounded-full border border-cyan-100/30" />
                   )}
                   <span className="font-light">{st.label}</span>
                 </span>
-                {isDone && <span className="text-[9px] text-[#D4AF37] uppercase tracking-widest font-mono">Passed</span>}
+                {isDone && <span className="text-[9px] text-[#57E6FF] uppercase tracking-widest font-mono">Passed</span>}
               </div>
             );
           })}
         </div>
       </div>
 
-      <p className="text-xs text-gray-500 italic font-light tracking-wide">
+      <p className="text-xs text-slate-300 italic font-light tracking-wide">
         "Less is best. Preserve the soul of the song."
       </p>
     </div>

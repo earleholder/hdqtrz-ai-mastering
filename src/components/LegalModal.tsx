@@ -62,7 +62,7 @@ export const LegalModal: React.FC<LegalModalProps> = ({ isOpen, onClose }) => {
         <div className="pt-2 flex justify-end">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-xl bg-[#d4af37] text-black font-semibold text-xs hover:bg-[#e5b83b] transition-colors"
+            className="px-6 py-2.5 rounded-xl bg-[#57E6FF] text-black font-semibold text-xs hover:bg-[#e5b83b] transition-colors"
           >
             I Understand
           </button>

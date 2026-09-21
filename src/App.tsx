@@ -391,7 +391,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white flex flex-col selection:bg-[#d4af37]/30 selection:text-[#d4af37] font-sans">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_#1B4566_0%,_#102640_48%,_#0C2036_100%)] text-white flex flex-col selection:bg-[#57E6FF]/30 selection:text-[#57E6FF] font-sans">
       {/* Studio Header */}
       <Header
         activeTab={activeTab}
@@ -503,16 +503,16 @@ export default function App() {
             <AdminDashboard onLogout={handleAdminLogout} />
           ) : (
             <div className="py-20 text-center space-y-4 max-w-md mx-auto">
-              <div className="w-12 h-12 rounded-full bg-[#111] border border-[#D4AF37]/30 flex items-center justify-center mx-auto text-[#D4AF37]">
+              <div className="w-12 h-12 rounded-full bg-[#111] border border-[#57E6FF]/30 flex items-center justify-center mx-auto text-[#57E6FF]">
                 <ShieldCheck className="w-6 h-6" />
               </div>
               <h3 className="text-xl font-light text-white">Administrator Restricted</h3>
-              <p className="text-xs text-gray-400 font-light">
+              <p className="text-xs text-slate-200 font-light">
                 Please sign in with authorized studio credentials to access engine operations.
               </p>
               <button
                 onClick={() => setShowAdminAuthModal(true)}
-                className="px-6 py-2.5 rounded-lg bg-[#D4AF37] hover:bg-[#C19A2E] text-black font-bold text-xs uppercase tracking-wider transition-all"
+                className="px-6 py-2.5 rounded-lg bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-bold text-xs uppercase tracking-wider transition-all"
               >
                 Sign In to Console
               </button>
@@ -522,16 +522,16 @@ export default function App() {
       </main>
 
       {/* Studio Footer (Clean Minimalism) */}
-      <footer className="px-4 sm:px-8 py-4 bg-[#0A0A0A] border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] uppercase tracking-widest text-gray-500">
+      <footer className="px-4 sm:px-8 py-4 bg-[#173653] border-t border-cyan-100/20 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] uppercase tracking-widest text-slate-300">
         <div className="flex flex-wrap items-center gap-6">
-          <span className="text-gray-400 font-medium tracking-wider">Engine V.2.4.1</span>
+          <span className="text-slate-200 font-medium tracking-wider">Engine V.2.4.1</span>
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             <span>Cloud Rendering: Active</span>
           </span>
           <button
             onClick={() => setShowHumanStudioModal(true)}
-            className="hover:text-[#D4AF37] transition-colors"
+            className="hover:text-[#57E6FF] transition-colors"
           >
             Analog Human Suite
           </button>
@@ -555,7 +555,7 @@ export default function App() {
           </button>
         </div>
 
-        <div className="flex items-center gap-4 text-center md:text-right text-gray-500">
+        <div className="flex items-center gap-4 text-center md:text-right text-slate-300">
           <span>Professional Sound. Intelligent Mastering. © {new Date().getFullYear()} HDQTRZ Studios.</span>
           {/* Discreet Studio Owner Lock Trigger */}
           <button
@@ -566,7 +566,7 @@ export default function App() {
                 setShowAdminAuthModal(true);
               }
             }}
-            className="text-gray-600 hover:text-[#D4AF37] transition-colors p-1"
+            className="text-slate-300 hover:text-[#57E6FF] transition-colors p-1"
             title="Studio Admin Access"
           >
             <ShieldCheck className="w-3.5 h-3.5" />

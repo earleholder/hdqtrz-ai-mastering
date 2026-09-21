@@ -309,34 +309,34 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="text-center space-y-2 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#111111] border border-white/5 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[10px] uppercase tracking-[0.2em] text-[#57E6FF]">
           <span>05 / Master vs Original Audition Desk</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-light tracking-tight text-white">
           A/B Comparison Console
         </h2>
-        <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto font-light">
+        <p className="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto font-light">
           Evaluate sonic transparency with calibrated loudness-matched A/B switching.
         </p>
       </div>
 
       {/* Free Audition Preview Banner (If Not Unlocked) */}
       {!isUnlocked && (
-        <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#14120B] via-[#1A170F] to-[#0A0A0A] border border-[#D4AF37]/50 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-black/40">
+        <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#14120B] via-[#1A170F] to-[#173653] border border-[#57E6FF]/50 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-lg shadow-black/40">
           <div className="flex items-start gap-3">
-            <div className="w-9 h-9 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center shrink-0 text-[#D4AF37] mt-0.5">
-              <Headphones className="w-4 h-4 text-[#D4AF37]" />
+            <div className="w-9 h-9 rounded-lg bg-[#57E6FF]/10 border border-[#57E6FF]/30 flex items-center justify-center shrink-0 text-[#57E6FF] mt-0.5">
+              <Headphones className="w-4 h-4 text-[#57E6FF]" />
             </div>
             <div className="space-y-0.5">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-medium text-white uppercase tracking-wider">
                   Free 30s Hook Audition Active
                 </span>
-                <span className="px-1.5 py-0.5 rounded bg-[#D4AF37] text-black text-[9px] font-bold uppercase tracking-wider">
+                <span className="px-1.5 py-0.5 rounded bg-[#57E6FF] text-black text-[9px] font-bold uppercase tracking-wider">
                   Climax Section
                 </span>
               </div>
-              <p className="text-xs text-gray-300 font-light leading-relaxed">
+              <p className="text-xs text-slate-100 font-light leading-relaxed">
                 Audition the loudest drop/hook with instant A/B switching ({formatTime(preview.startSec)} – {formatTime(preview.endSec)}). Hear the clarity, low-end punch, and high sheen before paying.
               </p>
             </div>
@@ -345,7 +345,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
           {onUnlockMaster && (
             <button
               onClick={onUnlockMaster}
-              className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shrink-0 transition-all shadow hover:shadow-[#D4AF37]/20"
+              className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 shrink-0 transition-all shadow hover:shadow-[#57E6FF]/20"
             >
               <Lock className="w-3.5 h-3.5 text-black" />
               <span>Unlock Full Track ($9.99)</span>
@@ -356,13 +356,13 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
 
       {/* Dynamic Protection Notification (If triggered) */}
       {record.plan.isDynamicProtected && (
-        <div className="p-4 rounded-xl bg-[#0A0A0A] border border-[#D4AF37]/40 text-xs text-[#D4AF37] flex items-start gap-3">
-          <ShieldCheck className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
+        <div className="p-4 rounded-xl bg-[#173653] border border-[#57E6FF]/40 text-xs text-[#57E6FF] flex items-start gap-3">
+          <ShieldCheck className="w-4 h-4 text-[#57E6FF] shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <span className="font-medium text-white uppercase tracking-wider text-[11px]">
               HDQTRZ Dynamic Preservation System Engaged
             </span>
-            <p className="text-gray-300 font-light leading-relaxed">
+            <p className="text-slate-100 font-light leading-relaxed">
               {record.plan.protectiveNotice}
             </p>
           </div>
@@ -370,17 +370,17 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
       )}
 
       {/* Main Console Box */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 sm:p-8 space-y-6">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 sm:p-8 space-y-6">
         {/* Top Controls: Channel Selector & Loudness Matching Toggle */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-5 border-b border-white/5">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-5 border-b border-cyan-100/20">
           {/* A/B Channel Selector Switch */}
-          <div className="flex items-center bg-[#111111] p-1 rounded-md border border-white/5 w-full sm:w-auto">
+          <div className="flex items-center bg-[#1E4263] p-1 rounded-md border border-cyan-100/20 w-full sm:w-auto">
             <button
               onClick={() => setActiveChannel('original')}
               className={`flex-1 sm:flex-none px-5 py-2 rounded text-xs uppercase tracking-wider transition-all font-medium ${
                 activeChannel === 'original'
-                  ? 'bg-[#222222] text-white border border-white/10'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-[#222222] text-white border border-cyan-100/30'
+                  : 'text-slate-200 hover:text-white'
               }`}
             >
               Original Mix
@@ -389,8 +389,8 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               onClick={() => setActiveChannel('master')}
               className={`flex-1 sm:flex-none px-5 py-2 rounded text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 font-bold ${
                 activeChannel === 'master'
-                  ? 'bg-[#D4AF37] text-black'
-                  : 'text-gray-400 hover:text-white'
+                  ? 'bg-[#57E6FF] text-black'
+                  : 'text-slate-200 hover:text-white'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -404,8 +404,8 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               onClick={() => setLoudnessMatched(!loudnessMatched)}
               className={`px-3.5 py-2 rounded-md text-xs font-medium uppercase tracking-wider flex items-center gap-2 border transition-all ${
                 loudnessMatched
-                  ? 'bg-[#1A1A1A] border-[#D4AF37] text-[#D4AF37]'
-                  : 'bg-[#111111] border-white/5 text-gray-400 hover:text-white'
+                  ? 'bg-[#1A1A1A] border-[#57E6FF] text-[#57E6FF]'
+                  : 'bg-[#1E4263] border-cyan-100/20 text-slate-200 hover:text-white'
               }`}
               title="Level-match the original audio with the master so you evaluate tonal clarity rather than loudness"
             >
@@ -417,20 +417,20 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
 
         {/* Level Matching Explanatory Note */}
         {loudnessMatched && (
-          <p className="text-[11px] text-gray-400 italic text-center -mt-2 font-light">
+          <p className="text-[11px] text-slate-200 italic text-center -mt-2 font-light">
             ✓ Loudness compensation active: Original track gain is adjusted so you evaluate tonal clarity, width, and transient punch — not psychoacoustic volume.
           </p>
         )}
 
         {/* Waveform Visualization & Timeline Scrubber */}
         <div className="space-y-3">
-          <div className="flex items-center justify-between text-xs text-gray-400">
-            <span className="font-mono text-[11px] uppercase tracking-wider text-gray-500">
+          <div className="flex items-center justify-between text-xs text-slate-200">
+            <span className="font-mono text-[11px] uppercase tracking-wider text-slate-300">
               {isUnlocked ? 'Interactive Waveform (Click to Seek)' : 'Climax Hook Audition Window (Click to Seek)'}
             </span>
             <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider font-mono">
               {!isUnlocked ? (
-                <span className="text-[#D4AF37] font-medium">
+                <span className="text-[#57E6FF] font-medium">
                   {formatTime(preview.startSec)} – {formatTime(preview.endSec)} (30s Free Preview)
                 </span>
               ) : (
@@ -450,7 +450,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               <div
                 ref={waveformContainerRef}
                 onClick={handleWaveformClick}
-                className="relative h-24 sm:h-28 w-full rounded-lg bg-[#050505] border border-white/5 p-3 flex items-center justify-between gap-[2px] overflow-hidden cursor-pointer group select-none hover:border-[#D4AF37]/30 transition-colors"
+                className="relative h-24 sm:h-28 w-full rounded-lg bg-[#102640] border border-cyan-100/20 p-3 flex items-center justify-between gap-[2px] overflow-hidden cursor-pointer group select-none hover:border-[#57E6FF]/30 transition-colors"
                 title="Click anywhere to jump playhead"
               >
                 {/* Visual highlight for the 30-sec audition window if not unlocked */}
@@ -460,9 +460,9 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
                       left: `${(preview.startSec / duration) * 100}%`,
                       width: `${(preview.durationSec / duration) * 100}%`
                     }}
-                    className="absolute top-0 bottom-0 bg-[#D4AF37]/15 border-x border-[#D4AF37]/40 pointer-events-none z-10 flex items-start p-1.5"
+                    className="absolute top-0 bottom-0 bg-[#57E6FF]/15 border-x border-[#57E6FF]/40 pointer-events-none z-10 flex items-start p-1.5"
                   >
-                    <span className="text-[9px] uppercase tracking-widest text-[#D4AF37] font-mono font-bold bg-black/70 px-1.5 py-0.5 rounded border border-[#D4AF37]/30">
+                    <span className="text-[9px] uppercase tracking-widest text-[#57E6FF] font-mono font-bold bg-black/70 px-1.5 py-0.5 rounded border border-[#57E6FF]/30">
                       Audition Window
                     </span>
                   </div>
@@ -483,7 +483,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
                       className={`flex-1 rounded-none transition-colors duration-75 ${
                         isPast
                           ? activeChannel === 'master'
-                            ? 'bg-[#D4AF37]'
+                            ? 'bg-[#57E6FF]'
                             : 'bg-white/80'
                           : isInAudition
                           ? 'bg-white/20 group-hover:bg-white/30'
@@ -496,9 +496,9 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
                 {/* Real-Time Synchronized Playhead Line */}
                 <div
                   style={{ left: `${progressPct}%` }}
-                  className="absolute top-0 bottom-0 w-[2px] bg-[#D4AF37] shadow-[0_0_10px_rgba(212,175,55,1)] pointer-events-none z-20"
+                  className="absolute top-0 bottom-0 w-[2px] bg-[#57E6FF] shadow-[0_0_10px_rgba(212,175,55,1)] pointer-events-none z-20"
                 >
-                  <div className="w-2.5 h-2.5 bg-[#D4AF37] -translate-x-[4px] rotate-45 shadow-sm" />
+                  <div className="w-2.5 h-2.5 bg-[#57E6FF] -translate-x-[4px] rotate-45 shadow-sm" />
                 </div>
               </div>
             );
@@ -513,10 +513,10 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               step={0.05}
               value={currentTime}
               onChange={handleSeek}
-              className="w-full accent-[#D4AF37] bg-[#111111] h-1.5 rounded cursor-pointer"
+              className="w-full accent-[#57E6FF] bg-[#1E4263] h-1.5 rounded cursor-pointer"
             />
-            <div className="flex items-center justify-between text-[11px] text-gray-500 font-mono">
-              <span className="text-[#D4AF37]">{formatTime(currentTime)}</span>
+            <div className="flex items-center justify-between text-[11px] text-slate-300 font-mono">
+              <span className="text-[#57E6FF]">{formatTime(currentTime)}</span>
               <span>{isUnlocked ? formatTime(duration) : `${formatTime(preview.endSec)} (Preview End)`}</span>
             </div>
           </div>
@@ -528,7 +528,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
           <div className="flex items-center gap-2.5">
             <button
               onClick={togglePlay}
-              className="w-12 h-12 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black flex items-center justify-center transition-colors active:scale-95 shadow-md shadow-[#D4AF37]/10"
+              className="w-12 h-12 rounded-md bg-[#57E6FF] hover:bg-[#41CBE8] text-black flex items-center justify-center transition-colors active:scale-95 shadow-md shadow-[#57E6FF]/10"
             >
               {isPlaying ? (
                 <Pause className="w-5 h-5 fill-black" />
@@ -547,7 +547,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
                   startPlayback();
                 }
               }}
-              className="p-2.5 rounded-md bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 text-gray-400 hover:text-white transition-colors"
+              className="p-2.5 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 text-slate-200 hover:text-white transition-colors"
               title="Return to start"
             >
               <RotateCcw className="w-4 h-4" />
@@ -557,8 +557,8 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               onClick={() => setIsLooping(!isLooping)}
               className={`p-2.5 rounded-md border transition-colors ${
                 isLooping
-                  ? 'bg-[#1A1A1A] border-[#D4AF37] text-[#D4AF37]'
-                  : 'bg-[#111111] border-white/5 text-gray-400 hover:text-white'
+                  ? 'bg-[#1A1A1A] border-[#57E6FF] text-[#57E6FF]'
+                  : 'bg-[#1E4263] border-cyan-100/20 text-slate-200 hover:text-white'
               }`}
               title="Toggle continuous loop"
             >
@@ -567,27 +567,27 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
           </div>
 
           {/* Stereo VU Meter Simulation */}
-          <div className="flex items-center gap-2.5 p-2.5 rounded-md bg-[#050505] border border-white/5 w-full sm:w-48">
-            <span className="text-[9px] font-mono text-gray-500 uppercase tracking-widest">VU</span>
+          <div className="flex items-center gap-2.5 p-2.5 rounded-md bg-[#102640] border border-cyan-100/20 w-full sm:w-48">
+            <span className="text-[9px] font-mono text-slate-300 uppercase tracking-widest">VU</span>
             <div className="flex-1 space-y-1">
-              <div className="h-1 w-full bg-[#111111] rounded-full overflow-hidden">
+              <div className="h-1 w-full bg-[#1E4263] rounded-full overflow-hidden">
                 <div
                   style={{ width: `${vuMeterLeft}%` }}
                   className={`h-full transition-all duration-75 ${
-                    vuMeterLeft > 85 ? 'bg-amber-400' : 'bg-[#D4AF37]'
+                    vuMeterLeft > 85 ? 'bg-amber-400' : 'bg-[#57E6FF]'
                   }`}
                 />
               </div>
-              <div className="h-1 w-full bg-[#111111] rounded-full overflow-hidden">
+              <div className="h-1 w-full bg-[#1E4263] rounded-full overflow-hidden">
                 <div
                   style={{ width: `${vuMeterRight}%` }}
                   className={`h-full transition-all duration-75 ${
-                    vuMeterRight > 85 ? 'bg-amber-400' : 'bg-[#D4AF37]'
+                    vuMeterRight > 85 ? 'bg-amber-400' : 'bg-[#57E6FF]'
                   }`}
                 />
               </div>
             </div>
-            <span className="text-[10px] font-mono text-gray-400">
+            <span className="text-[10px] font-mono text-slate-200">
               {activeChannel === 'master' ? `${record.masteredAnalysis.integratedLufs}` : `${record.originalAnalysis.integratedLufs}`}
             </span>
           </div>
@@ -595,9 +595,9 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
           {/* Master Volume */}
           <div className="flex items-center gap-2 w-full sm:w-auto">
             {volume === 0 ? (
-              <VolumeX className="w-4 h-4 text-gray-500" />
+              <VolumeX className="w-4 h-4 text-slate-300" />
             ) : (
-              <Volume2 className="w-4 h-4 text-gray-400" />
+              <Volume2 className="w-4 h-4 text-slate-200" />
             )}
             <input
               type="range"
@@ -606,24 +606,24 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               step={0.01}
               value={volume}
               onChange={(e) => setVolume(parseFloat(e.target.value))}
-              className="w-24 accent-[#D4AF37] bg-[#111111] h-1 rounded cursor-pointer"
+              className="w-24 accent-[#57E6FF] bg-[#1E4263] h-1 rounded cursor-pointer"
             />
           </div>
         </div>
 
         {/* Side-by-Side Metrics Comparison Table */}
-        <div className="pt-4 border-t border-white/5 space-y-3">
-          <h4 className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-medium">
+        <div className="pt-4 border-t border-cyan-100/20 space-y-3">
+          <h4 className="text-[10px] uppercase tracking-widest text-[#57E6FF] font-medium">
             Acoustic Measurement Delta
           </h4>
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs">
             {/* Loudness */}
-            <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Integrated LUFS</span>
+            <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Integrated LUFS</span>
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-gray-400 text-xs">{record.originalAnalysis.integratedLufs}</span>
-                <span className="text-[#D4AF37] font-light text-base">
+                <span className="text-slate-200 text-xs">{record.originalAnalysis.integratedLufs}</span>
+                <span className="text-[#57E6FF] font-light text-base">
                   {record.masteredAnalysis.integratedLufs}
                 </span>
               </div>
@@ -633,41 +633,41 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
             </div>
 
             {/* True Peak */}
-            <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase tracking-wider text-gray-500 block">True Peak (dBTP)</span>
+            <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-[10px] uppercase tracking-wider text-slate-300 block">True Peak (dBTP)</span>
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-gray-400 text-xs">{record.originalAnalysis.truePeak}</span>
+                <span className="text-slate-200 text-xs">{record.originalAnalysis.truePeak}</span>
                 <span className="text-emerald-400 font-light text-base">
                   {record.masteredAnalysis.truePeak}
                 </span>
               </div>
-              <span className="text-[9px] text-gray-500 block font-mono">
+              <span className="text-[9px] text-slate-300 block font-mono">
                 Ceiling held at -1.0 dBTP
               </span>
             </div>
 
             {/* Dynamic Range */}
-            <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Dynamic Range</span>
+            <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Dynamic Range</span>
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-gray-400 text-xs">{record.originalAnalysis.dynamicRange} dB</span>
+                <span className="text-slate-200 text-xs">{record.originalAnalysis.dynamicRange} dB</span>
                 <span className="text-white font-light text-base">
                   {record.masteredAnalysis.dynamicRange} dB
                 </span>
               </div>
-              <span className="text-[9px] text-gray-500 block font-mono">
+              <span className="text-[9px] text-slate-300 block font-mono">
                 Transients preserved
               </span>
             </div>
 
             {/* QC Status */}
-            <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Quality Control</span>
+            <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Quality Control</span>
               <div className="flex items-center gap-1.5 text-emerald-400 font-mono text-xs font-medium">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 <span>QC PASSED</span>
               </div>
-              <span className="text-[9px] text-gray-500 block font-mono">
+              <span className="text-[9px] text-slate-300 block font-mono">
                 0 clipping • 0 intersample
               </span>
             </div>
@@ -676,10 +676,10 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
       </div>
 
       {/* Navigation to Report / Download */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-cyan-100/20">
         <button
           onClick={onRemaster}
-          className="w-full sm:w-auto px-5 py-3 rounded-md bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 text-xs uppercase tracking-wider text-gray-300 transition-colors flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-5 py-3 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 text-xs uppercase tracking-wider text-slate-100 transition-colors flex items-center justify-center gap-2"
         >
           <Sliders className="w-3.5 h-3.5" />
           <span>Adjust Settings & Remaster</span>
@@ -689,7 +689,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
           {!isUnlocked && onUnlockMaster && (
             <button
               onClick={onUnlockMaster}
-              className="w-full sm:w-auto px-6 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#C19A2E] text-black shadow-lg shadow-[#D4AF37]/20"
+              className="w-full sm:w-auto px-6 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2 bg-[#57E6FF] hover:bg-[#41CBE8] text-black shadow-lg shadow-[#57E6FF]/20"
             >
               <Lock className="w-4 h-4 text-black" />
               <span>Unlock Full Master ($9.99)</span>
@@ -700,8 +700,8 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
             onClick={onProceedToDownload}
             className={`w-full sm:w-auto px-6 py-3.5 rounded-md text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 ${
               isUnlocked
-                ? 'font-bold bg-[#D4AF37] hover:bg-[#C19A2E] text-black'
-                : 'font-medium bg-[#161616] hover:bg-[#202020] text-gray-300 border border-white/10'
+                ? 'font-bold bg-[#57E6FF] hover:bg-[#41CBE8] text-black'
+                : 'font-medium bg-[#264E6D] hover:bg-[#202020] text-slate-100 border border-cyan-100/30'
             }`}
           >
             <span>{isUnlocked ? 'Download 24-Bit Master' : 'View Full Diagnostics'}</span>

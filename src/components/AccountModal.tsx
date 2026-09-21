@@ -82,7 +82,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
         </button>
 
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-2xl bg-[#1a1710] border border-[#d4af37]/40 flex items-center justify-center text-[#d4af37]">
+          <div className="w-12 h-12 rounded-2xl bg-[#1a1710] border border-[#57E6FF]/40 flex items-center justify-center text-[#57E6FF]">
             <User className="w-6 h-6" />
           </div>
           <div>
@@ -99,7 +99,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
               <span className="font-semibold text-white text-sm capitalize">
                 {user.subscriptionTier === 'admin' ? 'Studio Owner Access' : '$9.99 per mastered track'}
               </span>
-              <span className="px-2 py-0.5 rounded bg-[#1e1a12] text-[#d4af37] text-[10px] font-mono-studio border border-[#d4af37]/30">
+              <span className="px-2 py-0.5 rounded bg-[#1e1a12] text-[#57E6FF] text-[10px] font-mono-studio border border-[#57E6FF]/30">
                 {user.subscriptionTier === 'admin' ? 'No charge' : 'One-time payment'}
               </span>
             </div>
@@ -110,7 +110,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
                 onClose();
                 onOpenPricing();
               }}
-              className="px-3 py-1.5 rounded-lg bg-[#d4af37] text-black font-semibold text-xs hover:bg-[#e5b83b] transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-[#57E6FF] text-black font-semibold text-xs hover:bg-[#e5b83b] transition-colors"
             >
               View Price
             </button>
@@ -126,7 +126,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Artist / Producer Alias"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4af37]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white placeholder-neutral-600 focus:outline-none focus:border-[#57E6FF]"
             />
           </div>
 
@@ -137,7 +137,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
-              className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white placeholder-neutral-600 focus:outline-none focus:border-[#d4af37]"
+              className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white placeholder-neutral-600 focus:outline-none focus:border-[#57E6FF]"
             />
           </div>
 
@@ -178,7 +178,7 @@ export const AccountModal: React.FC<AccountModalProps> = ({
               <div className="flex gap-2">
                 {(['wav', 'mp3'] as const).map((format) => {
                   const key = `${delivery.orderId}:${format}`;
-                  return <button key={format} type="button" disabled={activeDownload === key} onClick={() => void downloadDelivery(delivery, format)} className="px-3 py-2 rounded-lg bg-[#1f1f2e] hover:bg-[#28283d] text-[#d4af37] text-[10px] font-bold uppercase flex items-center gap-1.5 disabled:opacity-50">
+                  return <button key={format} type="button" disabled={activeDownload === key} onClick={() => void downloadDelivery(delivery, format)} className="px-3 py-2 rounded-lg bg-[#1f1f2e] hover:bg-[#28283d] text-[#57E6FF] text-[10px] font-bold uppercase flex items-center gap-1.5 disabled:opacity-50">
                     <Download className="w-3 h-3" /> {activeDownload === key ? 'Preparing' : format}
                   </button>;
                 })}

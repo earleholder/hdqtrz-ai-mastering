@@ -143,20 +143,20 @@ export const PricingModal: React.FC<PricingModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-4xl rounded-xl bg-[#0A0A0A] border border-white/10 p-6 sm:p-10 space-y-6 max-h-[90vh] overflow-y-auto">
-        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-md bg-[#111111] hover:bg-[#1A1A1A] text-gray-400 hover:text-white border border-white/5 transition-colors" aria-label="Close pricing">
+      <div className="relative w-full max-w-4xl rounded-xl bg-[#173653] border border-cyan-100/30 p-6 sm:p-10 space-y-6 max-h-[90vh] overflow-y-auto">
+        <button onClick={onClose} className="absolute top-6 right-6 p-2 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] text-slate-200 hover:text-white border border-cyan-100/20 transition-colors" aria-label="Close pricing">
           <X className="w-4 h-4" />
         </button>
 
         <div className="text-center space-y-2 max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#111111] border border-white/5 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[10px] uppercase tracking-[0.2em] text-[#57E6FF]">
             <Sparkles className="w-3 h-3" />
             <span>{trackToUnlock ? 'Unlock Full 24-Bit Master' : 'Single-Song Mastering'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-light text-white tracking-tight">
             {trackToUnlock ? 'Unlock Full Master for Release' : 'One Song. One Price.'}
           </h2>
-          <p className="text-xs text-gray-400 font-light">
+          <p className="text-xs text-slate-200 font-light">
             {trackToUnlock
               ? <>You auditioned the preview of <strong className="text-white font-medium">"{trackToUnlock.title}"</strong>. Payment unlocks this track only.</>
               : 'Upload and master a song first; then unlock that exact track for one clear price.'}
@@ -164,32 +164,32 @@ export const PricingModal: React.FC<PricingModalProps> = ({
         </div>
 
         {isAdminLoggedIn && trackToUnlock && onUseCredit && (
-          <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#18150a] via-[#211b0c] to-[#12110a] border border-[#D4AF37] flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="p-4 sm:p-5 rounded-xl bg-gradient-to-r from-[#18150a] via-[#211b0c] to-[#12110a] border border-[#57E6FF] flex flex-col sm:flex-row items-center justify-between gap-4">
             <div>
-              <span className="text-[10px] text-[#D4AF37] uppercase tracking-wider">Admin Access Active</span>
-              <p className="text-xs text-gray-300 mt-1">Studio administrator bypass; no customer payment is recorded.</p>
+              <span className="text-[10px] text-[#57E6FF] uppercase tracking-wider">Admin Access Active</span>
+              <p className="text-xs text-slate-100 mt-1">Studio administrator bypass; no customer payment is recorded.</p>
             </div>
-            <button onClick={onUseCredit} className="px-6 py-3 rounded-md bg-[#D4AF37] text-black font-bold text-xs uppercase tracking-wider">
+            <button onClick={onUseCredit} className="px-6 py-3 rounded-md bg-[#57E6FF] text-black font-bold text-xs uppercase tracking-wider">
               Unlock Master (Admin)
             </button>
           </div>
         )}
 
         <div className="max-w-md mx-auto w-full">
-          <div className="rounded-xl bg-gradient-to-b from-[#15130c] to-[#0F0F0F] border border-[#D4AF37]/60 p-6 sm:p-8 space-y-6 shadow-xl shadow-black/30">
+          <div className="rounded-xl bg-gradient-to-b from-[#15130c] to-[#1B3C5C] border border-[#57E6FF]/60 p-6 sm:p-8 space-y-6 shadow-xl shadow-black/30">
             <div className="space-y-5">
               <div className="text-center">
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#D4AF37] block mb-2">One Song · One-Time Payment</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#57E6FF] block mb-2">One Song · One-Time Payment</span>
                 <h3 className="text-xl font-medium text-white">Single Master</h3>
               </div>
               <div className="font-mono text-center">
                 <span className="text-4xl font-light text-white">$9.99</span>
-                <span className="text-xs text-gray-400"> / song</span>
+                <span className="text-xs text-slate-200"> / song</span>
               </div>
               <ul className="space-y-3 text-xs text-gray-200 font-light">
                 {['Complete 24-bit WAV studio master', '320 kbps MP3 master', 'Full mastering diagnostics report', 'Secure repeat downloads for this song'].map((feature) => (
                   <li key={feature} className="flex items-center gap-2.5">
-                    <Check className="w-4 h-4 text-[#D4AF37] shrink-0" />
+                    <Check className="w-4 h-4 text-[#57E6FF] shrink-0" />
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -197,11 +197,11 @@ export const PricingModal: React.FC<PricingModalProps> = ({
             </div>
 
             {!trackToUnlock ? (
-              <div className="w-full py-3.5 rounded-md bg-white/5 border border-white/10 text-gray-400 text-xs text-center">
+              <div className="w-full py-3.5 rounded-md bg-white/5 border border-cyan-100/30 text-slate-200 text-xs text-center">
                 Upload and master a song to purchase its download.
               </div>
             ) : !authReady || busy ? (
-              <div className="flex items-center justify-center gap-2 py-3.5 text-xs text-[#D4AF37]">
+              <div className="flex items-center justify-center gap-2 py-3.5 text-xs text-[#57E6FF]">
                 <LoaderCircle className="w-4 h-4 animate-spin" />
                 {checkoutState === 'unlocking' ? 'Unlocking paid master…' : 'Please wait…'}
               </div>
@@ -210,25 +210,25 @@ export const PricingModal: React.FC<PricingModalProps> = ({
                 <LogIn className="w-4 h-4" /> Sign in with Google to Pay
               </button>
             ) : hasPendingOrder ? (
-              <button onClick={() => void checkPayment()} className="w-full py-3.5 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
+              <button onClick={() => void checkPayment()} className="w-full py-3.5 rounded-md bg-[#57E6FF] hover:bg-[#41CBE8] text-black text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2">
                 <RefreshCw className="w-4 h-4" /> Check Payment Status
               </button>
             ) : (
-              <button onClick={() => void startCheckout()} className="w-full py-3.5 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black text-xs font-bold uppercase tracking-wider">
+              <button onClick={() => void startCheckout()} className="w-full py-3.5 rounded-md bg-[#57E6FF] hover:bg-[#41CBE8] text-black text-xs font-bold uppercase tracking-wider">
                 Master One Song — $9.99
               </button>
             )}
 
-            {firebaseUser && <p className="text-[10px] text-center text-gray-500">Signed in as {firebaseUser.email}</p>}
+            {firebaseUser && <p className="text-[10px] text-center text-slate-300">Signed in as {firebaseUser.email}</p>}
             {(checkoutState === 'pending' || checkoutState === 'verifying') && (
-              <p className="text-[11px] text-center text-[#D4AF37]">Stripe Checkout is open. Return here after payment to verify and unlock.</p>
+              <p className="text-[11px] text-center text-[#57E6FF]">Stripe Checkout is open. Return here after payment to verify and unlock.</p>
             )}
             {error && <p role="alert" className="text-[11px] text-center text-red-400">{error}</p>}
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-3 text-[11px] text-gray-500 pt-3 border-t border-white/5 font-light">
-          <ShieldCheck className="w-4 h-4 text-[#D4AF37]" />
+        <div className="flex items-center justify-center gap-3 text-[11px] text-slate-300 pt-3 border-t border-cyan-100/20 font-light">
+          <ShieldCheck className="w-4 h-4 text-[#57E6FF]" />
           <span>Stripe verifies payment server-side. No Stripe secret key is exposed to your browser.</span>
         </div>
       </div>

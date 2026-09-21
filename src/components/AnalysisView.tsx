@@ -44,27 +44,27 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
       <div className="text-center space-y-2 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#111111] border border-white/5 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[10px] uppercase tracking-[0.2em] text-[#57E6FF]">
           <span>02 / Mix Diagnostics & Spectral Map</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-light tracking-tight text-white">
           Mix Diagnostic Overview
         </h2>
-        <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto font-light">
+        <p className="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto font-light">
           HDQTRZ evaluated input loudness, dynamics, spectral balance, and phase correlation.
         </p>
       </div>
 
       {/* Simple Language Assessment Callout */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="flex items-center justify-between border-b border-white/5 pb-3">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="flex items-center justify-between border-b border-cyan-100/20 pb-3">
           <div className="flex items-center gap-2.5">
-            <Sparkles className="w-4 h-4 text-[#D4AF37]" />
-            <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium">
+            <Sparkles className="w-4 h-4 text-[#57E6FF]" />
+            <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium">
               Acoustic Assessment
             </h3>
           </div>
-          <span className="text-[10px] uppercase tracking-wider text-gray-500">Autonomous Diagnostic</span>
+          <span className="text-[10px] uppercase tracking-wider text-slate-300">Autonomous Diagnostic</span>
         </div>
 
         <p className="text-gray-200 text-sm sm:text-base leading-relaxed font-light">
@@ -73,20 +73,20 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
 
         {/* Quick health pills */}
         <div className="flex flex-wrap gap-2 pt-1 text-xs">
-          <span className="px-2.5 py-1 rounded bg-[#111111] text-gray-300 border border-white/5 flex items-center gap-1.5 text-[11px]">
-            <Gauge className="w-3 h-3 text-[#D4AF37]" />
+          <span className="px-2.5 py-1 rounded bg-[#1E4263] text-slate-100 border border-cyan-100/20 flex items-center gap-1.5 text-[11px]">
+            <Gauge className="w-3 h-3 text-[#57E6FF]" />
             Loudness: <strong className="text-white font-mono">{analysis.integratedLufs} LUFS</strong>
           </span>
-          <span className="px-2.5 py-1 rounded bg-[#111111] text-gray-300 border border-white/5 flex items-center gap-1.5 text-[11px]">
-            <Zap className="w-3 h-3 text-[#D4AF37]" />
+          <span className="px-2.5 py-1 rounded bg-[#1E4263] text-slate-100 border border-cyan-100/20 flex items-center gap-1.5 text-[11px]">
+            <Zap className="w-3 h-3 text-[#57E6FF]" />
             True Peak: <strong className="text-white font-mono">{analysis.truePeak} dBTP</strong>
           </span>
-          <span className="px-2.5 py-1 rounded bg-[#111111] text-gray-300 border border-white/5 flex items-center gap-1.5 text-[11px]">
-            <BarChart3 className="w-3 h-3 text-[#D4AF37]" />
+          <span className="px-2.5 py-1 rounded bg-[#1E4263] text-slate-100 border border-cyan-100/20 flex items-center gap-1.5 text-[11px]">
+            <BarChart3 className="w-3 h-3 text-[#57E6FF]" />
             Dynamic Range: <strong className="text-white font-mono">{analysis.dynamicRange} dB</strong>
           </span>
-          <span className="px-2.5 py-1 rounded bg-[#111111] text-gray-300 border border-white/5 flex items-center gap-1.5 text-[11px]">
-            <Radio className="w-3 h-3 text-[#D4AF37]" />
+          <span className="px-2.5 py-1 rounded bg-[#1E4263] text-slate-100 border border-cyan-100/20 flex items-center gap-1.5 text-[11px]">
+            <Radio className="w-3 h-3 text-[#57E6FF]" />
             Phase: <strong className="text-white">{analysis.phaseCorrelation > 0.5 ? 'Mono Compatible' : 'Wide / Check Lows'}</strong>
           </span>
         </div>
@@ -94,7 +94,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
 
       {/* Mix Problem Warnings Alert (if any issues flagged) OR Pristine Mix Certification */}
       {analysis.detectedIssues.length > 0 ? (
-        <div className="rounded-xl bg-[#0A0A0A] border border-amber-500/20 p-5 space-y-3">
+        <div className="rounded-xl bg-[#173653] border border-amber-500/20 p-5 space-y-3">
           <div className="flex items-center gap-2.5">
             <AlertTriangle className="w-4 h-4 text-amber-400" />
             <h4 className="text-xs uppercase tracking-wider text-amber-300 font-medium">
@@ -106,36 +106,36 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
             {analysis.detectedIssues.map((issue) => (
               <div
                 key={issue.id}
-                className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5 text-xs space-y-1"
+                className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 text-xs space-y-1"
               >
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-white">{issue.title}</span>
                   {issue.frequencyRange && (
-                    <span className="px-1.5 py-0.5 rounded bg-[#1A1A1A] text-[#D4AF37] font-mono text-[9px] uppercase tracking-wider">
+                    <span className="px-1.5 py-0.5 rounded bg-[#1A1A1A] text-[#57E6FF] font-mono text-[9px] uppercase tracking-wider">
                       {issue.frequencyRange}
                     </span>
                   )}
                 </div>
-                <p className="text-gray-400 text-xs leading-relaxed font-light">{issue.description}</p>
-                <p className="text-[#D4AF37] text-[11px]">
+                <p className="text-slate-200 text-xs leading-relaxed font-light">{issue.description}</p>
+                <p className="text-[#57E6FF] text-[11px]">
                   → HDQTRZ Action: {issue.recommendation}
                 </p>
               </div>
             ))}
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] text-gray-500 border-t border-white/5">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 text-[11px] text-slate-300 border-t border-cyan-100/20">
             <span>The AI engine automatically compensates without squashing transient clarity.</span>
             <button
               onClick={onReUpload}
-              className="text-gray-400 hover:text-white underline underline-offset-2 transition-colors"
+              className="text-slate-200 hover:text-white underline underline-offset-2 transition-colors"
             >
               Upload revised mix?
             </button>
           </div>
         </div>
       ) : (
-        <div className="rounded-xl bg-[#0A0A0A] border border-emerald-500/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="rounded-xl bg-[#173653] border border-emerald-500/20 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-full bg-emerald-950/40 border border-emerald-500/30 flex items-center justify-center text-emerald-400 shrink-0">
               <CheckCircle2 className="w-4 h-4" />
@@ -144,7 +144,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
               <h4 className="text-xs uppercase tracking-wider text-emerald-300 font-medium">
                 Pristine Mix Balance Verified
               </h4>
-              <p className="text-gray-400 text-xs font-light">
+              <p className="text-slate-200 text-xs font-light">
                 No phase cancellation, spectral masking, or clipping detected. Mix headroom is primed for mastering.
               </p>
             </div>
@@ -158,67 +158,67 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       {/* Core Studio Meters Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {/* Integrated LUFS */}
-        <div className="bg-[#0F0F0F] p-4 rounded-lg border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-gray-500">
+        <div className="bg-[#1B3C5C] p-4 rounded-lg border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-300">
             <span>Integrated LUFS</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#57E6FF]" />
           </div>
           <div className="font-mono text-2xl sm:text-3xl font-light text-white">
             {analysis.integratedLufs}
           </div>
-          <p className="text-[10px] text-gray-600 uppercase tracking-tight">ITU-R BS.1770</p>
+          <p className="text-[10px] text-slate-300 uppercase tracking-tight">ITU-R BS.1770</p>
         </div>
 
         {/* True Peak */}
-        <div className="bg-[#0F0F0F] p-4 rounded-lg border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-gray-500">
+        <div className="bg-[#1B3C5C] p-4 rounded-lg border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-300">
             <span>True Peak</span>
             <span className={`w-1.5 h-1.5 rounded-full ${analysis.truePeak > 0 ? 'bg-red-500' : 'bg-emerald-400'}`} />
           </div>
           <div className="font-mono text-2xl sm:text-3xl font-light text-white">
-            {analysis.truePeak} <span className="text-xs text-gray-400">dBTP</span>
+            {analysis.truePeak} <span className="text-xs text-slate-200">dBTP</span>
           </div>
-          <p className="text-[10px] text-gray-600 uppercase tracking-tight">
+          <p className="text-[10px] text-slate-300 uppercase tracking-tight">
             {analysis.truePeak > 0 ? 'Full Scale Exceeded' : 'Clean Headroom'}
           </p>
         </div>
 
         {/* Dynamic Range */}
-        <div className="bg-[#0F0F0F] p-4 rounded-lg border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-gray-500">
+        <div className="bg-[#1B3C5C] p-4 rounded-lg border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-300">
             <span>Dynamic Range</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#57E6FF]" />
           </div>
           <div className="font-mono text-2xl sm:text-3xl font-light text-white">
-            {analysis.dynamicRange} <span className="text-xs text-gray-400">dB</span>
+            {analysis.dynamicRange} <span className="text-xs text-slate-200">dB</span>
           </div>
-          <p className="text-[10px] text-gray-600 uppercase tracking-tight">Crest: {analysis.crestFactor} dB</p>
+          <p className="text-[10px] text-slate-300 uppercase tracking-tight">Crest: {analysis.crestFactor} dB</p>
         </div>
 
         {/* Stereo Width */}
-        <div className="bg-[#0F0F0F] p-4 rounded-lg border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-gray-500">
+        <div className="bg-[#1B3C5C] p-4 rounded-lg border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-300">
             <span>Correlation</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#57E6FF]" />
           </div>
           <div className="font-mono text-2xl sm:text-3xl font-light text-white">
             {analysis.phaseCorrelation > 0 ? `+${analysis.phaseCorrelation}` : analysis.phaseCorrelation}
           </div>
-          <p className="text-[10px] text-gray-600 uppercase tracking-tight">
+          <p className="text-[10px] text-slate-300 uppercase tracking-tight">
             Width Index: {analysis.stereoWidth}x
           </p>
         </div>
       </div>
 
       {/* Energy Balance Bar */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/5 p-5 space-y-3">
-        <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-gray-500">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/20 p-5 space-y-3">
+        <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-300">
           <span>Spectral Energy Distribution</span>
           <span>Acoustic Weighting</span>
         </div>
 
         {/* Multi-segment bar */}
-        <div className="h-3 w-full rounded bg-[#111111] overflow-hidden flex">
+        <div className="h-3 w-full rounded bg-[#1E4263] overflow-hidden flex">
           <div
             style={{ width: `${analysis.lowEnergyPct}%` }}
             className="bg-[#996515] h-full transition-all"
@@ -226,7 +226,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
           />
           <div
             style={{ width: `${analysis.midEnergyPct}%` }}
-            className="bg-[#D4AF37] h-full transition-all"
+            className="bg-[#57E6FF] h-full transition-all"
             title={`Midrange: ${analysis.midEnergyPct}%`}
           />
           <div
@@ -236,13 +236,13 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
           />
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-400 pt-1">
+        <div className="flex items-center justify-between text-xs text-slate-200 pt-1">
           <div className="flex items-center gap-2 text-[11px]">
             <span className="w-2 h-2 rounded-sm bg-[#996515]" />
             <span>Low End ({analysis.lowEnergyPct}%)</span>
           </div>
           <div className="flex items-center gap-2 text-[11px]">
-            <span className="w-2 h-2 rounded-sm bg-[#D4AF37]" />
+            <span className="w-2 h-2 rounded-sm bg-[#57E6FF]" />
             <span>Midrange ({analysis.midEnergyPct}%)</span>
           </div>
           <div className="flex items-center gap-2 text-[11px]">
@@ -256,85 +256,85 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       <div className="space-y-3">
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="w-full py-2.5 px-4 rounded-md bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 text-gray-400 hover:text-white text-[10px] uppercase tracking-[0.15em] flex items-center justify-center gap-2 transition-colors"
+          className="w-full py-2.5 px-4 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 text-slate-200 hover:text-white text-[10px] uppercase tracking-[0.15em] flex items-center justify-center gap-2 transition-colors"
         >
           <span>{showAdvanced ? 'Hide Detailed Frequency Specs' : 'Show 8-Band Energy Breakdown & Intersample Profile'}</span>
           {showAdvanced ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
         </button>
 
         {showAdvanced && (
-          <div className="p-5 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-5">
-            <h4 className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-medium">
+          <div className="p-5 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-5">
+            <h4 className="text-[10px] uppercase tracking-widest text-[#57E6FF] font-medium">
               8-Band Acoustic Spectrum Profile (dB Energy)
             </h4>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Sub-Bass (20-60 Hz)</span>
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Sub-Bass (20-60 Hz)</span>
                 <span className="font-mono text-sm text-white">
                   {analysis.spectralBands.subBass} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Bass (60-250 Hz)</span>
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Bass (60-250 Hz)</span>
                 <span className="font-mono text-sm text-white">
                   {analysis.spectralBands.bass} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Low-Mids (250-500 Hz)</span>
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Low-Mids (250-500 Hz)</span>
                 <span className="font-mono text-sm text-white">
                   {analysis.spectralBands.lowMids} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Midrange (500-2k Hz)</span>
-                <span className="font-mono text-sm text-[#D4AF37]">
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Midrange (500-2k Hz)</span>
+                <span className="font-mono text-sm text-[#57E6FF]">
                   {analysis.spectralBands.midrange} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Presence (2k-4k Hz)</span>
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Presence (2k-4k Hz)</span>
                 <span className="font-mono text-sm text-white">
                   {analysis.spectralBands.presence} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Upper-Mids (4k-6k Hz)</span>
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Upper-Mids (4k-6k Hz)</span>
                 <span className="font-mono text-sm text-white">
                   {analysis.spectralBands.upperMids} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Treble (6k-12k Hz)</span>
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Treble (6k-12k Hz)</span>
                 <span className="font-mono text-sm text-white">
                   {analysis.spectralBands.treble} dB
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-[#0F0F0F] border border-white/5">
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Air (12k-20k Hz)</span>
-                <span className="font-mono text-sm text-[#D4AF37]">
+              <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20">
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Air (12k-20k Hz)</span>
+                <span className="font-mono text-sm text-[#57E6FF]">
                   {analysis.spectralBands.air} dB
                 </span>
               </div>
             </div>
 
             {/* Intersample Peak & DC Offset Specs */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-white/5 text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-cyan-100/20 text-xs">
               <div>
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Momentary LUFS</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Momentary LUFS</span>
                 <span className="font-mono text-white text-xs">{analysis.momentaryLufs} LUFS</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Short-Term LUFS</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Short-Term LUFS</span>
                 <span className="font-mono text-white text-xs">{analysis.shortTermLufs} LUFS</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">DC Offset</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">DC Offset</span>
                 <span className="font-mono text-white text-xs">{analysis.dcOffset}%</span>
               </div>
               <div>
-                <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Channel Balance (L/R)</span>
+                <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Channel Balance (L/R)</span>
                 <span className="font-mono text-white text-xs">{analysis.channelBalanceDb} dB</span>
               </div>
             </div>
@@ -343,10 +343,10 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
       </div>
 
       {/* Navigation Actions */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-cyan-100/20">
         <button
           onClick={onReUpload}
-          className="w-full sm:w-auto px-4 py-3 rounded-md bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 text-xs uppercase tracking-wider text-gray-300 transition-colors flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-4 py-3 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 text-xs uppercase tracking-wider text-slate-100 transition-colors flex items-center justify-center gap-2"
         >
           <RotateCcw className="w-3.5 h-3.5" />
           <span>Change Track</span>
@@ -354,7 +354,7 @@ export const AnalysisView: React.FC<AnalysisViewProps> = ({
 
         <button
           onClick={onProceed}
-          className="w-full sm:w-auto px-6 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#C19A2E] text-black"
+          className="w-full sm:w-auto px-6 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 bg-[#57E6FF] hover:bg-[#41CBE8] text-black"
         >
           <span>Select Mastering Preferences</span>
           <ArrowRight className="w-3.5 h-3.5 text-black" />

@@ -97,14 +97,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-cyan-100/20">
         <div>
           <div className="flex items-center gap-2">
-            <span className="px-2 py-0.5 rounded bg-[#111111] text-[#D4AF37] text-[10px] uppercase tracking-[0.2em] border border-white/5">
+            <span className="px-2 py-0.5 rounded bg-[#1E4263] text-[#57E6FF] text-[10px] uppercase tracking-[0.2em] border border-cyan-100/20">
               Engine Operations Console
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-[10px] text-gray-500 font-mono">HDQTRZ Cluster v2.4</span>
+            <span className="text-[10px] text-slate-300 font-mono">HDQTRZ Cluster v2.4</span>
           </div>
           <h2 className="text-xl sm:text-2xl font-light text-white tracking-tight mt-1">
             Studio Engine Operations
@@ -112,36 +112,36 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         </div>
 
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#141414] border border-white/10 text-xs text-gray-300 font-mono">
-            <Lock className="w-3.5 h-3.5 text-[#D4AF37]" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#234A6A] border border-cyan-100/30 text-xs text-slate-100 font-mono">
+            <Lock className="w-3.5 h-3.5 text-[#57E6FF]" />
             <span>earle.holder@gmail.com</span>
           </div>
 
           {onLogout && (
             <button
               onClick={onLogout}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#161616] hover:bg-[#222222] border border-white/10 text-gray-400 hover:text-white text-xs uppercase tracking-wider transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#264E6D] hover:bg-[#222222] border border-cyan-100/30 text-slate-200 hover:text-white text-xs uppercase tracking-wider transition-colors"
               title="Lock & Exit Admin Console"
             >
-              <LogOut className="w-3.5 h-3.5 text-gray-400" />
+              <LogOut className="w-3.5 h-3.5 text-slate-200" />
               <span>Lock Console</span>
             </button>
           )}
 
-          <span className="text-xs text-gray-400 font-mono hidden md:inline">
-            Avg DSP Render: <strong className="text-[#D4AF37] font-medium">{metrics.avgProcessingTimeSec}s</strong>
+          <span className="text-xs text-slate-200 font-mono hidden md:inline">
+            Avg DSP Render: <strong className="text-[#57E6FF] font-medium">{metrics.avgProcessingTimeSec}s</strong>
           </span>
         </div>
       </div>
 
       {/* Admin Tab Switcher */}
-      <div className="flex items-center gap-2 border-b border-white/5 pb-2">
+      <div className="flex items-center gap-2 border-b border-cyan-100/20 pb-2">
         <button
           onClick={() => setActiveTab('engine')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
             activeTab === 'engine'
-              ? 'bg-[#181818] text-[#D4AF37] border border-[#D4AF37]/30'
-              : 'text-gray-400 hover:text-white hover:bg-[#121212]'
+              ? 'bg-[#181818] text-[#57E6FF] border border-[#57E6FF]/30'
+              : 'text-slate-200 hover:text-white hover:bg-[#121212]'
           }`}
         >
           <Sliders className="w-3.5 h-3.5" />
@@ -155,8 +155,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           }}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-colors relative ${
             activeTab === 'inquiries'
-              ? 'bg-[#181818] text-[#D4AF37] border border-[#D4AF37]/30'
-              : 'text-gray-400 hover:text-white hover:bg-[#121212]'
+              ? 'bg-[#181818] text-[#57E6FF] border border-[#57E6FF]/30'
+              : 'text-slate-200 hover:text-white hover:bg-[#121212]'
           }`}
         >
           <Mail className="w-3.5 h-3.5" />
@@ -172,31 +172,31 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       {activeTab === 'inquiries' ? (
         /* Inbound Studio Inquiries Inbox */
         <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 rounded-xl bg-[#0A0A0A] border border-white/5">
+          <div className="flex items-center justify-between p-4 rounded-xl bg-[#173653] border border-cyan-100/20">
             <div>
               <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                <Mail className="w-4 h-4 text-[#D4AF37]" />
+                <Mail className="w-4 h-4 text-[#57E6FF]" />
                 <span>Earle Holder Human Mastering Requests</span>
               </h3>
-              <p className="text-xs text-gray-400 font-light mt-0.5">
-                All booking inquiries dispatched to <strong className="text-gray-300">earle.holder@gmail.com</strong> are also cataloged here in real-time.
+              <p className="text-xs text-slate-200 font-light mt-0.5">
+                All booking inquiries dispatched to <strong className="text-slate-100">earle.holder@gmail.com</strong> are also cataloged here in real-time.
               </p>
             </div>
 
             <button
               onClick={refreshInquiries}
-              className="px-3 py-1.5 rounded-lg bg-[#141414] hover:bg-[#1C1C1C] border border-white/10 text-xs text-gray-300 flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-lg bg-[#234A6A] hover:bg-[#2D5878] border border-cyan-100/30 text-xs text-slate-100 flex items-center gap-1.5 transition-colors"
             >
-              <RefreshCw className="w-3 h-3 text-[#D4AF37]" />
+              <RefreshCw className="w-3 h-3 text-[#57E6FF]" />
               <span>Refresh</span>
             </button>
           </div>
 
           {inquiries.length === 0 ? (
-            <div className="p-12 text-center rounded-xl bg-[#0A0A0A] border border-white/5 space-y-3">
-              <Mail className="w-8 h-8 text-gray-600 mx-auto" />
-              <h4 className="text-sm text-gray-300">No Studio Inquiries Yet</h4>
-              <p className="text-xs text-gray-500 max-w-sm mx-auto">
+            <div className="p-12 text-center rounded-xl bg-[#173653] border border-cyan-100/20 space-y-3">
+              <Mail className="w-8 h-8 text-slate-300 mx-auto" />
+              <h4 className="text-sm text-slate-100">No Studio Inquiries Yet</h4>
+              <p className="text-xs text-slate-300 max-w-sm mx-auto">
                 When artists request Human Analog Hybrid Mastering or stem sessions, their submissions appear here and dispatch directly to your email.
               </p>
             </div>
@@ -208,9 +208,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                 return (
                   <div
                     key={inquiry.id}
-                    className="p-5 rounded-xl bg-[#0A0A0A] border border-white/5 hover:border-white/15 transition-all space-y-4"
+                    className="p-5 rounded-xl bg-[#173653] border border-cyan-100/20 hover:border-white/15 transition-all space-y-4"
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-white/5">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 pb-3 border-b border-cyan-100/20">
                       <div>
                         <div className="flex items-center gap-2.5">
                           <h4 className="text-sm font-semibold text-white">{inquiry.name}</h4>
@@ -221,17 +221,17 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                               ? 'bg-blue-500/10 text-blue-400 border border-blue-500/30'
                               : inquiry.status === 'booked'
                               ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                              : 'bg-gray-800 text-gray-400'
+                              : 'bg-gray-800 text-slate-200'
                           }`}>
                             {inquiry.status}
                           </span>
                         </div>
-                        <span className="text-xs text-[#D4AF37] font-medium block mt-0.5">
+                        <span className="text-xs text-[#57E6FF] font-medium block mt-0.5">
                           {inquiry.serviceType}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-3 text-xs text-gray-500">
+                      <div className="flex items-center gap-3 text-xs text-slate-300">
                         <span className="font-mono text-[11px]">
                           {new Date(inquiry.createdAt).toLocaleString()}
                         </span>
@@ -240,18 +240,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                       <div className="space-y-1">
-                        <span className="text-gray-500 text-[10px] uppercase tracking-wider block">Client Email</span>
+                        <span className="text-slate-300 text-[10px] uppercase tracking-wider block">Client Email</span>
                         <a
                           href={`mailto:${inquiry.email}`}
-                          className="text-white hover:text-[#D4AF37] transition-colors font-mono flex items-center gap-1.5"
+                          className="text-white hover:text-[#57E6FF] transition-colors font-mono flex items-center gap-1.5"
                         >
-                          <Mail className="w-3.5 h-3.5 text-gray-500" />
+                          <Mail className="w-3.5 h-3.5 text-slate-300" />
                           <span>{inquiry.email}</span>
                         </a>
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-gray-500 text-[10px] uppercase tracking-wider block">Dispatch Status</span>
+                        <span className="text-slate-300 text-[10px] uppercase tracking-wider block">Dispatch Status</span>
                         <span className="text-emerald-400 text-xs flex items-center gap-1.5">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>Email generated for earle.holder@gmail.com</span>
@@ -260,9 +260,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                     </div>
 
                     {inquiry.notes && (
-                      <div className="p-3 rounded-lg bg-[#111111] border border-white/5 text-xs text-gray-300 space-y-1">
-                        <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Project Notes</span>
-                        <p className="whitespace-pre-wrap font-light leading-relaxed text-gray-300">
+                      <div className="p-3 rounded-lg bg-[#1E4263] border border-cyan-100/20 text-xs text-slate-100 space-y-1">
+                        <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Project Notes</span>
+                        <p className="whitespace-pre-wrap font-light leading-relaxed text-slate-100">
                           {inquiry.notes}
                         </p>
                       </div>
@@ -270,11 +270,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
                     <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-gray-500">Update Status:</span>
+                        <span className="text-[11px] text-slate-300">Update Status:</span>
                         <select
                           value={inquiry.status}
                           onChange={(e) => handleStatusChange(inquiry.id, e.target.value as StudioBookingInquiry['status'])}
-                          className="px-2.5 py-1 rounded bg-[#141414] border border-white/10 text-xs text-gray-300 focus:outline-none focus:border-[#D4AF37]"
+                          className="px-2.5 py-1 rounded bg-[#234A6A] border border-cyan-100/30 text-xs text-slate-100 focus:outline-none focus:border-[#57E6FF]"
                         >
                           <option value="new">New</option>
                           <option value="contacted">Contacted</option>
@@ -286,7 +286,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                       <div className="flex items-center gap-2">
                         <a
                           href={mailtoReply}
-                          className="px-3 py-1.5 rounded-lg bg-[#D4AF37] hover:bg-[#C19A2E] text-black font-semibold text-xs flex items-center gap-1.5 transition-colors"
+                          className="px-3 py-1.5 rounded-lg bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-semibold text-xs flex items-center gap-1.5 transition-colors"
                         >
                           <Mail className="w-3.5 h-3.5" />
                           <span>Reply to Client</span>
@@ -294,7 +294,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
                         <button
                           onClick={() => handleDeleteInquiry(inquiry.id)}
-                          className="p-1.5 rounded-lg hover:bg-red-500/10 text-gray-500 hover:text-red-400 border border-transparent hover:border-red-500/20 transition-colors"
+                          className="p-1.5 rounded-lg hover:bg-red-500/10 text-slate-300 hover:text-red-400 border border-transparent hover:border-red-500/20 transition-colors"
                           title="Delete inquiry"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -311,62 +311,62 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         <>
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="p-4 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-gray-500 text-[10px] uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-slate-300 text-[10px] uppercase tracking-wider">
             <span>Completed Masters</span>
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
           </div>
           <div className="font-mono text-2xl font-light text-white">
             {metrics.completedMasters.toLocaleString()}
           </div>
-          <span className="text-[10px] text-gray-500 font-mono">
+          <span className="text-[10px] text-slate-300 font-mono">
             {(100 - (metrics.processingFailures / metrics.totalUploads) * 100).toFixed(1)}% success rate
           </span>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-gray-500 text-[10px] uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-slate-300 text-[10px] uppercase tracking-wider">
             <span>Active Creators</span>
-            <Users className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <Users className="w-3.5 h-3.5 text-[#57E6FF]" />
           </div>
           <div className="font-mono text-2xl font-light text-white">
             {metrics.totalUsers.toLocaleString()}
           </div>
-          <span className="text-[10px] text-gray-500 font-mono">+184 this week</span>
+          <span className="text-[10px] text-slate-300 font-mono">+184 this week</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-gray-500 text-[10px] uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-slate-300 text-[10px] uppercase tracking-wider">
             <span>Mastering Revenue</span>
             <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
           </div>
           <div className="font-mono text-2xl font-light text-white">
             ${metrics.revenueUsd.toLocaleString()}
           </div>
-          <span className="text-[10px] text-gray-500 font-mono">Stripe processing</span>
+          <span className="text-[10px] text-slate-300 font-mono">Stripe processing</span>
         </div>
 
-        <div className="p-4 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-1">
-          <div className="flex items-center justify-between text-gray-500 text-[10px] uppercase tracking-wider">
+        <div className="p-4 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-1">
+          <div className="flex items-center justify-between text-slate-300 text-[10px] uppercase tracking-wider">
             <span>Encrypted Storage</span>
-            <HardDrive className="w-3.5 h-3.5 text-gray-400" />
+            <HardDrive className="w-3.5 h-3.5 text-slate-200" />
           </div>
           <div className="font-mono text-2xl font-light text-white">
             {metrics.storageUsedGb} GB
           </div>
-          <span className="text-[10px] text-gray-500 font-mono">Retention: {retentionDays}d</span>
+          <span className="text-[10px] text-slate-300 font-mono">Retention: {retentionDays}d</span>
         </div>
       </div>
 
       {/* Analytics Charts: Popular Genres & LUFS Targets */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Popular Genres */}
-        <div className="p-5 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-3.5">
+        <div className="p-5 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-3.5">
           <div className="flex items-center justify-between">
-            <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-medium">
+            <h3 className="text-[10px] uppercase tracking-widest text-[#57E6FF] font-medium">
               Popular Mastering Genres
             </h3>
-            <span className="text-[10px] text-gray-500 font-mono">Distribution</span>
+            <span className="text-[10px] text-slate-300 font-mono">Distribution</span>
           </div>
 
           <div className="space-y-2.5 text-xs font-mono">
@@ -374,14 +374,14 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               const pct = Math.round((pg.count / metrics.completedMasters) * 100);
               return (
                 <div key={i} className="space-y-1">
-                  <div className="flex justify-between text-gray-300">
+                  <div className="flex justify-between text-slate-100">
                     <span>{pg.genre}</span>
-                    <span className="text-gray-500">{pg.count} ({pct}%)</span>
+                    <span className="text-slate-300">{pg.count} ({pct}%)</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#111111] rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-[#1E4263] rounded-full overflow-hidden">
                     <div
                       style={{ width: `${pct * 2.2}%` }}
-                      className="h-full bg-[#D4AF37] rounded-full"
+                      className="h-full bg-[#57E6FF] rounded-full"
                     />
                   </div>
                 </div>
@@ -391,12 +391,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         </div>
 
         {/* Selected LUFS Targets */}
-        <div className="p-5 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-3.5">
+        <div className="p-5 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-3.5">
           <div className="flex items-center justify-between">
-            <h3 className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-medium">
+            <h3 className="text-[10px] uppercase tracking-widest text-[#57E6FF] font-medium">
               Selected Loudness Targets
             </h3>
-            <span className="text-[10px] text-gray-500 font-mono">User Preference</span>
+            <span className="text-[10px] text-slate-300 font-mono">User Preference</span>
           </div>
 
           <div className="space-y-2.5 text-xs font-mono">
@@ -405,16 +405,16 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
               const isDefault = ld.target === -11;
               return (
                 <div key={i} className="space-y-1">
-                  <div className="flex justify-between text-gray-300">
-                    <span className={isDefault ? 'text-[#D4AF37] font-medium' : ''}>
+                  <div className="flex justify-between text-slate-100">
+                    <span className={isDefault ? 'text-[#57E6FF] font-medium' : ''}>
                       {ld.target} LUFS {isDefault && '(Recommended Default)'}
                     </span>
-                    <span className="text-gray-500">{ld.count} ({pct}%)</span>
+                    <span className="text-slate-300">{ld.count} ({pct}%)</span>
                   </div>
-                  <div className="h-1.5 w-full bg-[#111111] rounded-full overflow-hidden">
+                  <div className="h-1.5 w-full bg-[#1E4263] rounded-full overflow-hidden">
                     <div
                       style={{ width: `${pct * 2.2}%` }}
-                      className={`h-full rounded-full ${isDefault ? 'bg-[#D4AF37]' : 'bg-gray-700'}`}
+                      className={`h-full rounded-full ${isDefault ? 'bg-[#57E6FF]' : 'bg-gray-700'}`}
                     />
                   </div>
                 </div>
@@ -425,13 +425,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       </div>
 
       {/* Configuration Controls Form */}
-      <form onSubmit={handleSaveConfig} className="p-6 rounded-xl bg-[#0A0A0A] border border-white/5 space-y-5">
-        <div className="flex items-center justify-between pb-3 border-b border-white/5">
+      <form onSubmit={handleSaveConfig} className="p-6 rounded-xl bg-[#173653] border border-cyan-100/20 space-y-5">
+        <div className="flex items-center justify-between pb-3 border-b border-cyan-100/20">
           <div>
             <h3 className="text-sm font-normal text-white">
               System & Mastering Engine Parameters
             </h3>
-            <p className="text-xs text-gray-400 font-light">
+            <p className="text-xs text-slate-200 font-light">
               Update technical thresholds, storage quotas, and monetization limits.
             </p>
           </div>
@@ -446,39 +446,39 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 text-xs">
           <div className="space-y-1">
-            <label className="text-gray-400 block text-[11px] uppercase tracking-wider">Max Upload Size (MB)</label>
+            <label className="text-slate-200 block text-[11px] uppercase tracking-wider">Max Upload Size (MB)</label>
             <input
               type="number"
               value={maxUploadSizeMb}
               onChange={(e) => setMaxUploadSizeMb(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-md bg-[#111111] border border-white/10 text-white font-mono focus:outline-none focus:border-[#D4AF37]"
+              className="w-full px-3 py-2 rounded-md bg-[#1E4263] border border-cyan-100/30 text-white font-mono focus:outline-none focus:border-[#57E6FF]"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-gray-400 block text-[11px] uppercase tracking-wider">Max Duration (Minutes)</label>
+            <label className="text-slate-200 block text-[11px] uppercase tracking-wider">Max Duration (Minutes)</label>
             <input
               type="number"
               value={maxDurationMin}
               onChange={(e) => setMaxDurationMin(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-md bg-[#111111] border border-white/10 text-white font-mono focus:outline-none focus:border-[#D4AF37]"
+              className="w-full px-3 py-2 rounded-md bg-[#1E4263] border border-cyan-100/30 text-white font-mono focus:outline-none focus:border-[#57E6FF]"
             />
           </div>
 
           <div className="space-y-1">
-            <label className="text-gray-400 block text-[11px] uppercase tracking-wider">True Peak Ceiling (dBTP)</label>
+            <label className="text-slate-200 block text-[11px] uppercase tracking-wider">True Peak Ceiling (dBTP)</label>
             <input
               type="number"
               step="0.1"
               value={truePeakCeilingDb}
               onChange={(e) => setTruePeakCeilingDb(Number(e.target.value))}
-              className="w-full px-3 py-2 rounded-md bg-[#111111] border border-white/10 text-white font-mono focus:outline-none focus:border-[#D4AF37]"
+              className="w-full px-3 py-2 rounded-md bg-[#1E4263] border border-cyan-100/30 text-white font-mono focus:outline-none focus:border-[#57E6FF]"
             />
           </div>
 
           <div className="space-y-1">
-            <span className="text-gray-400 block text-[11px] uppercase tracking-wider">Customer Price</span>
-            <div className="w-full px-3 py-2 rounded-md bg-[#15130c] border border-[#D4AF37]/40 text-[#D4AF37] font-mono">
+            <span className="text-slate-200 block text-[11px] uppercase tracking-wider">Customer Price</span>
+            <div className="w-full px-3 py-2 rounded-md bg-[#15130c] border border-[#57E6FF]/40 text-[#57E6FF] font-mono">
               $9.99 per track · One-time payment
             </div>
           </div>
@@ -487,7 +487,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
         <div className="flex items-center justify-end pt-2">
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2"
+            className="px-5 py-2.5 rounded-md bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-bold text-xs uppercase tracking-wider transition-colors flex items-center gap-2"
           >
             <Save className="w-3.5 h-3.5 text-black" />
             <span>Save Configuration</span>

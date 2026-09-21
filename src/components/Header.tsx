@@ -38,7 +38,7 @@ export const Header: React.FC<HeaderProps> = ({
   ];
 
   return (
-    <nav className="sticky top-0 z-40 bg-[#0A0A0A] border-b border-white/10 transition-colors">
+    <nav className="sticky top-0 z-40 bg-[#173653] border-b border-cyan-100/30 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-8 py-3.5">
         <div className="flex items-center justify-between gap-4">
           {/* Brand Logo */}
@@ -46,10 +46,10 @@ export const Header: React.FC<HeaderProps> = ({
             className="flex items-baseline space-x-2 cursor-pointer select-none group"
             onClick={() => onSelectTab('master')}
           >
-            <span className="text-2xl font-bold tracking-tighter text-[#D4AF37] group-hover:text-[#f3d97b] transition-colors">
+            <span className="text-2xl font-bold tracking-tighter text-[#57E6FF] group-hover:text-[#f3d97b] transition-colors">
               HDQTRZ
             </span>
-            <span className="text-xs uppercase tracking-widest text-gray-400 font-medium">
+            <span className="text-xs uppercase tracking-widest text-slate-200 font-medium">
               AI Mastering
             </span>
           </div>
@@ -64,8 +64,8 @@ export const Header: React.FC<HeaderProps> = ({
                     key={s.id}
                     className={`transition-all ${
                       isActive
-                        ? 'text-[#D4AF37] border-b border-[#D4AF37] pb-1'
-                        : 'text-gray-500'
+                        ? 'text-[#57E6FF] border-b border-[#57E6FF] pb-1'
+                        : 'text-slate-300'
                     }`}
                   >
                     {s.label}
@@ -78,13 +78,13 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Right Navigation & Tools */}
           <div className="flex items-center space-x-2 sm:space-x-4">
             {/* View Tabs */}
-            <div className="flex items-center bg-[#111111] p-1 rounded-md border border-white/5">
+            <div className="flex items-center bg-[#1E4263] p-1 rounded-md border border-cyan-100/20">
               <button
                 onClick={() => onSelectTab('master')}
                 className={`flex items-center gap-1.5 px-2.5 py-1 text-xs transition-all uppercase tracking-wider rounded ${
                   activeTab === 'master'
-                    ? 'bg-[#1A1A1A] border border-[#D4AF37] text-[#D4AF37] font-medium'
-                    : 'text-gray-400 hover:text-white border border-transparent'
+                    ? 'bg-[#1A1A1A] border border-[#57E6FF] text-[#57E6FF] font-medium'
+                    : 'text-slate-200 hover:text-white border border-transparent'
                 }`}
               >
                 <Sliders className="w-3 h-3" />
@@ -95,8 +95,8 @@ export const Header: React.FC<HeaderProps> = ({
                 onClick={() => onSelectTab('history')}
                 className={`flex items-center gap-1.5 px-2.5 py-1 text-xs transition-all uppercase tracking-wider rounded ${
                   activeTab === 'history'
-                    ? 'bg-[#1A1A1A] border border-[#D4AF37] text-[#D4AF37] font-medium'
-                    : 'text-gray-400 hover:text-white border border-transparent'
+                    ? 'bg-[#1A1A1A] border border-[#57E6FF] text-[#57E6FF] font-medium'
+                    : 'text-slate-200 hover:text-white border border-transparent'
                 }`}
               >
                 <History className="w-3 h-3" />
@@ -109,13 +109,13 @@ export const Header: React.FC<HeaderProps> = ({
                   onClick={() => onSelectTab('admin')}
                   className={`flex items-center gap-1.5 px-2 py-1 text-xs transition-all uppercase tracking-wider rounded ${
                     activeTab === 'admin'
-                      ? 'bg-[#1A1A1A] border border-[#D4AF37] text-[#D4AF37] font-medium'
-                      : 'text-gray-400 hover:text-white border border-transparent'
+                      ? 'bg-[#1A1A1A] border border-[#57E6FF] text-[#57E6FF] font-medium'
+                      : 'text-slate-200 hover:text-white border border-transparent'
                   }`}
                   title="Mastering Admin Console"
                 >
-                  <Activity className="w-3 h-3 text-[#D4AF37]" />
-                  <span className="hidden md:inline text-[#D4AF37]">Admin</span>
+                  <Activity className="w-3 h-3 text-[#57E6FF]" />
+                  <span className="hidden md:inline text-[#57E6FF]">Admin</span>
                 </button>
               )}
             </div>
@@ -123,16 +123,16 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Human Studio Upsell */}
             <button
               onClick={onOpenHumanStudio}
-              className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 hover:border-white/10 text-gray-300 hover:text-white text-xs uppercase tracking-wider transition-colors"
+              className="hidden lg:flex items-center gap-1.5 px-3 py-1 rounded bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 hover:border-cyan-100/30 text-slate-100 hover:text-white text-xs uppercase tracking-wider transition-colors"
             >
               <span>Human Studio</span>
-              <ExternalLink className="w-2.5 h-2.5 text-[#D4AF37]" />
+              <ExternalLink className="w-2.5 h-2.5 text-[#57E6FF]" />
             </button>
 
             {/* Guide & Instructions */}
             <button
               onClick={onOpenInstructions}
-              className="text-xs uppercase tracking-wider text-gray-300 hover:text-[#D4AF37] transition-colors px-2 py-1 flex items-center gap-1"
+              className="text-xs uppercase tracking-wider text-slate-100 hover:text-[#57E6FF] transition-colors px-2 py-1 flex items-center gap-1"
               title="Mastering Instructions & Best Practices"
             >
               <span>Guide</span>
@@ -140,14 +140,14 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Pricing (for customers) or Unlimited Admin Badge */}
             {isAdminLoggedIn ? (
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1A180E] border border-[#D4AF37]/40 text-[#D4AF37] text-[10px] font-mono tracking-wider uppercase">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#D4AF37] animate-pulse" />
+              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#1A180E] border border-[#57E6FF]/40 text-[#57E6FF] text-[10px] font-mono tracking-wider uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#57E6FF] animate-pulse" />
                 <span>Unlimited Masters</span>
               </div>
             ) : (
               <button
                 onClick={onOpenPricing}
-                className="hidden sm:inline text-xs uppercase tracking-wider text-gray-400 hover:text-white transition-colors px-2 py-1"
+                className="hidden sm:inline text-xs uppercase tracking-wider text-slate-200 hover:text-white transition-colors px-2 py-1"
               >
                 Pricing
               </button>
@@ -158,8 +158,8 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onOpenAccount}
               className={`h-8 w-8 rounded-full border flex items-center justify-center transition-colors ${
                 isAdminLoggedIn
-                  ? 'bg-[#18150D] border-[#D4AF37] text-[#D4AF37]'
-                  : 'bg-[#1A1A1A] border-white/10 text-gray-300 hover:text-white hover:border-[#D4AF37]/50'
+                  ? 'bg-[#18150D] border-[#57E6FF] text-[#57E6FF]'
+                  : 'bg-[#1A1A1A] border-cyan-100/30 text-slate-100 hover:text-white hover:border-[#57E6FF]/50'
               }`}
               title={isAdminLoggedIn ? 'Earle Holder (Admin - No Charge)' : 'Account & Purchased Masters'}
             >
@@ -168,11 +168,11 @@ export const Header: React.FC<HeaderProps> = ({
 
             {/* Status indicator dot */}
             <div
-              className="h-8 w-8 rounded-full bg-[#1A1A1A] border border-white/10 flex items-center justify-center"
+              className="h-8 w-8 rounded-full bg-[#1A1A1A] border border-cyan-100/30 flex items-center justify-center"
               title={isProcessing ? 'DSP Processing Active' : 'HDQTRZ Engine Ready'}
             >
               <div
-                className={`h-2 w-2 rounded-full bg-[#D4AF37] ${
+                className={`h-2 w-2 rounded-full bg-[#57E6FF] ${
                   isProcessing ? 'animate-ping' : ''
                 }`}
               />

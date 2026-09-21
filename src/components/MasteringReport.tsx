@@ -28,91 +28,91 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
   };
 
   return (
-    <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 sm:p-8 space-y-6 relative overflow-hidden">
+    <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 sm:p-8 space-y-6 relative overflow-hidden">
       {/* Background Watermark */}
       <div className="absolute top-6 right-6 opacity-[0.03] pointer-events-none select-none">
-        <span className="text-8xl font-light text-[#D4AF37]">HDQTRZ</span>
+        <span className="text-8xl font-light text-[#57E6FF]">HDQTRZ</span>
       </div>
 
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-white/5">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-cyan-100/20">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-[#D4AF37]">
+            <span className="text-[10px] uppercase tracking-[0.2em] font-medium text-[#57E6FF]">
               HDQTRZ Studio Certification
             </span>
-            <span className="w-1 h-1 rounded-full bg-[#D4AF37]" />
-            <span className="text-[10px] text-gray-500 font-mono">
+            <span className="w-1 h-1 rounded-full bg-[#57E6FF]" />
+            <span className="text-[10px] text-slate-300 font-mono">
               ID: {record.id.slice(0, 10).toUpperCase()}
             </span>
           </div>
           <h3 className="text-xl sm:text-2xl font-light text-white tracking-tight">
             Acoustic Mastering Report
           </h3>
-          <p className="text-xs text-gray-400 font-mono">
+          <p className="text-xs text-slate-200 font-mono">
             Track: <span className="text-white font-medium">{record.title}</span> • {new Date(record.timestamp).toLocaleDateString()}
           </p>
         </div>
 
         <button
           onClick={handlePrint}
-          className="px-3.5 py-2 rounded-md bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 text-gray-300 hover:text-white text-xs uppercase tracking-wider flex items-center gap-2 transition-colors print:hidden"
+          className="px-3.5 py-2 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 text-slate-100 hover:text-white text-xs uppercase tracking-wider flex items-center gap-2 transition-colors print:hidden"
         >
-          <Printer className="w-3.5 h-3.5 text-[#D4AF37]" />
+          <Printer className="w-3.5 h-3.5 text-[#57E6FF]" />
           <span>Export / Print</span>
         </button>
       </div>
 
       {/* Core AI Assessment Statement */}
-      <div className="p-5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-2">
+      <div className="p-5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2">
         <div className="flex items-center gap-2">
-          <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
-          <h4 className="text-[10px] font-medium text-[#D4AF37] uppercase tracking-widest">
+          <Sparkles className="w-3.5 h-3.5 text-[#57E6FF]" />
+          <h4 className="text-[10px] font-medium text-[#57E6FF] uppercase tracking-widest">
             Acoustic Engineer Evaluation
           </h4>
         </div>
         <p className="text-gray-200 text-xs sm:text-sm leading-relaxed font-light italic">
           "{report.aiAssessment}"
         </p>
-        <div className="text-[10px] text-gray-500 pt-1 font-light uppercase tracking-wider">
+        <div className="text-[10px] text-slate-300 pt-1 font-light uppercase tracking-wider">
           Mastering Creed: Less is best. Preserve the soul of the song.
         </div>
       </div>
 
       {/* Metrics Summary Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-        <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-          <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Genre Profile</span>
+        <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Genre Profile</span>
           <span className="text-xs font-medium text-white block truncate">{record.genre}</span>
-          <span className="text-[10px] text-gray-400 uppercase tracking-tight">{record.character} character</span>
+          <span className="text-[10px] text-slate-200 uppercase tracking-tight">{record.character} character</span>
         </div>
 
-        <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-          <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Integrated LUFS</span>
-          <span className="text-xs font-mono text-[#D4AF37] block">
+        <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Integrated LUFS</span>
+          <span className="text-xs font-mono text-[#57E6FF] block">
             {record.masteredAnalysis.integratedLufs} LUFS
           </span>
-          <span className="text-[10px] text-gray-500 font-mono">
+          <span className="text-[10px] text-slate-300 font-mono">
             Mix was {record.originalAnalysis.integratedLufs} LUFS
           </span>
         </div>
 
-        <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-          <span className="text-[10px] uppercase tracking-wider text-gray-500 block">True Peak</span>
+        <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-300 block">True Peak</span>
           <span className="text-xs font-mono text-emerald-400 block">
             {record.masteredAnalysis.truePeak} dBTP
           </span>
-          <span className="text-[10px] text-gray-500 uppercase tracking-tight">
+          <span className="text-[10px] text-slate-300 uppercase tracking-tight">
             ITU-R BS.1770 safe
           </span>
         </div>
 
-        <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-          <span className="text-[10px] uppercase tracking-wider text-gray-500 block">Dynamic Range</span>
+        <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+          <span className="text-[10px] uppercase tracking-wider text-slate-300 block">Dynamic Range</span>
           <span className="text-xs font-mono text-white block">
             {record.masteredAnalysis.dynamicRange} dB
           </span>
-          <span className="text-[10px] text-gray-500 font-mono">
+          <span className="text-[10px] text-slate-300 font-mono">
             Crest: {record.masteredAnalysis.crestFactor} dB
           </span>
         </div>
@@ -120,16 +120,16 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
 
       {/* Processing Applied Checklist */}
       <div className="space-y-2.5">
-        <h4 className="text-[10px] uppercase tracking-widest text-[#D4AF37] font-medium">
+        <h4 className="text-[10px] uppercase tracking-widest text-[#57E6FF] font-medium">
           Signal Processing Stages Executed
         </h4>
         <div className="flex flex-wrap gap-2">
           {report.processingApplied.map((proc, idx) => (
             <span
               key={idx}
-              className="px-2.5 py-1 rounded bg-[#111111] border border-white/5 text-[11px] text-gray-300 flex items-center gap-1.5"
+              className="px-2.5 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[11px] text-slate-100 flex items-center gap-1.5"
             >
-              <CheckCircle2 className="w-3 h-3 text-[#D4AF37]" />
+              <CheckCircle2 className="w-3 h-3 text-[#57E6FF]" />
               <span>{proc}</span>
             </span>
           ))}
@@ -139,46 +139,46 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
       {/* Technical Tonal & Dynamic Adjustments */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
         {/* Tonal Adjustments */}
-        <div className="p-4 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-2.5">
-          <h5 className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+        <div className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2.5">
+          <h5 className="text-[10px] uppercase tracking-wider text-slate-200 font-medium">
             Tonal Spectrum Adjustments
           </h5>
-          <div className="space-y-1.5 text-gray-400 font-light">
+          <div className="space-y-1.5 text-slate-200 font-light">
             <div>
-              <strong className="text-gray-300 font-normal">Low End: </strong>
+              <strong className="text-slate-100 font-normal">Low End: </strong>
               <span>{report.tonalAdjustments.lowEnd}</span>
             </div>
             <div>
-              <strong className="text-gray-300 font-normal">Low Mids: </strong>
+              <strong className="text-slate-100 font-normal">Low Mids: </strong>
               <span>{report.tonalAdjustments.lowMids}</span>
             </div>
             <div>
-              <strong className="text-gray-300 font-normal">Presence: </strong>
+              <strong className="text-slate-100 font-normal">Presence: </strong>
               <span>{report.tonalAdjustments.presence}</span>
             </div>
             <div>
-              <strong className="text-gray-300 font-normal">Air & Treble: </strong>
+              <strong className="text-slate-100 font-normal">Air & Treble: </strong>
               <span>{report.tonalAdjustments.highFrequencies}</span>
             </div>
           </div>
         </div>
 
         {/* Dynamic & Limiting Control */}
-        <div className="p-4 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-2.5">
-          <h5 className="text-[10px] uppercase tracking-wider text-gray-400 font-medium">
+        <div className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2.5">
+          <h5 className="text-[10px] uppercase tracking-wider text-slate-200 font-medium">
             Dynamic & Intersample Limiting
           </h5>
-          <div className="space-y-2 text-gray-400 font-light">
+          <div className="space-y-2 text-slate-200 font-light">
             <div>
-              <strong className="text-gray-300 font-normal">Bus Compression: </strong>
+              <strong className="text-slate-100 font-normal">Bus Compression: </strong>
               <span>{report.compressionSummary}</span>
             </div>
             <div>
-              <strong className="text-gray-300 font-normal">True-Peak Limiting: </strong>
+              <strong className="text-slate-100 font-normal">True-Peak Limiting: </strong>
               <span>{report.limitingSummary}</span>
             </div>
             <div>
-              <strong className="text-gray-300 font-normal">Stereo Integrity: </strong>
+              <strong className="text-slate-100 font-normal">Stereo Integrity: </strong>
               <span>
                 {plan.stereoApplied
                   ? `Sub frequencies below ${plan.subMonoCutoffHz} Hz consolidated to mono for vinyl/club phase security.`
@@ -193,41 +193,41 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
       {(plan.dynamicEQApplied || plan.saturationApplied) && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
           {/* Dynamic EQ Band Details */}
-          <div className="p-4 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-2.5">
-            <h5 className="text-[10px] uppercase tracking-wider text-gray-400 font-medium flex items-center justify-between">
+          <div className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2.5">
+            <h5 className="text-[10px] uppercase tracking-wider text-slate-200 font-medium flex items-center justify-between">
               <span>{plan.dynamicEQMsDecoupled ? 'Mid/Side Decoupled Dynamic EQ' : 'Dynamic Resonance EQ'}</span>
-              <span className="text-[#D4AF37] font-mono text-[9px]">
+              <span className="text-[#57E6FF] font-mono text-[9px]">
                 {plan.dynamicEQApplied ? `${plan.dynamicEQBands.length} BANDS • ${plan.dynamicEQMsDecoupled ? 'M/S DECOUPLED' : 'LINKED'}` : 'BYPASSED'}
               </span>
             </h5>
-            <div className="space-y-2 text-gray-400 font-light">
-              <p className="text-gray-300 text-xs">
+            <div className="space-y-2 text-slate-200 font-light">
+              <p className="text-slate-100 text-xs">
                 {report.dynamicEQSummary}
               </p>
               {plan.dynamicEQBands.length > 0 && (
-                <div className="pt-1 space-y-1.5 border-t border-white/5">
+                <div className="pt-1 space-y-1.5 border-t border-cyan-100/20">
                   {plan.dynamicEQBands.map((band) => (
-                    <div key={band.id} className="flex items-center justify-between text-[11px] bg-[#141414] px-2.5 py-1.5 rounded border border-white/5">
+                    <div key={band.id} className="flex items-center justify-between text-[11px] bg-[#234A6A] px-2.5 py-1.5 rounded border border-cyan-100/20">
                       <div className="space-y-0.5">
                         <div className="flex items-center gap-1.5">
                           <span className={`text-[8px] font-mono px-1 py-0.2 rounded font-bold uppercase tracking-wider ${
                             band.channelTarget === 'side'
                               ? 'bg-purple-950/70 text-purple-300 border border-purple-800/50'
                               : band.channelTarget === 'mid'
-                              ? 'bg-amber-950/70 text-[#D4AF37] border border-[#D4AF37]/50'
-                              : 'bg-white/10 text-gray-300 border border-white/10'
+                              ? 'bg-amber-950/70 text-[#57E6FF] border border-[#57E6FF]/50'
+                              : 'bg-white/10 text-slate-100 border border-cyan-100/30'
                           }`}>
                             {band.channelTarget}
                           </span>
                           <span className="text-white font-medium block">{band.name} ({band.frequency} Hz)</span>
                         </div>
-                        <span className="text-[10px] text-gray-500 block">Q={band.q} • Thresh: {band.thresholdDb} dB</span>
+                        <span className="text-[10px] text-slate-300 block">Q={band.q} • Thresh: {band.thresholdDb} dB</span>
                       </div>
                       <div className="text-right">
                         <span className="text-emerald-400 font-mono text-xs block">
                           {band.actualCutDb > 0 ? `-${band.actualCutDb} dB` : `Max -${band.maxCutDb} dB`}
                         </span>
-                        <span className="text-[9px] text-gray-500 uppercase tracking-tight">Dynamic Cut</span>
+                        <span className="text-[9px] text-slate-300 uppercase tracking-tight">Dynamic Cut</span>
                       </div>
                     </div>
                   ))}
@@ -237,38 +237,38 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
           </div>
 
           {/* Analog Saturation Details with Polyphase 8x Oversampling */}
-          <div className="p-4 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-2.5">
-            <h5 className="text-[10px] uppercase tracking-wider text-gray-400 font-medium flex items-center justify-between">
+          <div className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2.5">
+            <h5 className="text-[10px] uppercase tracking-wider text-slate-200 font-medium flex items-center justify-between">
               <span>Analog Harmonic Saturation Stage</span>
-              <span className="text-[#D4AF37] font-mono text-[9px]">
+              <span className="text-[#57E6FF] font-mono text-[9px]">
                 {plan.saturationApplied ? plan.saturation.flavor.toUpperCase() : 'PRISTINE DIGITAL'}
               </span>
             </h5>
-            <div className="space-y-2 text-gray-400 font-light">
-              <p className="text-gray-300 text-xs">
+            <div className="space-y-2 text-slate-200 font-light">
+              <p className="text-slate-100 text-xs">
                 {report.saturationSummary}
               </p>
               {plan.saturationApplied && plan.saturation.flavor !== 'none' && (
-                <div className="pt-1 space-y-2 border-t border-white/5">
+                <div className="pt-1 space-y-2 border-t border-cyan-100/20">
                   <div className="grid grid-cols-2 gap-2 text-[11px]">
-                    <div className="bg-[#141414] p-2 rounded border border-white/5 space-y-0.5">
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Harmonic Structure</span>
+                    <div className="bg-[#234A6A] p-2 rounded border border-cyan-100/20 space-y-0.5">
+                      <span className="text-[10px] text-slate-300 uppercase tracking-wider block">Harmonic Structure</span>
                       <span className="text-white font-medium block capitalize">
                         {plan.saturation.harmonicEmphasis} Harmonics
                       </span>
                     </div>
-                    <div className="bg-[#141414] p-2 rounded border border-white/5 space-y-0.5">
-                      <span className="text-[10px] text-gray-500 uppercase tracking-wider block">Total Harmonic Distortion</span>
-                      <span className="text-[#D4AF37] font-mono font-medium block">
+                    <div className="bg-[#234A6A] p-2 rounded border border-cyan-100/20 space-y-0.5">
+                      <span className="text-[10px] text-slate-300 uppercase tracking-wider block">Total Harmonic Distortion</span>
+                      <span className="text-[#57E6FF] font-mono font-medium block">
                         {plan.saturation.thdPercent}% THD ({plan.saturation.intensity})
                       </span>
                     </div>
                   </div>
 
                   {/* 8x Polyphase Oversampling Details */}
-                  <div className="bg-[#121212] p-2 rounded border border-white/5 flex items-center justify-between text-[10px]">
-                    <div className="flex items-center gap-1.5 text-gray-300">
-                      <Cpu className="w-3 h-3 text-[#D4AF37]" />
+                  <div className="bg-[#121212] p-2 rounded border border-cyan-100/20 flex items-center justify-between text-[10px]">
+                    <div className="flex items-center gap-1.5 text-slate-100">
+                      <Cpu className="w-3 h-3 text-[#57E6FF]" />
                       <span>{report.oversamplingSummary}</span>
                     </div>
                     <span className="text-emerald-400 font-mono font-medium">&lt; -96 dB aliasing foldback</span>
@@ -282,20 +282,20 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
 
       {/* 4-Band Downward Multiband Dynamics Stage */}
       {plan.multibandApplied && (
-        <div className="p-4 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-white/5 pb-2.5">
+        <div className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-cyan-100/20 pb-2.5">
             <div className="flex items-center gap-2">
-              <SlidersHorizontal className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <h5 className="text-[10px] uppercase tracking-wider text-gray-300 font-medium">
+              <SlidersHorizontal className="w-3.5 h-3.5 text-[#57E6FF]" />
+              <h5 className="text-[10px] uppercase tracking-wider text-slate-100 font-medium">
                 4-Band Downward Multiband Dynamics (Linkwitz-Riley LR4)
               </h5>
             </div>
-            <span className="text-[#D4AF37] font-mono text-[9px] uppercase tracking-wider">
+            <span className="text-[#57E6FF] font-mono text-[9px] uppercase tracking-wider">
               {plan.multiband.mode.toUpperCase()} CIRCUIT MODELING
             </span>
           </div>
 
-          <p className="text-gray-300 text-xs font-light">
+          <p className="text-slate-100 text-xs font-light">
             {report.multibandSummary}
           </p>
 
@@ -303,28 +303,28 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
             {plan.multiband.bands.map((b) => (
               <div
                 key={b.bandId}
-                className="bg-[#141414] p-2.5 rounded border border-white/5 space-y-1.5"
+                className="bg-[#234A6A] p-2.5 rounded border border-cyan-100/20 space-y-1.5"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-medium text-white">{b.name}</span>
                   <span className={`text-[8px] font-mono px-1 py-0.2 rounded font-bold uppercase ${
                     b.circuit === 'vca'
                       ? 'bg-blue-950/70 text-blue-300 border border-blue-800/40'
-                      : 'bg-amber-950/70 text-[#D4AF37] border border-[#D4AF37]/40'
+                      : 'bg-amber-950/70 text-[#57E6FF] border border-[#57E6FF]/40'
                   }`}>
                     {b.circuit}
                   </span>
                 </div>
-                <div className="text-[10px] text-gray-500 font-mono">
+                <div className="text-[10px] text-slate-300 font-mono">
                   {b.lowCutHz} Hz – {b.highCutHz} Hz
                 </div>
-                <div className="flex items-center justify-between pt-1 border-t border-white/5 text-[10px]">
-                  <span className="text-gray-400">Ratio {b.ratio}:1</span>
+                <div className="flex items-center justify-between pt-1 border-t border-cyan-100/20 text-[10px]">
+                  <span className="text-slate-200">Ratio {b.ratio}:1</span>
                   <span className="text-emerald-400 font-mono font-medium">
                     {b.measuredGainReductionDb > 0 ? `-${b.measuredGainReductionDb} dB GR` : 'Linear'}
                   </span>
                 </div>
-                <div className="text-[9px] text-gray-500">
+                <div className="text-[9px] text-slate-300">
                   Thresh: {b.thresholdDb} dB • Att: {b.attackMs}ms / Rel: {b.releaseMs}ms
                 </div>
               </div>
@@ -335,15 +335,15 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
 
       {/* Reference Track Matching Report */}
       {plan.referenceMatching?.applied && (
-        <div className="p-4 rounded-lg bg-[#0F0F0F] border border-[#D4AF37]/30 space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-white/5 pb-2.5">
+        <div className="p-4 rounded-lg bg-[#1B3C5C] border border-[#57E6FF]/30 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-cyan-100/20 pb-2.5">
             <div className="flex items-center gap-2">
-              <FileAudio className="w-3.5 h-3.5 text-[#D4AF37]" />
-              <h5 className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-medium">
+              <FileAudio className="w-3.5 h-3.5 text-[#57E6FF]" />
+              <h5 className="text-[10px] uppercase tracking-wider text-[#57E6FF] font-medium">
                 Reference Track Matching (FFT Spectral Cross-Correlation)
               </h5>
             </div>
-            <span className="text-gray-400 font-mono text-[9px] uppercase tracking-wider">
+            <span className="text-slate-200 font-mono text-[9px] uppercase tracking-wider">
               {Math.round(plan.referenceMatching.matchIntensity * 100)}% MATCH INTENSITY
             </span>
           </div>
@@ -352,7 +352,7 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
             <span className="text-xs font-medium text-white block">
               Reference Target: {plan.referenceMatching.referenceTitle}
             </span>
-            <p className="text-xs text-gray-300 font-light leading-relaxed">
+            <p className="text-xs text-slate-100 font-light leading-relaxed">
               {report.referenceMatchingSummary || `Tonal curve aligned via 8 FFT spectral bands with &plusmn;2.8 dB safety limits.`}
             </p>
           </div>
@@ -362,10 +362,10 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
               {plan.referenceMatching.adjustments.map((adj, i) => (
                 <span
                   key={i}
-                  className="px-2 py-0.5 rounded bg-[#141414] border border-white/5 font-mono text-gray-300"
+                  className="px-2 py-0.5 rounded bg-[#234A6A] border border-cyan-100/20 font-mono text-slate-100"
                 >
                   <strong className="text-white">{adj.frequency}Hz:</strong>{' '}
-                  <span className={adj.gainDb > 0 ? 'text-[#D4AF37]' : 'text-cyan-400'}>
+                  <span className={adj.gainDb > 0 ? 'text-[#57E6FF]' : 'text-cyan-400'}>
                     {adj.gainDb > 0 ? `+${adj.gainDb}` : adj.gainDb} dB
                   </span>
                 </span>

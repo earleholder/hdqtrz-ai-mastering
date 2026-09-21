@@ -69,11 +69,11 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-fadeIn">
-      <div className="relative w-full max-w-4xl rounded-xl bg-[#0A0A0A] border border-white/10 p-6 sm:p-10 space-y-8 max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-4xl rounded-xl bg-[#173653] border border-cyan-100/30 p-6 sm:p-10 space-y-8 max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-md bg-[#111111] hover:bg-[#1A1A1A] text-gray-400 hover:text-white border border-white/5 transition-colors"
+          className="absolute top-6 right-6 p-2 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] text-slate-200 hover:text-white border border-cyan-100/20 transition-colors"
           title="Close instructions"
         >
           <X className="w-4 h-4" />
@@ -81,21 +81,21 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
 
         {/* Modal Header */}
         <div className="space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#111111] border border-white/5 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">
-            <BookOpen className="w-3 h-3 text-[#D4AF37]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[10px] uppercase tracking-[0.2em] text-[#57E6FF]">
+            <BookOpen className="w-3 h-3 text-[#57E6FF]" />
             <span>Mastering Guide & Best Practices</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-light text-white tracking-tight">
             How to Master with HDQTRZ
           </h2>
-          <p className="text-xs text-gray-400 font-light max-w-2xl leading-relaxed">
+          <p className="text-xs text-slate-200 font-light max-w-2xl leading-relaxed">
             Follow these professional studio mixing guidelines to achieve optimal dynamic range, stereo clarity, and pristine broadcast loudness.
           </p>
         </div>
 
         {/* 5-Step Workflow Overview */}
         <div className="space-y-3">
-          <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] font-medium">
+          <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#57E6FF] font-medium">
             The Complete Mastering Workflow
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
@@ -128,13 +128,13 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
             ].map((item) => (
               <div
                 key={item.step}
-                className="p-4 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-2 relative"
+                className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2 relative"
               >
-                <span className="text-[10px] font-mono text-[#D4AF37] tracking-widest block">
+                <span className="text-[10px] font-mono text-[#57E6FF] tracking-widest block">
                   STEP {item.step}
                 </span>
                 <h4 className="text-xs font-normal text-white">{item.title}</h4>
-                <p className="text-[11px] text-gray-400 font-light leading-relaxed">
+                <p className="text-[11px] text-slate-200 font-light leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -145,37 +145,37 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
         {/* NEW: Advanced DSP & Mastering Modules Guide */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] font-medium">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#57E6FF]" />
+            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#57E6FF] font-medium">
               Advanced Mastering Directives & DSP Architecture
             </h3>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             {/* 4-Band Multiband Dynamics */}
-            <div className="p-4 rounded-xl bg-[#0E0E0E] border border-white/5 space-y-2.5">
+            <div className="p-4 rounded-xl bg-[#1D4162] border border-cyan-100/20 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <Sliders className="w-3.5 h-3.5 text-[#57E6FF]" />
                   <span>4-Band Downward Multiband Dynamics</span>
                 </span>
-                <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-[#D4AF37]">
+                <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-[#57E6FF]">
                   Linkwitz-Riley LR4
                 </span>
               </div>
-              <p className="text-gray-400 text-[11px] font-light leading-relaxed">
+              <p className="text-slate-200 text-[11px] font-light leading-relaxed">
                 Uses 24 dB/oct phase-aligned crossovers at 140 Hz, 1 kHz, and 6 kHz to split audio into 4 distinct frequency zones (Sub, Low-Mids, High-Mids, Air).
               </p>
-              <div className="pt-2 border-t border-white/5 grid grid-cols-2 gap-2 text-[10px]">
-                <div className="bg-[#121212] p-2 rounded border border-white/5">
+              <div className="pt-2 border-t border-cyan-100/20 grid grid-cols-2 gap-2 text-[10px]">
+                <div className="bg-[#121212] p-2 rounded border border-cyan-100/20">
                   <span className="text-white font-medium block">VCA Circuit Mode</span>
-                  <span className="text-gray-400 block font-light mt-0.5">
+                  <span className="text-slate-200 block font-light mt-0.5">
                     Fast feedforward attack. Tightens 140Hz sub-bass and clamps stray transients for Hip Hop, Trap, and EDM.
                   </span>
                 </div>
-                <div className="bg-[#121212] p-2 rounded border border-white/5">
+                <div className="bg-[#121212] p-2 rounded border border-cyan-100/20">
                   <span className="text-white font-medium block">Opto Circuit Mode</span>
-                  <span className="text-gray-400 block font-light mt-0.5">
+                  <span className="text-slate-200 block font-light mt-0.5">
                     Dual-decay optical photocell response. Musical, non-linear release for warm glue on R&amp;B, Jazz, and Ballads.
                   </span>
                 </div>
@@ -183,75 +183,75 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
             </div>
 
             {/* Polyphase 8x Anti-Aliasing Oversampling */}
-            <div className="p-4 rounded-xl bg-[#0E0E0E] border border-white/5 space-y-2.5">
+            <div className="p-4 rounded-xl bg-[#1D4162] border border-cyan-100/20 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium flex items-center gap-1.5">
-                  <Cpu className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <Cpu className="w-3.5 h-3.5 text-[#57E6FF]" />
                   <span>Polyphase 8x Oversampling Saturation</span>
                 </span>
                 <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-emerald-400">
                   &lt; -96 dB Aliasing Rejection
                 </span>
               </div>
-              <p className="text-gray-400 text-[11px] font-light leading-relaxed">
+              <p className="text-slate-200 text-[11px] font-light leading-relaxed">
                 When Tape, Tube, or Class-A Console saturation is applied, internal audio is upsampled 8x (to 352.8 kHz / 384 kHz) through a 64-tap linear-phase Blackman-Harris FIR filter.
               </p>
-              <div className="pt-2 border-t border-white/5 bg-[#121212] p-2.5 rounded border border-white/5 text-[10px] space-y-1">
+              <div className="pt-2 border-t border-cyan-100/20 bg-[#121212] p-2.5 rounded border border-cyan-100/20 text-[10px] space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-white font-medium">Why it matters:</span>
-                  <span className="text-[#D4AF37] font-mono">Zero Digital Harshness</span>
+                  <span className="text-[#57E6FF] font-mono">Zero Digital Harshness</span>
                 </div>
-                <p className="text-gray-400 font-light leading-relaxed">
+                <p className="text-slate-200 font-light leading-relaxed">
                   Eliminates harmonic foldback intermodulation distortion in the audible 10 kHz–20 kHz region, preserving silky air and analog depth.
                 </p>
               </div>
             </div>
 
             {/* Reference Track Matching */}
-            <div className="p-4 rounded-xl bg-[#0E0E0E] border border-white/5 space-y-2.5">
+            <div className="p-4 rounded-xl bg-[#1D4162] border border-cyan-100/20 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium flex items-center gap-1.5">
-                  <FileAudio className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <FileAudio className="w-3.5 h-3.5 text-[#57E6FF]" />
                   <span>Reference Track Spectral Matching</span>
                 </span>
-                <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-[#D4AF37]">
+                <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-[#57E6FF]">
                   FFT Cross-Correlation
                 </span>
               </div>
-              <p className="text-gray-400 text-[11px] font-light leading-relaxed">
+              <p className="text-slate-200 text-[11px] font-light leading-relaxed">
                 Upload any commercial master (WAV, MP3, AIFF). HDQTRZ calculates its 8-band spectral envelope, loudness, and crest factor.
               </p>
-              <div className="pt-2 border-t border-white/5 bg-[#121212] p-2.5 rounded border border-white/5 text-[10px] space-y-1">
+              <div className="pt-2 border-t border-cyan-100/20 bg-[#121212] p-2.5 rounded border border-cyan-100/20 text-[10px] space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-white font-medium">Musical Safety Clamping:</span>
                   <span className="text-emerald-400 font-mono">±2.8 dB Limit</span>
                 </div>
-                <p className="text-gray-400 font-light leading-relaxed">
+                <p className="text-slate-200 font-light leading-relaxed">
                   Adjust match intensity from 20% to 100%. The AI engine aligns your mix to match commercial frequency balance without compromising original mix character.
                 </p>
               </div>
             </div>
 
             {/* Decoupled Mid/Side Dynamic EQ */}
-            <div className="p-4 rounded-xl bg-[#0E0E0E] border border-white/5 space-y-2.5">
+            <div className="p-4 rounded-xl bg-[#1D4162] border border-cyan-100/20 space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#57E6FF]" />
                   <span>Decoupled Mid/Side Dynamic EQ</span>
                 </span>
-                <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-[#D4AF37]">
+                <span className="text-[9px] font-mono uppercase px-1.5 py-0.5 rounded bg-white/5 text-[#57E6FF]">
                   Stereo Independence
                 </span>
               </div>
-              <p className="text-gray-400 text-[11px] font-light leading-relaxed">
+              <p className="text-slate-200 text-[11px] font-light leading-relaxed">
                 Separates center channel information from side stereo width before tracking narrow-band resonant peaks.
               </p>
-              <div className="pt-2 border-t border-white/5 bg-[#121212] p-2.5 rounded border border-white/5 text-[10px] space-y-1">
+              <div className="pt-2 border-t border-cyan-100/20 bg-[#121212] p-2.5 rounded border border-cyan-100/20 text-[10px] space-y-1">
                 <div className="flex items-center justify-between">
                   <span className="text-white font-medium">Targeted Correction:</span>
                   <span className="text-white font-mono">Center Lead vs Stereo Space</span>
                 </div>
-                <p className="text-gray-400 font-light leading-relaxed">
+                <p className="text-slate-200 font-light leading-relaxed">
                   Lead vocal and kick resonances in the center are attenuated without dulling stereo guitars or reverbs, maintaining a spacious, unclouded stereo field.
                 </p>
               </div>
@@ -260,9 +260,9 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
         </div>
 
         {/* Pre-Mastering Preparation Checklist */}
-        <div className="p-5 rounded-xl bg-[#0E0E0E] border border-white/5 space-y-4">
+        <div className="p-5 rounded-xl bg-[#1D4162] border border-cyan-100/20 space-y-4">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />
+            <CheckCircle2 className="w-4 h-4 text-[#57E6FF]" />
             <h3 className="text-xs uppercase tracking-wider text-white font-medium">
               Pre-Master Mix Preparation Checklist (Do's & Don'ts)
             </h3>
@@ -270,11 +270,11 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-light">
             {/* DO's */}
-            <div className="space-y-2.5 p-4 rounded-lg bg-[#121212] border border-white/5">
+            <div className="space-y-2.5 p-4 rounded-lg bg-[#121212] border border-cyan-100/20">
               <span className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider block">
                 Recommended (Do This)
               </span>
-              <ul className="space-y-2 text-gray-300">
+              <ul className="space-y-2 text-slate-100">
                 <li className="flex items-start gap-2">
                   <span className="text-emerald-400 text-sm font-bold">✓</span>
                   <span><strong>Maintain -3 dB to -6 dB headroom:</strong> Peak transients should never touch or exceed 0.0 dBFS.</span>
@@ -295,11 +295,11 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
             </div>
 
             {/* DON'Ts */}
-            <div className="space-y-2.5 p-4 rounded-lg bg-[#121212] border border-white/5">
+            <div className="space-y-2.5 p-4 rounded-lg bg-[#121212] border border-cyan-100/20">
               <span className="text-[10px] font-medium text-red-400 uppercase tracking-wider block">
                 Avoid (Don't Do This)
               </span>
-              <ul className="space-y-2 text-gray-300">
+              <ul className="space-y-2 text-slate-100">
                 <li className="flex items-start gap-2">
                   <span className="text-red-400 text-sm font-bold">✕</span>
                   <span><strong>No master bus brickwall limiters:</strong> Turn off peak limiters or clippers on your output channel before export.</span>
@@ -323,36 +323,36 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
 
         {/* Streaming Platform Loudness Quick Reference */}
         <div className="space-y-3">
-          <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] font-medium">
+          <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#57E6FF] font-medium">
             Platform Loudness Targets & Delivery Specs
           </h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-gray-400 text-[10px] uppercase block">Streaming Platforms</span>
+            <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-slate-200 text-[10px] uppercase block">Streaming Platforms</span>
               <span className="text-white font-medium block">Spotify & YouTube</span>
-              <span className="text-[#D4AF37] font-mono text-sm block font-light">-14 to -12 LUFS</span>
-              <p className="text-[10px] text-gray-500 font-light">Max dynamic range, zero normalization penalty.</p>
+              <span className="text-[#57E6FF] font-mono text-sm block font-light">-14 to -12 LUFS</span>
+              <p className="text-[10px] text-slate-300 font-light">Max dynamic range, zero normalization penalty.</p>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-gray-400 text-[10px] uppercase block">Apple Music</span>
+            <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-slate-200 text-[10px] uppercase block">Apple Music</span>
               <span className="text-white font-medium block">Sound Check Standard</span>
-              <span className="text-[#D4AF37] font-mono text-sm block font-light">-16 to -14 LUFS</span>
-              <p className="text-[10px] text-gray-500 font-light">Requires -1.0 dBTP true-peak ceiling.</p>
+              <span className="text-[#57E6FF] font-mono text-sm block font-light">-16 to -14 LUFS</span>
+              <p className="text-[10px] text-slate-300 font-light">Requires -1.0 dBTP true-peak ceiling.</p>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-gray-400 text-[10px] uppercase block">Club & Commercial</span>
+            <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-slate-200 text-[10px] uppercase block">Club & Commercial</span>
               <span className="text-white font-medium block">Hip Hop, EDM & Trap</span>
-              <span className="text-[#D4AF37] font-mono text-sm block font-light">-11 to -9 LUFS</span>
-              <p className="text-[10px] text-gray-500 font-light">Loud, punchy, competitive playback.</p>
+              <span className="text-[#57E6FF] font-mono text-sm block font-light">-11 to -9 LUFS</span>
+              <p className="text-[10px] text-slate-300 font-light">Loud, punchy, competitive playback.</p>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-[#0F0F0F] border border-white/5 space-y-1">
-              <span className="text-gray-400 text-[10px] uppercase block">CD & Soundtracks</span>
+            <div className="p-3.5 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-1">
+              <span className="text-slate-200 text-[10px] uppercase block">CD & Soundtracks</span>
               <span className="text-white font-medium block">Acoustic & Classical</span>
-              <span className="text-[#D4AF37] font-mono text-sm block font-light">-14 to -16 LUFS</span>
-              <p className="text-[10px] text-gray-500 font-light">Natural transients and micro-dynamics.</p>
+              <span className="text-[#57E6FF] font-mono text-sm block font-light">-14 to -16 LUFS</span>
+              <p className="text-[10px] text-slate-300 font-light">Natural transients and micro-dynamics.</p>
             </div>
           </div>
         </div>
@@ -360,8 +360,8 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
         {/* FAQ Accordion */}
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <HelpCircle className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#D4AF37] font-medium">
+            <HelpCircle className="w-3.5 h-3.5 text-[#57E6FF]" />
+            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#57E6FF] font-medium">
               Frequently Asked Questions
             </h3>
           </div>
@@ -372,21 +372,21 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
               return (
                 <div
                   key={index}
-                  className="rounded-lg bg-[#0F0F0F] border border-white/5 overflow-hidden transition-colors"
+                  className="rounded-lg bg-[#1B3C5C] border border-cyan-100/20 overflow-hidden transition-colors"
                 >
                   <button
                     onClick={() => setExpandedFaq(isOpen ? null : index)}
-                    className="w-full p-3.5 flex items-center justify-between text-left text-xs text-white hover:text-[#D4AF37] transition-colors"
+                    className="w-full p-3.5 flex items-center justify-between text-left text-xs text-white hover:text-[#57E6FF] transition-colors"
                   >
                     <span className="font-medium pr-4">{faq.q}</span>
                     {isOpen ? (
-                      <ChevronUp className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+                      <ChevronUp className="w-3.5 h-3.5 text-[#57E6FF] shrink-0" />
                     ) : (
-                      <ChevronDown className="w-3.5 h-3.5 text-gray-500 shrink-0" />
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-300 shrink-0" />
                     )}
                   </button>
                   {isOpen && (
-                    <div className="px-3.5 pb-3.5 text-xs text-gray-400 font-light leading-relaxed border-t border-white/5 pt-2.5">
+                    <div className="px-3.5 pb-3.5 text-xs text-slate-200 font-light leading-relaxed border-t border-cyan-100/20 pt-2.5">
                       {faq.a}
                     </div>
                   )}
@@ -397,15 +397,15 @@ export const InstructionsModal: React.FC<InstructionsModalProps> = ({ isOpen, on
         </div>
 
         {/* Footer CTA */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5">
-          <div className="flex items-center gap-2 text-[11px] text-gray-500 font-light">
-            <Shield className="w-3.5 h-3.5 text-[#D4AF37]" />
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-cyan-100/20">
+          <div className="flex items-center gap-2 text-[11px] text-slate-300 font-light">
+            <Shield className="w-3.5 h-3.5 text-[#57E6FF]" />
             <span>Questions about analog hardware? Visit our Human Suite for hybrid mastering.</span>
           </div>
 
           <button
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-[#D4AF37] hover:bg-[#C19A2E] text-black font-bold text-xs uppercase tracking-wider transition-colors"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-md bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-bold text-xs uppercase tracking-wider transition-colors"
           >
             Got It, Back to Studio
           </button>

@@ -79,7 +79,7 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-fadeIn">
-      <div className="relative w-full max-w-3xl rounded-3xl bg-[#0d0d14] border border-[#d4af37]/50 p-6 sm:p-10 space-y-8 gold-glow max-h-[90vh] overflow-y-auto">
+      <div className="relative w-full max-w-3xl rounded-3xl bg-[#0d0d14] border border-[#57E6FF]/50 p-6 sm:p-10 space-y-8 gold-glow max-h-[90vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-6 right-6 p-2 rounded-xl bg-[#171722] hover:bg-[#222232] text-neutral-400 hover:text-white transition-colors"
@@ -89,8 +89,8 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
 
         {/* Header with Earle Holder quote and branding */}
         <div className="space-y-3 text-center max-w-xl mx-auto">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1b1810] border border-[#d4af37]/40 text-xs text-[#e5b83b]">
-            <Award className="w-3.5 h-3.5 text-[#d4af37]" />
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1b1810] border border-[#57E6FF]/40 text-xs text-[#e5b83b]">
+            <Award className="w-3.5 h-3.5 text-[#57E6FF]" />
             <span>HDQTRZ Mastering Studios</span>
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-white">
@@ -105,7 +105,7 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="p-5 rounded-2xl bg-[#12121c] border border-[#222232] space-y-3">
             <h4 className="font-semibold text-white font-display text-sm flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#d4af37]" />
+              <Sparkles className="w-4 h-4 text-[#57E6FF]" />
               <span>HDQTRZ AI Mastering</span>
             </h4>
             <p className="text-neutral-400 leading-relaxed">
@@ -113,9 +113,9 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-[#181510] border border-[#d4af37]/40 space-y-3 gold-glow-subtle">
+          <div className="p-5 rounded-2xl bg-[#181510] border border-[#57E6FF]/40 space-y-3 gold-glow-subtle">
             <h4 className="font-semibold text-[#f5d061] font-display text-sm flex items-center gap-2">
-              <Headphones className="w-4 h-4 text-[#d4af37]" />
+              <Headphones className="w-4 h-4 text-[#57E6FF]" />
               <span>HDQTRZ Analog Studio</span>
             </h4>
             <p className="text-neutral-300 leading-relaxed">
@@ -131,19 +131,19 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
           </h4>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-neutral-300">
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#d4af37]" />
+              <CheckCircle2 className="w-4 h-4 text-[#57E6FF]" />
               <span>Bespoke custom analog outboard signal chain</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#d4af37]" />
+              <CheckCircle2 className="w-4 h-4 text-[#57E6FF]" />
               <span>Stem mastering & multitrack balance correction</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#d4af37]" />
+              <CheckCircle2 className="w-4 h-4 text-[#57E6FF]" />
               <span>Vinyl lacquer cut preparation & DDP CD images</span>
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-4 h-4 text-[#d4af37]" />
+              <CheckCircle2 className="w-4 h-4 text-[#57E6FF]" />
               <span>Direct engineer mix feedback before final approval</span>
             </div>
           </div>
@@ -158,7 +158,7 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
               </div>
               <h4 className="text-lg font-bold text-white font-display">Inquiry Registered & Dispatched</h4>
               <p className="text-xs text-neutral-300 max-w-lg mx-auto leading-relaxed">
-                Thank you, <strong className="text-white">{name}</strong>! Your inquiry for <strong className="text-[#D4AF37]">{projectType}</strong> has been saved directly to Earle Holder's studio log, and an email draft has been generated for dispatch to <strong className="text-white">{studioEmail}</strong>.
+                Thank you, <strong className="text-white">{name}</strong>! Your inquiry for <strong className="text-[#57E6FF]">{projectType}</strong> has been saved directly to Earle Holder's studio log, and an email draft has been generated for dispatch to <strong className="text-white">{studioEmail}</strong>.
               </p>
             </div>
 
@@ -233,7 +233,7 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Artist / Band / Producer Alias"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#d4af37]"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#57E6FF]"
                 />
               </div>
 
@@ -245,7 +245,7 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@label.com"
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#d4af37]"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#57E6FF]"
                 />
               </div>
             </div>
@@ -255,7 +255,7 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
               <select
                 value={projectType}
                 onChange={(e) => setProjectType(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#d4af37]"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#57E6FF]"
               >
                 <option>Single Track Master (Analog Hybrid) — $85</option>
                 <option>Stem Mastering (Up to 8 Stems) — $150</option>
@@ -272,13 +272,13 @@ export const HumanStudioModal: React.FC<HumanStudioModalProps> = ({ isOpen, onCl
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Tell us about the project, reference tracks, or specific sonic goals..."
-                className="w-full px-3.5 py-2 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#d4af37]"
+                className="w-full px-3.5 py-2 rounded-xl bg-[#171722] border border-[#2b2b3b] text-white focus:outline-none focus:border-[#57E6FF]"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#d4af37] via-[#e5b83b] to-[#c29b28] text-black font-display font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
+              className="w-full py-3.5 rounded-xl bg-gradient-to-r from-[#57E6FF] via-[#e5b83b] to-[#c29b28] text-black font-display font-bold text-xs uppercase tracking-wider shadow-lg hover:brightness-110 active:scale-[0.99] transition-all flex items-center justify-center gap-2"
             >
               <span>Submit Studio Booking Request</span>
               <ExternalLink className="w-4 h-4 text-black" />

@@ -202,25 +202,25 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
     <div className="space-y-8 max-w-4xl mx-auto">
       {/* Header */}
       <div className="text-center space-y-2 pt-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#111111] border border-white/5 text-[10px] uppercase tracking-[0.2em] text-[#D4AF37]">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#1E4263] border border-cyan-100/20 text-[10px] uppercase tracking-[0.2em] text-[#57E6FF]">
           <span>03 / Mastering Directives & Sonic Target</span>
         </div>
         <h2 className="text-2xl sm:text-4xl font-light tracking-tight text-white">
           Mastering Directives
         </h2>
-        <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto font-light">
+        <p className="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto font-light">
           Set acoustic intent. The HDQTRZ engine shapes signal dynamics while preserving original nuance.
         </p>
       </div>
 
       {/* STEP 1: Genre Selection */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/5 pb-3">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-cyan-100/20 pb-3">
           <div>
-            <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium">
+            <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium">
               1. Genre & Acoustic Context
             </h3>
-            <p className="text-xs text-gray-500 font-light mt-0.5">
+            <p className="text-xs text-slate-300 font-light mt-0.5">
               Contextual guidance only — no static presets or heavy-handed coloring.
             </p>
           </div>
@@ -230,7 +230,7 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
             placeholder="Search genre..."
             value={genreSearch}
             onChange={(e) => setGenreSearch(e.target.value)}
-            className="w-full sm:w-48 px-3 py-1.5 rounded bg-[#111111] border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#D4AF37]"
+            className="w-full sm:w-48 px-3 py-1.5 rounded bg-[#1E4263] border border-cyan-100/30 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-[#57E6FF]"
           />
         </div>
 
@@ -245,12 +245,12 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                 onClick={() => setSelectedGenre(genre)}
                 className={`p-3 rounded text-left transition-all border ${
                   isSelected
-                    ? 'bg-[#1A1A1A] border-[#D4AF37] text-white'
-                    : 'bg-[#111111] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
+                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
                 }`}
               >
                 <div className="text-xs font-medium truncate">{genre}</div>
-                <div className="text-[10px] text-gray-500 mt-0.5 truncate">{tag}</div>
+                <div className="text-[10px] text-slate-300 mt-0.5 truncate">{tag}</div>
               </button>
             );
           })}
@@ -258,12 +258,12 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
       </div>
 
       {/* STEP 2: Target Loudness */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3">
-          <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="border-b border-cyan-100/20 pb-3">
+          <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium">
             2. Integrated Loudness Target
           </h3>
-          <p className="text-xs text-gray-500 font-light mt-0.5">
+          <p className="text-xs text-slate-300 font-light mt-0.5">
             Calibrated for broadcast translation across major streaming codecs and analog systems.
           </p>
         </div>
@@ -279,18 +279,18 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                 onClick={() => setSelectedLufs(opt.lufs)}
                 className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#1A1A1A] border-[#D4AF37] text-white'
-                    : 'bg-[#111111] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
+                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
                 }`}
               >
                 {opt.isDefault && (
-                  <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#D4AF37] border border-[#D4AF37]/50">
+                  <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#57E6FF] border border-[#57E6FF]/50">
                     Recommended
                   </span>
                 )}
                 <div>
                   <div className="font-mono text-xl font-light text-white">{opt.title}</div>
-                  <p className="text-xs text-gray-400 mt-2 font-light leading-relaxed">{opt.desc}</p>
+                  <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{opt.desc}</p>
                 </div>
               </button>
             );
@@ -298,11 +298,11 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
         </div>
 
         {/* Dynamic Protection Guarantee Notice */}
-        <div className="p-3 rounded-lg bg-[#111111] border border-white/5 flex items-start gap-2.5 text-xs text-gray-400">
-          <ShieldCheck className="w-4 h-4 text-[#D4AF37] shrink-0 mt-0.5" />
+        <div className="p-3 rounded-lg bg-[#1E4263] border border-cyan-100/20 flex items-start gap-2.5 text-xs text-slate-200">
+          <ShieldCheck className="w-4 h-4 text-[#57E6FF] shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <span className="font-medium text-white text-[11px] uppercase tracking-wider">Dynamic Integrity Guardrail</span>
-            <p className="text-gray-400 text-xs font-light leading-relaxed">
+            <p className="text-slate-200 text-xs font-light leading-relaxed">
               If your mix features high crest factor or acoustic dynamics, the engine protects transients from harsh clipping or pumping.
             </p>
           </div>
@@ -310,12 +310,12 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
       </div>
 
       {/* STEP 3: Mastering Character */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3">
-          <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="border-b border-cyan-100/20 pb-3">
+          <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium">
             3. Mastering Character & Tone
           </h3>
-          <p className="text-xs text-gray-500 font-light mt-0.5">
+          <p className="text-xs text-slate-300 font-light mt-0.5">
             Steers the harmonic saturation, dynamic envelope curve, and air presence.
           </p>
         </div>
@@ -331,18 +331,18 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                 onClick={() => setSelectedCharacter(char.character)}
                 className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#1A1A1A] border-[#D4AF37] text-white'
-                    : 'bg-[#111111] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
+                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
                 }`}
               >
                 {char.isDefault && (
-                  <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#D4AF37] border border-[#D4AF37]/50">
+                  <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#57E6FF] border border-[#57E6FF]/50">
                     Default
                   </span>
                 )}
                 <div>
                   <div className="text-sm uppercase tracking-wider font-medium text-white">{char.title}</div>
-                  <p className="text-xs text-gray-400 mt-2 font-light leading-relaxed">{char.desc}</p>
+                  <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{char.desc}</p>
                 </div>
               </button>
             );
@@ -351,18 +351,18 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
       </div>
 
       {/* STEP 4: Multi-Band Dynamic EQ & Harsh Resonance Suppression */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="border-b border-cyan-100/20 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium flex items-center gap-2">
-              <Activity className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium flex items-center gap-2">
+              <Activity className="w-3.5 h-3.5 text-[#57E6FF]" />
               <span>4. Multi-Band Dynamic EQ & Mid/Side Resonance Control</span>
             </h3>
-            <p className="text-xs text-gray-500 font-light mt-0.5">
+            <p className="text-xs text-slate-300 font-light mt-0.5">
               Decoupled Mid/Side dynamic EQ: Isolates center lead vocals & snare crack independently from wide stereo cymbals & reverb splash with zero cross-channel phase smear.
             </p>
           </div>
-          <span className="text-[10px] text-gray-400 bg-[#141414] px-2.5 py-1 rounded border border-white/5 uppercase tracking-wider self-start sm:self-auto">
+          <span className="text-[10px] text-slate-200 bg-[#234A6A] px-2.5 py-1 rounded border border-cyan-100/20 uppercase tracking-wider self-start sm:self-auto">
             Mid/Side Decoupled • Zero Phase Smear
           </span>
         </div>
@@ -402,20 +402,20 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                 onClick={() => setSelectedDynamicEQMode(opt.id)}
                 className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#1A1A1A] border-[#D4AF37] text-white'
-                    : 'bg-[#111111] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
+                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="text-sm uppercase tracking-wider font-medium text-white">{opt.title}</div>
                     <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider ${
-                      isSelected ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30' : 'bg-white/5 text-gray-400'
+                      isSelected ? 'bg-[#57E6FF]/20 text-[#57E6FF] border border-[#57E6FF]/30' : 'bg-white/5 text-slate-200'
                     }`}>
                       {opt.tag}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-2 font-light leading-relaxed">{opt.desc}</p>
+                  <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{opt.desc}</p>
                 </div>
               </button>
             );
@@ -424,19 +424,19 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
       </div>
 
       {/* STEP 5: True Analog Harmonic Saturation */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="border-b border-cyan-100/20 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium flex items-center gap-2">
-              <Flame className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium flex items-center gap-2">
+              <Flame className="w-3.5 h-3.5 text-[#57E6FF]" />
               <span>5. Analog Harmonic Saturation & Excitation</span>
             </h3>
-            <p className="text-xs text-gray-500 font-light mt-0.5">
+            <p className="text-xs text-slate-300 font-light mt-0.5">
               Physical modeling of analog transformers, magnetic tape hysteresis (odd harmonics), and Class-A tubes (even harmonics).
             </p>
           </div>
           {selectedSaturationFlavor !== 'none' && (
-            <div className="flex items-center gap-1.5 bg-[#141414] p-1 rounded border border-white/5">
+            <div className="flex items-center gap-1.5 bg-[#234A6A] p-1 rounded border border-cyan-100/20">
               {(['subtle', 'moderate'] as SaturationIntensity[]).map((intensity) => (
                 <button
                   key={intensity}
@@ -444,8 +444,8 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                   onClick={() => setSelectedSaturationIntensity(intensity)}
                   className={`text-[10px] px-2.5 py-1 rounded uppercase tracking-wider transition-colors ${
                     selectedSaturationIntensity === intensity
-                      ? 'bg-[#D4AF37] text-black font-semibold'
-                      : 'text-gray-400 hover:text-white'
+                      ? 'bg-[#57E6FF] text-black font-semibold'
+                      : 'text-slate-200 hover:text-white'
                   }`}
                 >
                   {intensity === 'subtle' ? 'Subtle (Mastering)' : 'Moderate (Vibe)'}
@@ -456,10 +456,10 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
         </div>
 
         {/* Anti-Aliasing Oversampling Protection Badge */}
-        <div className="flex items-center justify-between p-3 rounded-lg bg-[#0D0D0D] border border-white/5 text-[11px]">
+        <div className="flex items-center justify-between p-3 rounded-lg bg-[#0D0D0D] border border-cyan-100/20 text-[11px]">
           <div className="flex items-center gap-2">
-            <Cpu className="w-3.5 h-3.5 text-[#D4AF37]" />
-            <span className="text-gray-300 font-medium">Polyphase 8x Anti-Aliasing Oversampling</span>
+            <Cpu className="w-3.5 h-3.5 text-[#57E6FF]" />
+            <span className="text-slate-100 font-medium">Polyphase 8x Anti-Aliasing Oversampling</span>
           </div>
           <div className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -504,18 +504,18 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                 onClick={() => setSelectedSaturationFlavor(sat.id)}
                 className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#1A1A1A] border-[#D4AF37] text-white'
-                    : 'bg-[#111111] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
+                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="text-sm uppercase tracking-wider font-medium text-white">{sat.title}</div>
                   </div>
-                  <span className="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider bg-white/5 text-[#D4AF37]">
+                  <span className="inline-block mt-1 text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider bg-white/5 text-[#57E6FF]">
                     {sat.harmonic}
                   </span>
-                  <p className="text-xs text-gray-400 mt-2 font-light leading-relaxed">{sat.desc}</p>
+                  <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{sat.desc}</p>
                 </div>
               </button>
             );
@@ -524,13 +524,13 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
       </div>
 
       {/* STEP 6: Full 4-Band Downward Multiband Dynamics */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3">
-          <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium flex items-center gap-2">
-            <SlidersHorizontal className="w-3.5 h-3.5 text-[#D4AF37]" />
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="border-b border-cyan-100/20 pb-3">
+          <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium flex items-center gap-2">
+            <SlidersHorizontal className="w-3.5 h-3.5 text-[#57E6FF]" />
             <span>6. 4-Band Downward Multiband Dynamics (VCA / Opto)</span>
           </h3>
-          <p className="text-xs text-gray-500 font-light mt-0.5">
+          <p className="text-xs text-slate-300 font-light mt-0.5">
             Splits audio into 4 Linkwitz-Riley crossover zones (Sub 140Hz, Low-Mid 1kHz, High-Mid 6kHz, Air 20kHz) for independent macro-dynamic contouring.
           </p>
         </div>
@@ -571,20 +571,20 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                 onClick={() => setSelectedMultibandMode(mode.id)}
                 className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-[#1A1A1A] border-[#D4AF37] text-white'
-                    : 'bg-[#111111] border-white/5 hover:border-white/20 text-gray-400 hover:text-white'
+                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between">
                     <div className="text-sm uppercase tracking-wider font-medium text-white">{mode.title}</div>
                     <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono uppercase tracking-wider ${
-                      isSelected ? 'bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30' : 'bg-white/5 text-gray-400'
+                      isSelected ? 'bg-[#57E6FF]/20 text-[#57E6FF] border border-[#57E6FF]/30' : 'bg-white/5 text-slate-200'
                     }`}>
                       {mode.badge}
                     </span>
                   </div>
-                  <p className="text-xs text-gray-400 mt-2 font-light leading-relaxed">{mode.desc}</p>
+                  <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{mode.desc}</p>
                 </div>
               </button>
             );
@@ -594,47 +594,47 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
         {/* Multiband Band Breakdown Preview */}
         {selectedMultibandMode !== 'bypassed' && (
           <div className="pt-2 grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
-            <div className="bg-[#121212] p-2.5 rounded border border-white/5 space-y-1">
+            <div className="bg-[#121212] p-2.5 rounded border border-cyan-100/20 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium">Band 1: Sub</span>
-                <span className="text-[#D4AF37] font-mono text-[10px]">20–140 Hz</span>
+                <span className="text-[#57E6FF] font-mono text-[10px]">20–140 Hz</span>
               </div>
-              <p className="text-[10px] text-gray-400 font-light">Sub-bass weight &amp; kick fundamental stabilization</p>
+              <p className="text-[10px] text-slate-200 font-light">Sub-bass weight &amp; kick fundamental stabilization</p>
             </div>
-            <div className="bg-[#121212] p-2.5 rounded border border-white/5 space-y-1">
+            <div className="bg-[#121212] p-2.5 rounded border border-cyan-100/20 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium">Band 2: Low-Mid</span>
-                <span className="text-[#D4AF37] font-mono text-[10px]">140–1000 Hz</span>
+                <span className="text-[#57E6FF] font-mono text-[10px]">140–1000 Hz</span>
               </div>
-              <p className="text-[10px] text-gray-400 font-light">Bass warmth &amp; vocal chest body contouring</p>
+              <p className="text-[10px] text-slate-200 font-light">Bass warmth &amp; vocal chest body contouring</p>
             </div>
-            <div className="bg-[#121212] p-2.5 rounded border border-white/5 space-y-1">
+            <div className="bg-[#121212] p-2.5 rounded border border-cyan-100/20 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium">Band 3: High-Mid</span>
-                <span className="text-[#D4AF37] font-mono text-[10px]">1000–6000 Hz</span>
+                <span className="text-[#57E6FF] font-mono text-[10px]">1000–6000 Hz</span>
               </div>
-              <p className="text-[10px] text-gray-400 font-light">Snare crack, vocal presence &amp; guitar articulation</p>
+              <p className="text-[10px] text-slate-200 font-light">Snare crack, vocal presence &amp; guitar articulation</p>
             </div>
-            <div className="bg-[#121212] p-2.5 rounded border border-white/5 space-y-1">
+            <div className="bg-[#121212] p-2.5 rounded border border-cyan-100/20 space-y-1">
               <div className="flex items-center justify-between">
                 <span className="text-white font-medium">Band 4: Air</span>
-                <span className="text-[#D4AF37] font-mono text-[10px]">6000–20 kHz</span>
+                <span className="text-[#57E6FF] font-mono text-[10px]">6000–20 kHz</span>
               </div>
-              <p className="text-[10px] text-gray-400 font-light">Cymbal sheen, vocal sibilance control &amp; top air</p>
+              <p className="text-[10px] text-slate-200 font-light">Cymbal sheen, vocal sibilance control &amp; top air</p>
             </div>
           </div>
         )}
       </div>
 
       {/* STEP 7: Reference Track Matching via FFT Cross-Correlation */}
-      <div className="rounded-xl bg-[#0A0A0A] border border-white/10 p-6 space-y-4">
-        <div className="border-b border-white/5 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+        <div className="border-b border-cyan-100/20 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h3 className="text-xs uppercase tracking-widest text-[#D4AF37] font-medium flex items-center gap-2">
-              <FileAudio className="w-3.5 h-3.5 text-[#D4AF37]" />
+            <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium flex items-center gap-2">
+              <FileAudio className="w-3.5 h-3.5 text-[#57E6FF]" />
               <span>7. Reference Track Matching (FFT Spectral Cross-Correlation)</span>
             </h3>
-            <p className="text-xs text-gray-500 font-light mt-0.5">
+            <p className="text-xs text-slate-300 font-light mt-0.5">
               Upload a commercial master to analyze its spectral density and morph the mastering EQ profile to mirror the target tonal envelope.
             </p>
           </div>
@@ -672,25 +672,25 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
             onClick={() => fileInputRef.current?.click()}
             className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
               isAnalyzingRef
-                ? 'border-[#D4AF37] bg-[#141414]'
-                : 'border-white/10 hover:border-white/30 bg-[#0F0F0F]'
+                ? 'border-[#57E6FF] bg-[#234A6A]'
+                : 'border-cyan-100/30 hover:border-white/30 bg-[#1B3C5C]'
             }`}
           >
             {isAnalyzingRef ? (
               <div className="space-y-2">
-                <div className="w-6 h-6 border-2 border-[#D4AF37] border-t-transparent rounded-full animate-spin mx-auto" />
-                <p className="text-xs text-[#D4AF37] font-medium">
+                <div className="w-6 h-6 border-2 border-[#57E6FF] border-t-transparent rounded-full animate-spin mx-auto" />
+                <p className="text-xs text-[#57E6FF] font-medium">
                   Decoding &amp; Calculating Reference FFT Spectral Envelope...
                 </p>
               </div>
             ) : (
               <div className="space-y-2">
-                <UploadCloud className="w-6 h-6 text-gray-500 mx-auto" />
+                <UploadCloud className="w-6 h-6 text-slate-300 mx-auto" />
                 <div>
-                  <p className="text-xs text-gray-300 font-medium">
+                  <p className="text-xs text-slate-100 font-medium">
                     Upload Commercial Reference Track (WAV, MP3, AIFF)
                   </p>
-                  <p className="text-[10px] text-gray-500 font-light mt-0.5">
+                  <p className="text-[10px] text-slate-300 font-light mt-0.5">
                     Drag and drop file here, or click to browse reference master
                   </p>
                 </div>
@@ -699,25 +699,25 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
             {refError && <p className="text-xs text-rose-400 mt-2 font-light">{refError}</p>}
           </div>
         ) : (
-          <div className="p-4 rounded-lg bg-[#111111] border border-[#D4AF37]/40 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+          <div className="p-4 rounded-lg bg-[#1E4263] border border-[#57E6FF]/40 space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cyan-100/20 pb-3">
               <div>
-                <span className="text-[10px] uppercase tracking-wider text-[#D4AF37] font-medium block">
+                <span className="text-[10px] uppercase tracking-wider text-[#57E6FF] font-medium block">
                   Reference Master Analyzed
                 </span>
                 <span className="text-sm font-medium text-white block">{referenceProfile.title}</span>
               </div>
               <div className="flex items-center gap-4 text-xs font-mono">
                 <div>
-                  <span className="text-[10px] text-gray-500 block uppercase">Target LUFS</span>
-                  <span className="text-[#D4AF37]">{referenceProfile.integratedLufs} LUFS</span>
+                  <span className="text-[10px] text-slate-300 block uppercase">Target LUFS</span>
+                  <span className="text-[#57E6FF]">{referenceProfile.integratedLufs} LUFS</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-gray-500 block uppercase">Dynamic Range</span>
+                  <span className="text-[10px] text-slate-300 block uppercase">Dynamic Range</span>
                   <span className="text-white">{referenceProfile.dynamicRange} dB</span>
                 </div>
                 <div>
-                  <span className="text-[10px] text-gray-500 block uppercase">True Peak</span>
+                  <span className="text-[10px] text-slate-300 block uppercase">True Peak</span>
                   <span className="text-emerald-400">{referenceProfile.truePeak} dBTP</span>
                 </div>
               </div>
@@ -726,8 +726,8 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
             {/* Match Intensity Slider */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-300 font-medium">FFT Spectral Match Intensity</span>
-                <span className="text-[#D4AF37] font-mono font-medium">
+                <span className="text-slate-100 font-medium">FFT Spectral Match Intensity</span>
+                <span className="text-[#57E6FF] font-mono font-medium">
                   {Math.round(referenceMatchIntensity * 100)}% Match
                 </span>
               </div>
@@ -742,16 +742,16 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
                   setReferenceMatchIntensity(val);
                   setReferenceProfile(prev => prev ? { ...prev, matchIntensity: val } : null);
                 }}
-                className="w-full accent-[#D4AF37] cursor-pointer"
+                className="w-full accent-[#57E6FF] cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-gray-500 font-light">
+              <div className="flex justify-between text-[10px] text-slate-300 font-light">
                 <span>Subtle Correction (20%)</span>
                 <span>Balanced Mastering Alignment (65%)</span>
                 <span>Full Envelope Match (100%)</span>
               </div>
             </div>
 
-            <p className="text-[11px] text-gray-400 font-light leading-relaxed">
+            <p className="text-[11px] text-slate-200 font-light leading-relaxed">
               HDQTRZ AI will derive 8 surgical filter bands across sub-bass, midrange, presence, and air to morph your track's tonal balance toward &ldquo;{referenceProfile.title}&rdquo; while mathematically clamping gain within &plusmn;2.8 dB to preserve mix authenticity.
             </p>
           </div>
@@ -759,10 +759,10 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
       </div>
 
       {/* Action Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-cyan-100/20">
         <button
           onClick={onBack}
-          className="w-full sm:w-auto px-5 py-3 rounded-md bg-[#111111] hover:bg-[#1A1A1A] border border-white/5 text-xs uppercase tracking-wider text-gray-300 transition-colors flex items-center justify-center gap-2"
+          className="w-full sm:w-auto px-5 py-3 rounded-md bg-[#1E4263] hover:bg-[#1A1A1A] border border-cyan-100/20 text-xs uppercase tracking-wider text-slate-100 transition-colors flex items-center justify-center gap-2"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Back to Analysis</span>
@@ -779,7 +779,7 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
               referenceMatchIntensity
             })
           }
-          className="w-full sm:w-auto px-8 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 bg-[#D4AF37] hover:bg-[#C19A2E] text-black"
+          className="w-full sm:w-auto px-8 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 bg-[#57E6FF] hover:bg-[#41CBE8] text-black"
         >
           <Wand2 className="w-4 h-4 text-black" />
           <span>Render Master with HDQTRZ AI</span>
