@@ -139,7 +139,9 @@ export async function processMasteringDSP(
   // streaming-oriented targets. Keep the budget conservative, but do not let
   // a fixed 4 dB ceiling silently miss a user-selected -11, -10, or -9 LUFS
   // target after the input has been gain-staged correctly.
-  const maxLimiterReductionDb = plan.actualAchievedLufs >= -11 ? 6.0 : 4.0;
+  const maxLimiterReductionDb = plan.actualAchievedLufs >= -11
+    ? Math.min(8.5, 6.5 + Math.max(0, plan.actualAchievedLufs + 11))
+    : 4.0;
   const maxSafeLimiterGainDb = Math.max(
     -6,
     Math.min(14, limiterCeilingDb - preAnalysis.truePeak + maxLimiterReductionDb)
