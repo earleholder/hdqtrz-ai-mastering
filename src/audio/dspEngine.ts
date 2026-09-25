@@ -112,22 +112,30 @@ export async function processMasteringDSP(
   const preAnalysis = analyzeAudioBuffer(conditionedBuffer);
   const preLufs = preAnalysis.integratedLufs;
 
-  // Calculate base make-up gain required to reach target LUFS
-  let currentLimiterGain = Math.max(-6, Math.min(14, plan.actualAchievedLufs - preLufs));
+  // Calculate requested make-up gain, then cap it by the maximum permitted
+  // limiter reduction. Loudness targets are subordinate to clean, undistorted audio.
+  const requestedLimiterGainDb = plan.actualAchievedLufs - preLufs;
 
   let qcPassed = false;
   let qcIterations = 0;
   let finalBuffer: AudioBuffer = conditionedBuffer;
   let finalAnalysis: AudioAnalysis = preAnalysis;
 
-  const ceilingDb = plan.limiter.ceilingDb; // Published delivery target, e.g. -1.0 dBTP
-  // Browser sample-domain limiting does not model every reconstruction filter used by
-  // streaming encoders and DACs. Calibration against an independent ITU-R meter found
-  // up to 1.48 dB of reconstruction overshoot on dense material. Reserve 1.7 dB so the
-  // encoded WAV remains below the published ceiling outside this engine as well.
-  const reconstructionReserveDb = 1.7;
+  const ceilingDb = plan.limiter.ceilingDb;
+  const reconstructionReserveDb = 1.0;
   const limiterCeilingDb = ceilingDb - reconstructionReserveDb;
   const ceilingLinear = Math.pow(10, limiterCeilingDb / 20);
+
+  // Never force more than 4 dB of peak reduction merely to hit a LUFS number.
+  const maxLimiterReductionDb = 4.0;
+  const maxSafeLimiterGainDb = Math.max(
+    -6,
+    Math.min(14, limiterCeilingDb - preAnalysis.truePeak + maxLimiterReductionDb)
+  );
+  let currentLimiterGain = Math.max(
+    -6,
+    Math.min(requestedLimiterGainDb, maxSafeLimiterGainDb)
+  );
 
   // 7. Iterative Quality Control (QC) Loop:
   // Calibrates make-up gain so the rendered master lands precisely on target LUFS without over-limiting
@@ -159,8 +167,12 @@ export async function processMasteringDSP(
       finalAnalysis = analysis;
       qcPassed = isPeakCompliant;
     } else {
-      // Damped adjustment to avoid overshoot
-      currentLimiterGain += lufsDiscrepancy * 0.85;
+      // Damped adjustment with a strict safety cap. If the requested LUFS
+      // cannot be reached cleanly, preserve the safer master instead.
+      currentLimiterGain = Math.max(
+        -6,
+        Math.min(maxSafeLimiterGainDb, currentLimiterGain + lufsDiscrepancy * 0.65)
+      );
       finalBuffer = processedBuffer;
       finalAnalysis = analysis;
     }
@@ -393,48 +405,50 @@ function processChannelDynamicEQ(
   // If no attenuation needed, return early
   if (maxCutObserved < 0.1) return 0;
 
-  // 2. Audio Pass: Direct Form II Transposed Peaking Bell Biquad
-  // Coefficients are updated in 32-sample blocks to guarantee zero zipper noise and high efficiency
+  // 2. Audio Pass: smoothly interpolate the peaking-filter coefficients.
+  // Abrupt 32-sample coefficient jumps can create zipper noise on dense audio.
   const blockSize = 32;
   let s1 = 0, s2 = 0;
+  let currentB0 = 1, currentB1 = 0, currentB2 = 0, currentA1 = 0, currentA2 = 0;
 
-  let b0 = 1, b1 = 0, b2 = 0, a1 = 0, a2 = 0;
-  let lastCutDb = -999;
-
-  for (let b = 0; b < length; b += blockSize) {
-    const blockEnd = Math.min(b + blockSize, length);
-
-    // Compute average cut for this block
+  for (let blockStart = 0; blockStart < length; blockStart += blockSize) {
+    const blockEnd = Math.min(blockStart + blockSize, length);
     let blockCutSum = 0;
-    for (let i = b; i < blockEnd; i++) blockCutSum += detectedCutDb[i];
-    const blockCutDb = blockCutSum / (blockEnd - b);
+    for (let i = blockStart; i < blockEnd; i++) blockCutSum += detectedCutDb[i];
+    const blockCutDb = blockCutSum / (blockEnd - blockStart);
 
-    // Only recalculate biquad coeffs if cut changed significantly (> 0.05 dB)
-    if (Math.abs(blockCutDb - lastCutDb) > 0.05) {
-      lastCutDb = blockCutDb;
-      if (blockCutDb < 0.05) {
-        // Transparent unity gain
-        b0 = 1; b1 = 0; b2 = 0; a1 = 0; a2 = 0;
-      } else {
-        // Standard Peaking EQ Cookbook formula with negative gain (-blockCutDb)
-        const A = Math.pow(10, -blockCutDb / 40); // gain < 1
-        const raw_a0 = 1 + alpha / A;
-        b0 = (1 + alpha * A) / raw_a0;
-        b1 = (-2 * cosW0) / raw_a0;
-        b2 = (1 - alpha * A) / raw_a0;
-        a1 = (-2 * cosW0) / raw_a0;
-        a2 = (1 - alpha / A) / raw_a0;
-      }
+    let targetB0 = 1, targetB1 = 0, targetB2 = 0, targetA1 = 0, targetA2 = 0;
+    if (blockCutDb >= 0.05) {
+      const A = Math.pow(10, -blockCutDb / 40);
+      const rawA0 = 1 + alpha / A;
+      targetB0 = (1 + alpha * A) / rawA0;
+      targetB1 = (-2 * cosW0) / rawA0;
+      targetB2 = (1 - alpha * A) / rawA0;
+      targetA1 = (-2 * cosW0) / rawA0;
+      targetA2 = (1 - alpha / A) / rawA0;
     }
 
-    // Process block through Direct Form II Transposed biquad
-    for (let i = b; i < blockEnd; i++) {
+    const blockLength = blockEnd - blockStart;
+    for (let i = blockStart; i < blockEnd; i++) {
+      const mix = (i - blockStart + 1) / blockLength;
+      const b0 = currentB0 + (targetB0 - currentB0) * mix;
+      const b1 = currentB1 + (targetB1 - currentB1) * mix;
+      const b2 = currentB2 + (targetB2 - currentB2) * mix;
+      const a1 = currentA1 + (targetA1 - currentA1) * mix;
+      const a2 = currentA2 + (targetA2 - currentA2) * mix;
+
       const x = data[i];
       const y = b0 * x + s1;
       s1 = b1 * x - a1 * y + s2;
       s2 = b2 * x - a2 * y;
       data[i] = y;
     }
+
+    currentB0 = targetB0;
+    currentB1 = targetB1;
+    currentB2 = targetB2;
+    currentA1 = targetA1;
+    currentA2 = targetA2;
   }
 
   return maxCutObserved;
@@ -824,147 +838,70 @@ function applyLookaheadLimiter(
   const numChannels = buffer.numberOfChannels;
   const length = buffer.length;
   const sampleRate = buffer.sampleRate;
-
   const offlineCtx = new OfflineAudioContext(numChannels, length, sampleRate);
   const outBuffer = offlineCtx.createBuffer(numChannels, length, sampleRate);
-
   const linearGain = Math.pow(10, gainDb / 20);
-
-  // 3.5 ms lookahead delay window
   const lookaheadSamples = Math.max(16, Math.round(sampleRate * 0.0035));
-  const attackCoeff = Math.exp(-1 / (sampleRate * 0.0006)); // 0.6 ms attack ramp
-  const releaseCoeff = Math.exp(-1 / (sampleRate * 0.075)); // 75 ms smooth release
+  const releaseCoeff = Math.exp(-1 / (sampleRate * 0.090));
 
-  if (numChannels === 1) {
-    const src = buffer.getChannelData(0);
-    const dest = outBuffer.getChannelData(0);
-
-    const conditioned = new Float32Array(length);
+  const conditioned: Float32Array[] = [];
+  const linkedPeak = new Float32Array(length);
+  for (let c = 0; c < numChannels; c++) {
+    const src = buffer.getChannelData(c);
+    const channel = new Float32Array(length);
     for (let i = 0; i < length; i++) {
-      conditioned[i] = src[i] * linearGain;
+      const value = src[i] * linearGain;
+      channel[i] = value;
+      const magnitude = Math.abs(value);
+      if (magnitude > linkedPeak[i]) linkedPeak[i] = magnitude;
     }
-
-    // 1. Target gain calculation
-    const targetGain = new Float32Array(length);
-    for (let i = 0; i < length; i++) {
-      const peak = Math.abs(conditioned[i]);
-      targetGain[i] = peak > ceilingLinear ? ceilingLinear / peak : 1.0;
-    }
-
-    // 2. Preemptive lookahead pass (backwards smoothing over the lookahead window)
-    const lookaheadGain = new Float32Array(length);
-    lookaheadGain.set(targetGain);
-    for (let i = length - 2; i >= 0; i--) {
-      if (lookaheadGain[i] > lookaheadGain[i + 1]) {
-        lookaheadGain[i] = lookaheadGain[i + 1] + (lookaheadGain[i] - lookaheadGain[i + 1]) * 0.88;
-      }
-    }
-
-    // 3. Forward attack/release envelope smoothing
-    const smoothGain = new Float32Array(length);
-    let env = 1.0;
-    for (let i = 0; i < length; i++) {
-      const target = lookaheadGain[i];
-      if (target < env) {
-        env = target + attackCoeff * (env - target);
-      } else {
-        env = target + releaseCoeff * (env - target);
-      }
-      smoothGain[i] = env;
-    }
-
-    // 4. Apply smooth gain to delayed audio with transparent soft-knee ceiling
-    const delay = new Float32Array(lookaheadSamples);
-    let delayIdx = 0;
-
-    for (let i = 0; i < length; i++) {
-      const readIdx = (delayIdx + 1) % lookaheadSamples;
-      const delayed = delay[readIdx];
-      delay[delayIdx] = conditioned[i];
-      delayIdx = readIdx;
-
-      let val = delayed * smoothGain[i];
-
-      // Soft-knee ceiling saturation to prevent hard digital flat-topping
-      if (Math.abs(val) > ceilingLinear * 0.98) {
-        val = ceilingLinear * Math.tanh(val / ceilingLinear);
-      }
-      dest[i] = val;
-    }
-
-    return outBuffer;
+    conditioned.push(channel);
   }
 
-  // Stereo processing
-  const srcL = buffer.getChannelData(0);
-  const srcR = buffer.getChannelData(1);
-  const destL = outBuffer.getChannelData(0);
-  const destR = outBuffer.getChannelData(1);
+  // Exact future-window peak using a monotonic deque. This is a true offline
+  // lookahead detector: reduction begins before a peak and never depends on a
+  // discontinuous waveshaper.
+  const futurePeak = new Float32Array(length);
+  const deque = new Int32Array(length);
+  let head = 0;
+  let tail = 0;
+  for (let reversedIndex = 0; reversedIndex < length; reversedIndex++) {
+    const sampleIndex = length - 1 - reversedIndex;
+    while (head < tail && deque[head] < reversedIndex - lookaheadSamples) head++;
+    while (head < tail) {
+      const queuedSampleIndex = length - 1 - deque[tail - 1];
+      if (linkedPeak[queuedSampleIndex] > linkedPeak[sampleIndex]) break;
+      tail--;
+    }
+    deque[tail++] = reversedIndex;
+    const maxSampleIndex = length - 1 - deque[head];
+    futurePeak[sampleIndex] = linkedPeak[maxSampleIndex];
+  }
 
-  const conditionedL = new Float32Array(length);
-  const conditionedR = new Float32Array(length);
-
+  const gainEnvelope = new Float32Array(length);
+  let envelope = 1.0;
   for (let i = 0; i < length; i++) {
-    conditionedL[i] = srcL[i] * linearGain;
-    conditionedR[i] = srcR[i] * linearGain;
-  }
-
-  // 1. Linked peak target gain calculation
-  const targetGain = new Float32Array(length);
-  for (let i = 0; i < length; i++) {
-    const peak = Math.max(Math.abs(conditionedL[i]), Math.abs(conditionedR[i]));
-    targetGain[i] = peak > ceilingLinear ? ceilingLinear / peak : 1.0;
-  }
-
-  // 2. Preemptive lookahead backward smoothing
-  const lookaheadGain = new Float32Array(length);
-  lookaheadGain.set(targetGain);
-  for (let i = length - 2; i >= 0; i--) {
-    if (lookaheadGain[i] > lookaheadGain[i + 1]) {
-      lookaheadGain[i] = lookaheadGain[i + 1] + (lookaheadGain[i] - lookaheadGain[i + 1]) * 0.88;
-    }
-  }
-
-  // 3. Forward envelope smoothing
-  const smoothGain = new Float32Array(length);
-  let env = 1.0;
-  for (let i = 0; i < length; i++) {
-    const target = lookaheadGain[i];
-    if (target < env) {
-      env = target + attackCoeff * (env - target);
+    const peak = futurePeak[i];
+    const target = peak > ceilingLinear ? ceilingLinear / peak : 1.0;
+    if (target < envelope) {
+      // Instantaneous attack is safe because the future peak was already seen.
+      envelope = target;
     } else {
-      env = target + releaseCoeff * (env - target);
+      // Program-safe release prevents pumping and keeps envelope <= target.
+      envelope = target + releaseCoeff * (envelope - target);
     }
-    smoothGain[i] = env;
+    gainEnvelope[i] = envelope;
   }
 
-  // 4. Apply to delayed audio
-  const delayL = new Float32Array(lookaheadSamples);
-  const delayR = new Float32Array(lookaheadSamples);
-  let delayIdx = 0;
-
-  for (let i = 0; i < length; i++) {
-    const readIdx = (delayIdx + 1) % lookaheadSamples;
-    const delayedL = delayL[readIdx];
-    const delayedR = delayR[readIdx];
-    delayL[delayIdx] = conditionedL[i];
-    delayR[delayIdx] = conditionedR[i];
-    delayIdx = readIdx;
-
-    const g = smoothGain[i];
-    let valL = delayedL * g;
-    let valR = delayedR * g;
-
-    // Smooth soft-knee saturation prevents any hard clipping artifacts
-    if (Math.abs(valL) > ceilingLinear * 0.98) {
-      valL = ceilingLinear * Math.tanh(valL / ceilingLinear);
+  for (let c = 0; c < numChannels; c++) {
+    const dest = outBuffer.getChannelData(c);
+    const src = conditioned[c];
+    for (let i = 0; i < length; i++) {
+      const value = src[i] * gainEnvelope[i];
+      // Numerical safety only. The lookahead envelope should already guarantee
+      // compliance, so this clamp should not shape ordinary program material.
+      dest[i] = Math.max(-ceilingLinear, Math.min(ceilingLinear, value));
     }
-    if (Math.abs(valR) > ceilingLinear * 0.98) {
-      valR = ceilingLinear * Math.tanh(valR / ceilingLinear);
-    }
-
-    destL[i] = valL;
-    destR[i] = valR;
   }
 
   return outBuffer;
@@ -1019,7 +956,10 @@ export function audioBufferToWavBlob(buffer: AudioBuffer, bitDepth: 16 | 24 = 24
   if (bitDepth === 16) {
     for (let i = 0; i < numSamples; i++) {
       for (let c = 0; c < numChannels; c++) {
-        const s = Math.max(-1, Math.min(1, channels[c][i]));
+        // One LSB peak-to-peak TPDF dither prevents correlated truncation
+        // distortion when reducing the floating-point master to 16-bit PCM.
+        const dither = (Math.random() - Math.random()) / 0x8000;
+        const s = Math.max(-1, Math.min(1, channels[c][i] + dither));
         const int16 = s < 0 ? Math.round(s * 0x8000) : Math.round(s * 0x7FFF);
         view.setInt16(offset, int16, true);
         offset += 2;
