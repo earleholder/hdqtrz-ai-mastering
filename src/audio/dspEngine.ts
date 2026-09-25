@@ -41,9 +41,18 @@ export async function processMasteringDSP(
 
   let lastNode: AudioNode = sourceNode;
 
-  // Pre-Gain Staging: Clean unity gain
+  // Pre-Gain Staging: normalize every usable upload to -5 dBFS before the
+  // mastering processors. This gives fixed-threshold compressors and dynamic
+  // processors a consistent operating level whether the source arrives very
+  // quiet or already too loud. The gain is bounded for malformed or nearly
+  // silent files, and final LUFS calibration still happens after processing.
+  const sourceAnalysis = analyzeAudioBuffer(sourceBuffer);
+  const inputNormalizationTargetDbfs = -5.0;
+  const inputNormalizationGainDb = sourceAnalysis.truePeak > -80
+    ? Math.max(-24, Math.min(24, inputNormalizationTargetDbfs - sourceAnalysis.truePeak))
+    : 0;
   const preGain = offlineCtx.createGain();
-  preGain.gain.value = 1.0;
+  preGain.gain.value = Math.pow(10, inputNormalizationGainDb / 20);
   lastNode.connect(preGain);
   lastNode = preGain;
 
@@ -126,8 +135,11 @@ export async function processMasteringDSP(
   const limiterCeilingDb = ceilingDb - reconstructionReserveDb;
   const ceilingLinear = Math.pow(10, limiterCeilingDb / 20);
 
-  // Never force more than 4 dB of peak reduction merely to hit a LUFS number.
-  const maxLimiterReductionDb = 4.0;
+  // Dynamic commercial targets need slightly more transient control than
+  // streaming-oriented targets. Keep the budget conservative, but do not let
+  // a fixed 4 dB ceiling silently miss a user-selected -11, -10, or -9 LUFS
+  // target after the input has been gain-staged correctly.
+  const maxLimiterReductionDb = plan.actualAchievedLufs >= -11 ? 6.0 : 4.0;
   const maxSafeLimiterGainDb = Math.max(
     -6,
     Math.min(14, limiterCeilingDb - preAnalysis.truePeak + maxLimiterReductionDb)
@@ -139,7 +151,7 @@ export async function processMasteringDSP(
 
   // 7. Iterative Quality Control (QC) Loop:
   // Calibrates make-up gain so the rendered master lands precisely on target LUFS without over-limiting
-  while (!qcPassed && qcIterations < 3) {
+  while (!qcPassed && qcIterations < 5) {
     qcIterations++;
     onProgress?.(`Applying Mastering Limiter & Loudness Calibration (Pass ${qcIterations})...`, 55 + qcIterations * 12);
 
@@ -160,7 +172,7 @@ export async function processMasteringDSP(
       qcPassed = true;
       finalBuffer = processedBuffer;
       finalAnalysis = analysis;
-    } else if (qcIterations >= 3) {
+    } else if (qcIterations >= 5) {
       // Keep the safest render after the last calibration pass. Never override a
       // failed peak check merely because the iteration budget has been exhausted.
       finalBuffer = processedBuffer;
