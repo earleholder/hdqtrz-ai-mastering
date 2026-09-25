@@ -349,7 +349,14 @@ export function createMasteringPlan(
   let multibandCircuit: 'vca' | 'opto' = 'vca';
   const multibandBands: MultibandBandConfig[] = [];
 
-  if (multibandMode !== 'bypassed') {
+  const autoMultibandNeeded =
+    analysis.dynamicRange > 13.0 ||
+    analysis.detectedIssues.some(issue =>
+      ['excessive-bass', 'muddy-low-mids', 'harsh-presence'].includes(issue.id)
+    );
+  const explicitMultibandRequested = multibandMode === 'vca' || multibandMode === 'opto';
+
+  if (explicitMultibandRequested || (multibandMode === 'auto' && autoMultibandNeeded)) {
     multibandApplied = true;
     if (
       multibandMode === 'vca' ||
@@ -437,7 +444,7 @@ export function createMasteringPlan(
       `Multiband Dynamics: 4-Band Downward ${multibandCircuit.toUpperCase()} Compressor engaged (Sub: 140Hz, Low-Mid: 1kHz, High-Mid: 6kHz, Air: 20kHz).`
     );
   } else {
-    decisionLog.push('Multiband Dynamics: 4-Band compression bypassed per mastering directive.');
+    decisionLog.push(multibandMode === 'auto' ? 'Multiband Dynamics: Automatically bypassed because the mix did not require corrective multiband control.' : 'Multiband Dynamics: 4-Band compression bypassed per mastering directive.');
   }
 
   const multibandPlan: MultibandPlan = {
