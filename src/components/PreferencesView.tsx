@@ -43,6 +43,7 @@ interface PreferencesViewProps {
   initialSaturationFlavor?: SaturationFlavor;
   initialSaturationIntensity?: SaturationIntensity;
   initialMultibandMode?: MultibandMode;
+  initialTruePeakCeiling?: -1.0 | -2.0;
   onStartMastering: (
     genre: Genre,
     targetLufs: LoudnessTarget,
@@ -54,6 +55,7 @@ interface PreferencesViewProps {
       multibandMode?: MultibandMode;
       referenceProfile?: ReferenceTrackProfile;
       referenceMatchIntensity?: number;
+      truePeakCeilingDb?: number;
     }
   ) => void;
   onBack: () => void;
@@ -89,23 +91,37 @@ const LOUDNESS_OPTIONS: { lufs: LoudnessTarget; title: string; desc: string; isD
   {
     lufs: -14,
     title: '-14 LUFS',
-    desc: 'Streaming standard (Default). Preserves complete punch and micro-dynamics without limiter squashing.',
+    desc: 'Streaming standard (Creative delivery choice). Preserves complete punch and micro-dynamics without limiter squashing.',
     isDefault: true
   },
   {
     lufs: -16,
     title: '-16 LUFS',
-    desc: 'Wide acoustic dynamics. Ideal for classical, jazz, and audiophile releases with maximum crest factor.'
+    desc: 'Wide acoustic dynamics (Creative delivery choice). Ideal for classical, jazz, acoustic, and audiophile releases with maximum crest factor.'
   },
   {
     lufs: -12,
     title: '-12 LUFS',
-    desc: 'Dynamic and polished. Healthy transient headroom for modern rock, electronic, and dynamic pop.'
+    desc: 'Dynamic and forward (Creative delivery choice). Healthy transient headroom with punch for modern rock, electronic, and dynamic pop.'
   },
   {
     lufs: -11,
     title: '-11 LUFS',
-    desc: 'Competitive commercial loudness with conservative limiter transient protection.'
+    desc: 'Competitive density (Creative delivery choice). Higher commercial impact with conservative limiter transient protection.'
+  }
+];
+
+const CEILING_OPTIONS: { ceiling: -1.0 | -2.0; title: string; desc: string; isDefault?: boolean }[] = [
+  {
+    ceiling: -1.0,
+    title: '-1.0 dBTP (Default)',
+    desc: 'Standard commercial ceiling. Meets EBU/AES recommendations for clean inter-sample peak suppression on digital playback.',
+    isDefault: true
+  },
+  {
+    ceiling: -2.0,
+    title: '-2.0 dBTP (Conservative)',
+    desc: 'Conservative inter-sample ceiling. Extra safety margin to prevent clipping distortion when audio is encoded into lossy AAC or MP3 codecs.'
   }
 ];
 
@@ -151,11 +167,13 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
   initialSaturationFlavor = 'none',
   initialSaturationIntensity = 'subtle',
   initialMultibandMode = 'auto',
+  initialTruePeakCeiling = -1.0,
   onStartMastering,
   onBack
 }) => {
   const [selectedGenre, setSelectedGenre] = useState<Genre>(initialGenre);
   const [selectedLufs, setSelectedLufs] = useState<LoudnessTarget>(initialLufs);
+  const [selectedTruePeakCeiling, setSelectedTruePeakCeiling] = useState<-1.0 | -2.0>(initialTruePeakCeiling);
   const [selectedCharacter, setSelectedCharacter] = useState<MasteringCharacter>(initialCharacter);
   const [selectedDynamicEQMode, setSelectedDynamicEQMode] = useState<DynamicEQMode>(initialDynamicEQMode);
   const [selectedSaturationFlavor, setSelectedSaturationFlavor] = useState<SaturationFlavor>(initialSaturationFlavor);
@@ -247,44 +265,83 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
         </div>
       </div>
 
-      {/* STEP 2: Target Loudness */}
-      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-4">
+      {/* STEP 2: Target Loudness & True-Peak Ceiling (Feature 6) */}
+      <div className="rounded-xl bg-[#173653] border border-cyan-100/30 p-6 space-y-5">
         <div className="border-b border-cyan-100/20 pb-3">
           <h3 className="text-xs uppercase tracking-widest text-[#57E6FF] font-medium">
-            2. Integrated Loudness Target
+            2. Integrated Loudness Target & True-Peak Ceiling
           </h3>
-          <p className="text-xs text-slate-300 font-light mt-0.5">
-            Calibrated for broadcast translation across major streaming codecs and analog systems.
+          <p className="text-xs text-slate-300 font-light mt-1 leading-relaxed">
+            <strong className="text-white font-medium">Target Guidance:</strong> Loudness targets (-16, -14, -12, -11 LUFS) are creative delivery choices and aesthetic preferences, never guaranteed platform requirements (major streaming platforms apply their own volume normalization).
           </p>
         </div>
 
         {/* Loudness Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-          {LOUDNESS_OPTIONS.map((opt) => {
-            const isSelected = selectedLufs === opt.lufs;
-            return (
-              <button
-                key={opt.lufs}
-                type="button"
-                onClick={() => setSelectedLufs(opt.lufs)}
-                className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
-                  isSelected
-                    ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
-                    : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
-                }`}
-              >
-                {opt.isDefault && (
-                  <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#57E6FF] border border-[#57E6FF]/50">
-                    Recommended
-                  </span>
-                )}
-                <div>
-                  <div className="font-mono text-xl font-light text-white">{opt.title}</div>
-                  <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{opt.desc}</p>
-                </div>
-              </button>
-            );
-          })}
+        <div className="space-y-2">
+          <div className="text-[11px] uppercase tracking-wider text-slate-300 font-mono">
+            A. Creative Loudness Delivery Target
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+            {LOUDNESS_OPTIONS.map((opt) => {
+              const isSelected = selectedLufs === opt.lufs;
+              return (
+                <button
+                  key={opt.lufs}
+                  type="button"
+                  onClick={() => setSelectedLufs(opt.lufs)}
+                  className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                      : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
+                  }`}
+                >
+                  {opt.isDefault && (
+                    <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#57E6FF] border border-[#57E6FF]/50">
+                      Recommended
+                    </span>
+                  )}
+                  <div>
+                    <div className="font-mono text-xl font-light text-white">{opt.title}</div>
+                    <p className="text-xs text-slate-200 mt-2 font-light leading-relaxed">{opt.desc}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* True-Peak Limiter Ceiling Option (Feature 6) */}
+        <div className="space-y-2 pt-2 border-t border-cyan-100/10">
+          <div className="text-[11px] uppercase tracking-wider text-slate-300 font-mono">
+            B. True-Peak Limiter Ceiling Option
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {CEILING_OPTIONS.map((opt) => {
+              const isSelected = selectedTruePeakCeiling === opt.ceiling;
+              return (
+                <button
+                  key={opt.ceiling}
+                  type="button"
+                  onClick={() => setSelectedTruePeakCeiling(opt.ceiling)}
+                  className={`p-4 rounded-lg text-left transition-all border relative flex flex-col justify-between ${
+                    isSelected
+                      ? 'bg-[#1A1A1A] border-[#57E6FF] text-white'
+                      : 'bg-[#1E4263] border-cyan-100/20 hover:border-cyan-100/40 text-slate-200 hover:text-white'
+                  }`}
+                >
+                  {opt.isDefault && (
+                    <span className="absolute top-2.5 right-2.5 px-1.5 py-0.5 rounded text-[8px] font-medium uppercase tracking-widest bg-[#1A1A1A] text-[#57E6FF] border border-[#57E6FF]/50">
+                      Default
+                    </span>
+                  )}
+                  <div>
+                    <div className="font-mono text-lg font-light text-white">{opt.title}</div>
+                    <p className="text-xs text-slate-200 mt-1.5 font-light leading-relaxed">{opt.desc}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Dynamic Protection Guarantee Notice */}
@@ -293,7 +350,7 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
           <div className="space-y-0.5">
             <span className="font-medium text-white text-[11px] uppercase tracking-wider">Dynamic Integrity Guardrail</span>
             <p className="text-slate-200 text-xs font-light leading-relaxed">
-              If your mix features high crest factor or acoustic dynamics, the engine protects transients from harsh clipping or pumping.
+              If your mix features high crest factor or acoustic dynamics, the engine caps limiter gain reduction at 2.0 dB peak to protect your transients from harsh squashing.
             </p>
           </div>
         </div>
@@ -766,7 +823,8 @@ export const PreferencesView: React.FC<PreferencesViewProps> = ({
               saturationIntensity: selectedSaturationIntensity,
               multibandMode: selectedMultibandMode,
               referenceProfile: referenceProfile || undefined,
-              referenceMatchIntensity
+              referenceMatchIntensity,
+              truePeakCeilingDb: selectedTruePeakCeiling
             })
           }
           className="w-full sm:w-auto px-8 py-3.5 rounded-md font-bold text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2 bg-[#57E6FF] hover:bg-[#41CBE8] text-black"

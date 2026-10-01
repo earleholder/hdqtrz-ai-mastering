@@ -1,9 +1,14 @@
-/**
- * Centralized Configuration for AI Mastering Tool
- * per AI_Mastering_Tool_Update_Spec.md (Sections 5, 6, 7)
- */
+export const ENGINE_VERSION = '2.4.0';
+
+export const SAFEGUARDS = {
+  maxDurationSeconds: 900, // 15 minutes
+  maxFileSizeBytes: 250 * 1024 * 1024, // 250 MB
+  processingTimeoutMs: 60000, // 60 seconds processing timeout
+} as const;
 
 export const CONFIG = {
+  engineVersion: ENGINE_VERSION,
+  safeguards: SAFEGUARDS,
   gate: {
     loudness: {
       warnLufs: -12.0,
@@ -51,6 +56,8 @@ export const CONFIG = {
   processing: {
     defaultLoudnessTarget: -14 as const,
     allowedLoudnessTargets: [-16, -14, -12, -11] as const,
+    defaultTruePeakCeilingDb: -1.0,
+    allowedTruePeakCeilings: [-1.0, -2.0] as const,
     truePeakCeilingDb: -1.0,
     limiterOversampling: 4,
     limiterLookaheadMs: 3.5,
@@ -65,13 +72,23 @@ export const CONFIG = {
     maxClippingEvents: 0,
     maxCrestDropDb: 1.0,
   },
+  customerOutcomeLabels: {
+    PASS: 'Ready for AI Preview',
+    WARN: 'Revision recommended',
+    BLOCK: 'Human review recommended / Not ready for automated processing',
+  },
+  policy: {
+    aiPreviewCreditPercentToHumanMaster: 100, // 100% of AI Preview cost credited toward human master
+  },
   wording: {
     cta: 'Want a human master? Book Earle Holder at HDQTRZ Mastering Studios (Apple Digital Masters certified).',
+    creditPolicy: '100% Credit Guarantee: Any AI Preview purchase can be credited toward eligible human mastering with Earle Holder at HDQTRZ Mastering Studios.',
     bookingUrl: 'https://hdqtrzmastering.com',
   }
 } as const;
 
 export type LoudnessTargetOption = typeof CONFIG.processing.allowedLoudnessTargets[number];
+export type TruePeakCeilingOption = typeof CONFIG.processing.allowedTruePeakCeilings[number];
 
 /**
  * Exact filename rule per Section 2:

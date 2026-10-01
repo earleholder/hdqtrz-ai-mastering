@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Upload, Play, Pause, FileAudio, ShieldCheck, AlertCircle, Sparkles, Wand2, BookOpen, ChevronDown, ChevronUp } from 'lucide-react';
 import { TrackMetadata } from '../types';
 import { robustDecodeAudio } from '../audio/audioDecoder';
+import { SAFEGUARDS } from '../audio/config';
 
 interface UploadSectionProps {
   onAudioReady: (buffer: AudioBuffer, metadata: TrackMetadata) => void;
@@ -129,10 +130,9 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
     setUploadError(null);
     stopPlayback();
 
-    // Technical validation: Max 250MB
-    const MAX_SIZE_BYTES = 250 * 1024 * 1024;
-    if (file.size > MAX_SIZE_BYTES) {
-      setUploadError(`File exceeds maximum size limit of 250 MB (${(file.size / (1024 * 1024)).toFixed(1)} MB).`);
+    // Technical validation: Centralized safeguards
+    if (file.size > SAFEGUARDS.maxFileSizeBytes) {
+      setUploadError(`File exceeds maximum size limit of ${Math.round(SAFEGUARDS.maxFileSizeBytes / (1024 * 1024))} MB (${(file.size / (1024 * 1024)).toFixed(1)} MB).`);
       return;
     }
 
@@ -145,9 +145,9 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
         audioContextRef.current = decodedResult.ctx;
       }
 
-      // Validate duration: Max 15 minutes (900 seconds)
-      if (audioBuffer.duration > 900) {
-        setUploadError(`Audio duration (${Math.round(audioBuffer.duration / 60)} minutes) exceeds the 15-minute maximum limit for automated mastering.`);
+      // Validate duration: Centralized safeguards
+      if (audioBuffer.duration > SAFEGUARDS.maxDurationSeconds) {
+        setUploadError(`Audio duration (${Math.round(audioBuffer.duration / 60)} minutes) exceeds the ${Math.round(SAFEGUARDS.maxDurationSeconds / 60)}-minute maximum limit for automated mastering.`);
         return;
       }
 
@@ -476,19 +476,19 @@ export const UploadSection: React.FC<UploadSectionProps> = ({
         </div>
       )}
 
-      {/* Privacy & Trust Badge */}
-      <div className="flex items-center justify-center gap-6 text-[10px] uppercase tracking-wider text-slate-300 pt-2">
+      {/* Feature 9: Privacy & Trust Guarantee (Truthful & Code-Verifiable) */}
+      <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[10px] uppercase tracking-wider text-slate-300 pt-2 border-t border-cyan-100/10">
         <div className="flex items-center gap-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-[#57E6FF]" />
-          <span>Encrypted Transfer</span>
+          <span>100% In-Browser Processing (No Audio Uploaded)</span>
         </div>
         <div className="flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-[#57E6FF]" />
-          <span>100% Artist Property</span>
+          <span>Zero AI Model Training</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-          <span>Private Engine</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span>Ephemeral In-Memory Buffers</span>
         </div>
       </div>
     </div>

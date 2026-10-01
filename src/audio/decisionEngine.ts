@@ -25,6 +25,7 @@ export interface MasteringDirectives {
   multibandMode?: MultibandMode;
   referenceProfile?: ReferenceTrackProfile;
   applyColdStartFade?: boolean;
+  truePeakCeilingDb?: number;
 }
 
 export function createMasteringPlan(
@@ -529,8 +530,8 @@ export function createMasteringPlan(
   }
 
   // 8. True-Peak Limiter (Section 7.3):
-  // Target ceiling -1.0 dBTP
-  const ceilingDb = CONFIG.processing.truePeakCeilingDb; // -1.0 dBTP
+  // Target ceiling: default -1.0 dBTP or conservative -2.0 dBTP
+  const ceilingDb = directives?.truePeakCeilingDb ?? CONFIG.processing.defaultTruePeakCeilingDb;
   const gainNeeded = Math.max(0, actualAchievedLufs - analysis.integratedLufs);
   const limiterGain = Number(gainNeeded.toFixed(1));
   const estimatedLimiterReduction = Math.max(0.0, Number((gainNeeded * 0.35).toFixed(1)));
@@ -542,6 +543,7 @@ export function createMasteringPlan(
     targetLufs,
     actualAchievedLufs,
     character,
+    truePeakCeilingDb: ceilingDb,
     isDynamicProtected,
     protectiveNotice,
     applyColdStartFade,

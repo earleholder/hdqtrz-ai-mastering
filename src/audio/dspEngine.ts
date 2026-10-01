@@ -1,6 +1,7 @@
 import { AudioAnalysis, DynamicEQBand, MasteringPlan } from '../types';
 import { analyzeAudioBuffer } from './analyzer';
 import { CONFIG } from './config';
+import { createAudioBufferPolyfill } from './audioDecoder';
 
 /**
  * High-Precision Web Audio DSP Mastering Engine
@@ -40,6 +41,33 @@ export function applyColdStartFadeIn(buffer: AudioBuffer, durationMs = 3.0): voi
 }
 
 export async function processMasteringDSP(
+  sourceBuffer: AudioBuffer,
+  plan: MasteringPlan,
+  onProgress?: (stage: string, progressPct: number) => void
+): Promise<RenderResult> {
+  const timeoutMs = CONFIG.safeguards.processingTimeoutMs;
+  let timer: any = undefined;
+
+  const timeoutPromise = new Promise<RenderResult>((_, reject) => {
+    timer = setTimeout(() => {
+      reject(new Error(`Mastering processing timed out after ${timeoutMs / 1000} seconds. Please verify file duration and sample rate.`));
+    }, timeoutMs);
+  });
+
+  try {
+    const result = await Promise.race([
+      executeMasteringPipeline(sourceBuffer, plan, onProgress),
+      timeoutPromise
+    ]);
+    if (timer) clearTimeout(timer);
+    return result;
+  } catch (err) {
+    if (timer) clearTimeout(timer);
+    throw err;
+  }
+}
+
+async function executeMasteringPipeline(
   sourceBuffer: AudioBuffer,
   plan: MasteringPlan,
   onProgress?: (stage: string, progressPct: number) => void
@@ -152,8 +180,10 @@ export async function processMasteringDSP(
   const preLufs = preAnalysis.integratedLufs;
 
   // Section 7.3 & 7.4: Loudness Policy & Limiter Cap
-  // - Ceiling: -1.0 dBTP (configured with slight reserve to ensure reconstruction <= -1.0 dBTP)
-  const limiterCeilingDb = CONFIG.processing.truePeakCeilingDb - 0.05; // -1.05 dBTP
+  // - Ceiling: selected target ceiling (-1.0 dBTP default, or conservative -2.0 dBTP)
+  const targetCeilingDb = plan.truePeakCeilingDb ?? CONFIG.processing.defaultTruePeakCeilingDb;
+  const maxAllowedTruePeak = targetCeilingDb + 0.01;
+  const limiterCeilingDb = targetCeilingDb - 0.05; // extra headroom reserve
   const ceilingLinear = Math.pow(10, limiterCeilingDb / 20);
 
   // - Cap limiter gain reduction at 2 dB peak
@@ -199,7 +229,7 @@ export async function processMasteringDSP(
     const analysis = analyzeAudioBuffer(processedBuffer);
     const lufsDiscrepancy = plan.actualAchievedLufs - analysis.integratedLufs;
     const isLoudnessAccurate = Math.abs(lufsDiscrepancy) <= 0.2;
-    const isPeakCompliant = analysis.truePeak <= -1.0;
+    const isPeakCompliant = analysis.truePeak <= maxAllowedTruePeak;
 
     if ((isLoudnessAccurate && isPeakCompliant) || isInputAlreadyLoud) {
       qcPassed = true;
@@ -231,7 +261,7 @@ export async function processMasteringDSP(
 
   let verificationPasses = 0;
   while (verificationPasses < 3) {
-    const truePeakPass = postAnalysis.truePeak <= -0.99; // <= -1.0 dBTP
+    const truePeakPass = postAnalysis.truePeak <= maxAllowedTruePeak;
     const clippingPass = (postAnalysis.clippingEvents ?? 0) === 0;
     const sampleRatePass = finalBuffer.sampleRate === sampleRate;
     const inputCrest = sourceAnalysis.shortTermCrestMedian ?? sourceAnalysis.crestFactor;
@@ -245,12 +275,12 @@ export async function processMasteringDSP(
     // Safety trim
     verificationPasses++;
     const trimGainDb = -0.2 * verificationPasses;
-    finalBuffer = applyLookaheadLimiter(finalBuffer, trimGainDb, Math.pow(10, -1.05 / 20));
+    finalBuffer = applyLookaheadLimiter(finalBuffer, trimGainDb, Math.pow(10, (targetCeilingDb - 0.05) / 20));
     postAnalysis = analyzeAudioBuffer(finalBuffer);
   }
 
   // Final verification check: Never deliver a file that fails these checks
-  const finalTruePeakPass = postAnalysis.truePeak <= -0.99;
+  const finalTruePeakPass = postAnalysis.truePeak <= maxAllowedTruePeak;
   const finalClippingPass = (postAnalysis.clippingEvents ?? 0) === 0;
   const finalSampleRatePass = finalBuffer.sampleRate === sampleRate;
   const inputCrest = sourceAnalysis.shortTermCrestMedian ?? sourceAnalysis.crestFactor;
@@ -259,7 +289,7 @@ export async function processMasteringDSP(
 
   if (!finalTruePeakPass || !finalClippingPass || !finalSampleRatePass || !finalCrestPass) {
     throw new Error(
-      `Mastering output verification failed: Output did not meet safety criteria (True Peak: ${postAnalysis.truePeak} dBTP, Clipping: ${postAnalysis.clippingEvents}, Crest: ${outputCrest} dB).`
+      `Mastering output verification failed: Output did not meet safety criteria (True Peak: ${postAnalysis.truePeak} dBTP, Ceiling: ${targetCeilingDb} dBTP, Clipping: ${postAnalysis.clippingEvents}, Crest: ${outputCrest} dB).`
     );
   }
 
@@ -917,7 +947,7 @@ function applyAnalogHarmonicSaturationWithOversampling(
  * 4. Hyperbolic Soft-Knee Ceiling: Smoothly compresses any residual sub-sample intersample peaks
  *    into the ceiling without ANY hard digital clipping (no flat tops, zero harsh odd harmonics).
  */
-function applyLookaheadLimiter(
+export function applyLookaheadLimiter(
   buffer: AudioBuffer,
   gainDb: number,
   ceilingLinear: number
@@ -925,8 +955,9 @@ function applyLookaheadLimiter(
   const numChannels = buffer.numberOfChannels;
   const length = buffer.length;
   const sampleRate = buffer.sampleRate;
-  const offlineCtx = new OfflineAudioContext(numChannels, length, sampleRate);
-  const outBuffer = offlineCtx.createBuffer(numChannels, length, sampleRate);
+  const outBuffer = typeof OfflineAudioContext !== 'undefined'
+    ? new OfflineAudioContext(numChannels, length, sampleRate).createBuffer(numChannels, length, sampleRate)
+    : createAudioBufferPolyfill(numChannels, length, sampleRate);
   const linearGain = Math.pow(10, gainDb / 20);
   const lookaheadSamples = Math.max(16, Math.round(sampleRate * 0.0035));
   const releaseCoeff = Math.exp(-1 / (sampleRate * 0.090));

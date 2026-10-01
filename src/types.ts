@@ -201,6 +201,7 @@ export interface MasteringPlan {
   targetLufs: LoudnessTarget;
   actualAchievedLufs: number;
   character: MasteringCharacter;
+  truePeakCeilingDb?: number; // -1.0 (default) or -2.0 (conservative)
   isDynamicProtected: boolean;
   protectiveNotice?: string;
   isLimiterCapped?: boolean;
@@ -355,4 +356,72 @@ export interface StudioBookingInquiry {
   createdAt: string;
   status: 'new' | 'contacted' | 'booked' | 'archived';
   clientEmailDispatched?: boolean;
+}
+
+export interface ProcessingReceipt {
+  engineVersion: string;
+  timestamp: string;
+  originalFilename: string;
+  inputFormat: {
+    format: string;
+    sampleRate: number;
+    bitDepth: number;
+    channels: number;
+    durationSec: number;
+  };
+  outputFormat: {
+    format: string;
+    sampleRate: number;
+    bitDepth: number;
+    channels: number;
+    dither: string;
+  };
+  inputMetrics: {
+    integratedLufs: number;
+    truePeakDb: number;
+    plrDb: number;
+    lraLu: number;
+    stereoCorrelation: number;
+    crestFactorDb: number;
+    clippingEvents: number;
+  };
+  outputMetrics: {
+    integratedLufs: number;
+    truePeakDb: number;
+    plrDb: number;
+    lraLu: number;
+    stereoCorrelation: number;
+    crestFactorDb: number;
+    clippingEvents: number;
+  };
+  processingParameters: {
+    loudnessTargetLufs: number;
+    truePeakCeilingDb: number;
+    inputGainAppliedDb: number;
+    maxLimiterGainReductionDb: number;
+    monoLowTreatment: string;
+    coldStartFadeApplied: boolean;
+  };
+  verification: {
+    status: 'PASSED' | 'FAILED';
+    truePeakCompliant: boolean;
+    zeroClippingCompliant: boolean;
+    sampleRatePreserved: boolean;
+    crestIntegrityPreserved: boolean;
+    aacOvershootCheck: string;
+  };
+  gateEvaluation: {
+    outcome: 'Ready for AI Preview' | 'Revision recommended' | 'Human review recommended / Not ready for automated processing';
+    technicalStatus: 'PASS' | 'WARN' | 'BLOCK';
+    notes: string[];
+  };
+  author: string;
+}
+
+export interface QualityFeedback {
+  improvedMix: boolean | null;
+  issues: string[];
+  notes: string;
+  consentGiven: boolean;
+  timestamp: string;
 }

@@ -83,23 +83,31 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
   const updateGains = () => {
     if (!audioCtxRef.current || !origGainRef.current || !masterGainRef.current) return;
 
-    // Gain compensation for loudness match:
-    const lufsDiffDb = record.masteredAnalysis.integratedLufs - record.originalAnalysis.integratedLufs;
-    const matchGainLinear = Math.pow(10, lufsDiffDb / 20);
+    // Perceived loudness matching based on measured integrated LUFS delta:
+    const origLufs = record.originalAnalysis.integratedLufs;
+    const previewLufs = record.masteredAnalysis.integratedLufs;
+    const lufsDiffDb = previewLufs - origLufs; // Positive when preview is louder
 
     const now = audioCtxRef.current.currentTime;
 
     if (activeChannel === 'master') {
       masterGainRef.current.gain.cancelScheduledValues(now);
-      masterGainRef.current.gain.linearRampToValueAtTime(volume, now + 0.04);
+      // Attenuate louder preview to match original, preventing DAC digital clip while matching level
+      const effectivePreviewGain = (loudnessMatched && lufsDiffDb > 0)
+        ? volume * Math.pow(10, -lufsDiffDb / 20)
+        : volume;
+      masterGainRef.current.gain.linearRampToValueAtTime(effectivePreviewGain, now + 0.04);
 
       origGainRef.current.gain.cancelScheduledValues(now);
       origGainRef.current.gain.linearRampToValueAtTime(0, now + 0.04);
     } else {
       // Playing original
       origGainRef.current.gain.cancelScheduledValues(now);
-      const effectiveOrigGain = loudnessMatched ? volume * matchGainLinear : volume;
-      origGainRef.current.gain.linearRampToValueAtTime(Math.min(1.2, effectiveOrigGain), now + 0.04);
+      // If original was louder than preview, attenuate original; otherwise play at full volume
+      const effectiveOrigGain = (loudnessMatched && lufsDiffDb < 0)
+        ? volume * Math.pow(10, lufsDiffDb / 20)
+        : volume;
+      origGainRef.current.gain.linearRampToValueAtTime(effectiveOrigGain, now + 0.04);
 
       masterGainRef.current.gain.cancelScheduledValues(now);
       masterGainRef.current.gain.linearRampToValueAtTime(0, now + 0.04);
@@ -305,6 +313,38 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
     return `${mins}:${s < 10 ? '0' : ''}${s}`;
   };
 
+  // Feature 10: Accessible Keyboard Navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+      } else if (e.key === 'a' || e.key === 'A' || e.key === '1') {
+        setActiveChannel('original');
+      } else if (e.key === 'b' || e.key === 'B' || e.key === '2') {
+        setActiveChannel('master');
+      } else if (e.key === 'l' || e.key === 'L') {
+        setLoudnessMatched(prev => !prev);
+      } else if (e.key === 'r' || e.key === 'R') {
+        setIsLooping(prev => !prev);
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        seekTo(Math.max(0, currentTime - 5));
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        seekTo(Math.min(duration, currentTime + 5));
+      } else if (e.key === '0') {
+        seekTo(isUnlocked ? 0 : preview.startSec);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentTime, duration, isUnlocked, preview.startSec]);
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Header */}
@@ -374,27 +414,29 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
         {/* Top Controls: Channel Selector & Loudness Matching Toggle */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-5 border-b border-cyan-100/20">
           {/* A/B Channel Selector Switch */}
-          <div className="flex items-center bg-[#1E4263] p-1 rounded-md border border-cyan-100/20 w-full sm:w-auto">
+          <div className="flex items-center bg-[#1E4263] p-1 rounded-md border border-cyan-100/20 w-full sm:w-auto" role="group" aria-label="A/B Audio Channel Switch">
             <button
               onClick={() => setActiveChannel('original')}
-              className={`flex-1 sm:flex-none px-5 py-2 rounded text-xs uppercase tracking-wider transition-all font-medium ${
+              aria-pressed={activeChannel === 'original'}
+              className={`flex-1 sm:flex-none px-5 py-2 rounded text-xs uppercase tracking-wider transition-all font-medium focus-visible:ring-2 focus-visible:ring-[#57E6FF] ${
                 activeChannel === 'original'
                   ? 'bg-[#222222] text-white border border-cyan-100/30'
                   : 'text-slate-200 hover:text-white'
               }`}
             >
-              Original Mix
+              Original Mix [A]
             </button>
             <button
               onClick={() => setActiveChannel('master')}
-              className={`flex-1 sm:flex-none px-5 py-2 rounded text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 font-bold ${
+              aria-pressed={activeChannel === 'master'}
+              className={`flex-1 sm:flex-none px-5 py-2 rounded text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 font-bold focus-visible:ring-2 focus-visible:ring-[#57E6FF] ${
                 activeChannel === 'master'
                   ? 'bg-[#57E6FF] text-black'
                   : 'text-slate-200 hover:text-white'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>HDQTRZ Master</span>
+              <span>AI Preview [B]</span>
             </button>
           </div>
 
@@ -402,7 +444,8 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
           <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
             <button
               onClick={() => setLoudnessMatched(!loudnessMatched)}
-              className={`px-3.5 py-2 rounded-md text-xs font-medium uppercase tracking-wider flex items-center gap-2 border transition-all ${
+              aria-pressed={loudnessMatched}
+              className={`px-3.5 py-2 rounded-md text-xs font-medium uppercase tracking-wider flex items-center gap-2 border transition-all focus-visible:ring-2 focus-visible:ring-[#57E6FF] ${
                 loudnessMatched
                   ? 'bg-[#1A1A1A] border-[#57E6FF] text-[#57E6FF]'
                   : 'bg-[#1E4263] border-cyan-100/20 text-slate-200 hover:text-white'
@@ -410,7 +453,7 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
               title="Level-match the original audio with the master so you evaluate tonal clarity rather than loudness"
             >
               <Sliders className="w-3.5 h-3.5" />
-              <span>Level Match: {loudnessMatched ? 'ON' : 'OFF'}</span>
+              <span>Level Match: {loudnessMatched ? 'ON' : 'OFF'} [L]</span>
             </button>
           </div>
         </div>
@@ -418,9 +461,18 @@ export const ComparisonPlayer: React.FC<ComparisonPlayerProps> = ({
         {/* Level Matching Explanatory Note */}
         {loudnessMatched && (
           <p className="text-[11px] text-slate-200 italic text-center -mt-2 font-light">
-            ✓ Loudness compensation active: Original track gain is adjusted so you evaluate tonal clarity, width, and transient punch — not psychoacoustic volume.
+            ✓ Level-matched audition active: Playback gain is calibrated based on measured integrated LUFS to eliminate the psychoacoustic "louder sounds better" bias, ensuring objective evaluation of punch, dynamic preservation, and frequency clarity. Downloadable audio files are never altered.
           </p>
         )}
+
+        {/* Keyboard Shortcuts Hint Bar (Feature 10) */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[10px] text-slate-300 font-mono py-1 px-3 bg-[#112234] rounded-lg border border-cyan-100/10">
+          <span><kbd className="px-1 py-0.5 rounded bg-[#173653] text-[#57E6FF]">Space</kbd> Play/Pause</span>
+          <span><kbd className="px-1 py-0.5 rounded bg-[#173653] text-[#57E6FF]">A / B</kbd> Switch Channel</span>
+          <span><kbd className="px-1 py-0.5 rounded bg-[#173653] text-[#57E6FF]">L</kbd> Toggle Level-Match</span>
+          <span><kbd className="px-1 py-0.5 rounded bg-[#173653] text-[#57E6FF]">← / →</kbd> Seek ±5s</span>
+          <span><kbd className="px-1 py-0.5 rounded bg-[#173653] text-[#57E6FF]">R</kbd> Toggle Loop</span>
+        </div>
 
         {/* Waveform Visualization & Timeline Scrubber */}
         <div className="space-y-3">

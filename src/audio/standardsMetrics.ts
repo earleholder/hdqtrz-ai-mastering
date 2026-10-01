@@ -641,7 +641,7 @@ export function evaluateMixGate(
   const analysis = {
     integratedLufs: analysisInput.integratedLufs,
     truePeak: analysisInput.truePeak,
-    samplePeak: analysisInput.samplePeak ?? analysisInput.peakDbfs ?? 0,
+    samplePeak: analysisInput.samplePeak ?? (analysisInput as any).samplePeakDbfs ?? analysisInput.peakDbfs ?? -6.0,
     plr: analysisInput.plr ?? Number((analysisInput.truePeak - analysisInput.integratedLufs).toFixed(1)),
     lra: analysisInput.lra ?? 0,
     clippingEvents: analysisInput.clippingEvents ?? 0,
@@ -888,8 +888,17 @@ export function evaluateMixGate(
   }
 
   // INFO Checks (Report Notes Only - Never change overall gate result)
-  // Flat Dynamics: LRA < 3.0 LU
-  if (analysis.lra < info.flatDynamicsLraLu) {
+  // Short-program handling (< 60s) per EBU Tech 3342 (Feature 8)
+  const isShortProgram = metadata.duration !== undefined && metadata.duration < 60;
+  if (isShortProgram) {
+    rules.push({
+      check: 'Dynamics Contrast',
+      severity: 'INFO',
+      valueDisplay: `${analysis.lra.toFixed(1)} LU (Short program)`,
+      note: `Audio duration is under 60 seconds (${metadata.duration.toFixed(0)}s). Per EBU Tech 3342, Loudness Range (LRA) requires longer statistical windows to be statistically reliable. This measurement is low-confidence and not decision-driving.`
+    });
+  } else if (analysis.lra < info.flatDynamicsLraLu) {
+    // Flat Dynamics: LRA < 3.0 LU for full-length songs (>= 60s)
     const note = `Your song stays at nearly the same level from start to finish (${analysis.lra.toFixed(1)} LU range). If you want the chorus to lift, build that contrast in the mix.`;
     rules.push({
       check: 'Dynamics Contrast',
