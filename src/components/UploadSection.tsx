@@ -128,29 +128,14 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAn
       return;
     }
 
-    // Disallow MP3 files specifically with clear professional guidance
-    const nameLower = file.name.toLowerCase();
-    const isMp3 = nameLower.endsWith('.mp3') || file.type === 'audio/mpeg' || file.type === 'audio/mp3';
-    if (isMp3) {
-      setUploadError('MP3 files cannot be accepted for professional mastering. Lossy compression degrades transients, smears stereo imaging, and causes phase distortion that mastering algorithms will severely amplify. Please export and upload an uncompressed 24-bit WAV, AIFF, or lossless FLAC file from your DAW.');
-      return;
-    }
-
-    // Validate format: Strictly lossless / uncompressed (WAV, AIFF, FLAC)
-    let format: 'WAV' | 'AIFF' | 'FLAC' = 'WAV';
-    if (nameLower.endsWith('.wav') || file.type === 'audio/wav' || file.type === 'audio/x-wav') format = 'WAV';
-    else if (nameLower.endsWith('.aiff') || nameLower.endsWith('.aif') || file.type === 'audio/aiff' || file.type === 'audio/x-aiff') format = 'AIFF';
-    else if (nameLower.endsWith('.flac') || file.type === 'audio/flac') format = 'FLAC';
-    else {
-      setUploadError('Unsupported format. To ensure mastering fidelity, please upload an uncompressed stereo WAV (recommended 24-bit), AIFF, or lossless FLAC file. MP3 and other lossy files are not supported.');
-      return;
-    }
-
     setSelectedFile(file);
 
     try {
-      const { buffer: audioBuffer, ctx } = await robustDecodeAudio(file);
-      audioContextRef.current = ctx;
+      const decodedResult = await robustDecodeAudio(file);
+      const audioBuffer = decodedResult.buffer;
+      if (decodedResult.ctx) {
+        audioContextRef.current = decodedResult.ctx;
+      }
 
       // Validate duration: Max 15 minutes (900 seconds)
       if (audioBuffer.duration > 900) {
@@ -162,19 +147,20 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAn
 
       const meta: TrackMetadata = {
         name: file.name,
-        format,
-        sampleRate: audioBuffer.sampleRate,
-        bitDepth: 24, // High-precision float decoded
+        format: decodedResult.format,
+        sampleRate: decodedResult.sampleRate,
+        bitDepth: decodedResult.bitDepth,
         duration: audioBuffer.duration,
         fileSize: file.size,
-        channels: audioBuffer.numberOfChannels,
+        channels: decodedResult.channels,
+        isLossy: decodedResult.isLossy,
         file
       };
       setMetadata(meta);
     } catch (err: unknown) {
-      console.error('[HDQTRZ Audio Decode Error]', err);
+      console.error('[Audio Decode Error]', err);
       const msg = err instanceof Error ? err.message : 'Unable to decode audio data.';
-      setUploadError(`${msg} Please ensure the file is an uncorrupted, uncompressed 24-bit stereo WAV or AIFF file.`);
+      setUploadError(`${msg} Please ensure the file is an uncorrupted audio file (WAV, AIFF, FLAC, MP3, AAC, OGG).`);
     }
   };
 

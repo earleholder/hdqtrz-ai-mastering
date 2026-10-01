@@ -16,6 +16,7 @@ import {
   SaturationIntensity
 } from '../types';
 import { computeReferenceMatchingEQ } from './analyzer';
+import { CONFIG } from './config';
 
 export interface MasteringDirectives {
   saturationFlavor?: SaturationFlavor;
@@ -23,12 +24,13 @@ export interface MasteringDirectives {
   dynamicEQMode?: DynamicEQMode;
   multibandMode?: MultibandMode;
   referenceProfile?: ReferenceTrackProfile;
+  applyColdStartFade?: boolean;
 }
 
 export function createMasteringPlan(
   analysis: AudioAnalysis,
   genre: Genre,
-  targetLufs: LoudnessTarget,
+  targetLufs: LoudnessTarget = CONFIG.processing.defaultLoudnessTarget,
   character: MasteringCharacter = 'transparent',
   directives?: MasteringDirectives
 ): MasteringPlan {
@@ -38,21 +40,27 @@ export function createMasteringPlan(
 
   decisionLog.push(`Analyzing ${genre} context with ${character} character profile.`);
 
-  // 1. Dynamic Protection Check:
-  // In LUFS, values closer to 0 are louder (-9 LUFS is much louder than -14 LUFS).
-  // For dynamic targets (-14, -13, -12, -11 LUFS), always honor the exact target.
-  // Dynamic protection only engages if the user requested an extreme loud target (>= -9 LUFS)
-  // on a very wide-dynamic mix where forcing it would cause severe transient destruction.
+  // 1. Loudness Policy (Section 7.4):
+  // - Default target -14 LUFS. Allowed: -16 / -14 / -12 / -11.
+  // - Never output quieter than the input unless the input breaks the true-peak ceiling (-1.0 dBTP).
+  // - If the input is already at or louder than the target, don't add gain. Apply only true-peak ceiling and mono low end.
   let actualAchievedLufs: number = targetLufs;
 
-  if (targetLufs >= -9 && analysis.dynamicRange >= 15.5 && (targetLufs - analysis.integratedLufs) > 11.0) {
-    // Protect the transients on extreme loudness requests
-    actualAchievedLufs = -10.5;
-    isDynamicProtected = true;
-    protectiveNotice = 'HDQTRZ AI protected the dynamics of your mix and mastered slightly below your requested loudness (-10.5 LUFS) to prevent audible distortion.';
-    decisionLog.push('Dynamic Protection triggered: Extreme limiting prevented to preserve musical groove and avoid audible pumping.');
+  if (analysis.integratedLufs >= targetLufs) {
+    // Input is already at or louder than requested target: do not add gain!
+    actualAchievedLufs = analysis.integratedLufs;
+    decisionLog.push(`Input mix is already loud (${analysis.integratedLufs.toFixed(1)} LUFS >= target ${targetLufs} LUFS). Retaining input loudness; applying true-peak ceiling and mono sub control only.`);
   } else {
     decisionLog.push(`Target loudness established at ${targetLufs} LUFS integrated.`);
+  }
+
+  // Cold-start fade option: on by default per Section 7.5
+  const hasColdStart = analysis.firstSampleDbfs !== undefined
+    ? analysis.firstSampleDbfs > CONFIG.info.coldStartDbfs
+    : false;
+  const applyColdStartFade = directives?.applyColdStartFade ?? hasColdStart;
+  if (applyColdStartFade && hasColdStart) {
+    decisionLog.push('Cold start detected: 3 ms raised cosine fade-in enabled to eliminate playback click.');
   }
 
   // 2. Broad Analog EQ Decision Engine:
@@ -520,15 +528,14 @@ export function createMasteringPlan(
     decisionLog.push('Stereo width verified within optimal broadcast range; no artificial widening applied.');
   }
 
-  // 8. True-Peak Limiter:
-  // Target ceiling -1.0 dBTP (industry release standard)
-  const ceilingDb = -1.0;
-  const gainNeeded = actualAchievedLufs - analysis.integratedLufs;
+  // 8. True-Peak Limiter (Section 7.3):
+  // Target ceiling -1.0 dBTP
+  const ceilingDb = CONFIG.processing.truePeakCeilingDb; // -1.0 dBTP
+  const gainNeeded = Math.max(0, actualAchievedLufs - analysis.integratedLufs);
   const limiterGain = Number(gainNeeded.toFixed(1));
-  const estimatedLimiterReduction = Math.max(0.1, Number((Math.max(0, gainNeeded) * 0.35).toFixed(1)));
+  const estimatedLimiterReduction = Math.max(0.0, Number((gainNeeded * 0.35).toFixed(1)));
 
-  decisionLog.push(`True-Peak limiter configured: Target ceiling ${ceilingDb} dBTP, ${limiterGain >= 0 ? `+${limiterGain}` : limiterGain} dB transparent make-up gain.`);
-  decisionLog.push('Analog Saturation: Polyphase 8x Anti-Aliasing Oversampling active (< -96 dB foldback distortion).');
+  decisionLog.push(`True-Peak limiter configured: Target ceiling ${ceilingDb} dBTP, ${limiterGain >= 0 ? `+${limiterGain}` : limiterGain} dB make-up gain.`);
 
   return {
     genre,
@@ -537,6 +544,7 @@ export function createMasteringPlan(
     character,
     isDynamicProtected,
     protectiveNotice,
+    applyColdStartFade,
     eqApplied,
     eqFilters,
     dynamicEQApplied,
@@ -568,11 +576,12 @@ export function createMasteringPlan(
     },
     stereoApplied,
     stereoWidthFactor,
-    subMonoCutoffHz,
+    subMonoCutoffHz: CONFIG.processing.monoLowEndCutoffHz,
     limiter: {
       inputGainDb: limiterGain,
       ceilingDb,
-      estimatedGainReductionDb: estimatedLimiterReduction
+      estimatedGainReductionDb: estimatedLimiterReduction,
+      maxLimiterReductionDb: CONFIG.processing.maxLimiterGainReductionDb
     },
     decisionLog
   };
@@ -691,7 +700,11 @@ export function generateMasteringReport(
     saturationFlavor: plan.saturation.flavor,
     multibandPlan: plan.multiband,
     referenceProfile: plan.referenceMatching?.referenceProfile,
-    aiAssessment
+    aiAssessment,
+    gateStatus: analysis.gateEvaluation?.status,
+    mixNotes: analysis.gateEvaluation?.notes,
+    limiterNotice: plan.limiterCapNotice,
+    coldStartFadeApplied: plan.applyColdStartFade
   };
 }
 

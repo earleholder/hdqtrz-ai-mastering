@@ -1,4 +1,15 @@
-import { AudioAnalysis, EQAdjustment, MixIssue, ReferenceTrackProfile, SpectralBands } from '../types';
+import { AudioAnalysis, EQAdjustment, MixIssue, ReferenceTrackProfile, SpectralBands, TrackMetadata } from '../types';
+import {
+  calculateTruePeak4x,
+  computeLoudnessAndLra,
+  countClippingEvents,
+  calculateShortTermCrestMedian,
+  calculateHighFrequencyDrop,
+  calculateStereoCorrelation,
+  calculateDCOffset,
+  calculateStartEndLevels,
+  evaluateMixGate
+} from './standardsMetrics';
 
 /**
  * Real client-side audio analyzer using Web Audio API buffer.
@@ -232,7 +243,7 @@ function calculateTruePeak(channelLeft: Float32Array, channelRight: Float32Array
   return Number((20 * Math.log10(maxTruePeak)).toFixed(2));
 }
 
-export function analyzeAudioBuffer(buffer: AudioBuffer): AudioAnalysis {
+export function analyzeAudioBuffer(buffer: AudioBuffer, metadata?: TrackMetadata): AudioAnalysis {
   const numChannels = buffer.numberOfChannels;
   const sampleRate = buffer.sampleRate;
   const length = buffer.length;
@@ -306,8 +317,8 @@ export function analyzeAudioBuffer(buffer: AudioBuffer): AudioAnalysis {
   const peakDbfs = peakVal > 0 ? 20 * Math.log10(peakVal) : -100;
   const rmsDbfs = avgRms > 0 ? 20 * Math.log10(avgRms) : -100;
 
-  // True Peak estimation using 4x Catmull-Rom cubic interpolation
-  const truePeak = calculateTruePeak(leftChannel, rightChannel);
+  // Section 4.2: True Peak estimation using 4x polyphase FIR interpolation per BS.1770-4 Annex 2
+  const truePeak = calculateTruePeak4x(leftChannel, rightChannel);
 
   // Crest factor, reported as peak-to-average dynamic range.
   const crestFactor = Math.max(0, peakDbfs - rmsDbfs);
@@ -317,10 +328,12 @@ export function analyzeAudioBuffer(buffer: AudioBuffer): AudioAnalysis {
   const dcLeft = Math.abs(sumLeft / length);
   const dcRight = Math.abs(sumRight / length);
   const dcOffset = Math.max(dcLeft, dcRight) * 100; // in percent
+  const dcOffsetRaw = calculateDCOffset(leftChannel, rightChannel);
 
   // Stereo Phase Correlation (-1 to +1)
   const correlationDenom = Math.sqrt(leftEnergy * rightEnergy) || 1;
   const phaseCorrelation = Math.max(-1, Math.min(1, correlationNumerator / correlationDenom));
+  const stereoCorrelation = calculateStereoCorrelation(leftChannel, rightChannel);
 
   // Channel balance (L vs R dB)
   const channelBalanceDb = rmsLeft > 0 && rmsRight > 0
@@ -331,12 +344,25 @@ export function analyzeAudioBuffer(buffer: AudioBuffer): AudioAnalysis {
   // Side and Mid RMS energy.
   const stereoWidth = Number(Math.min(2, Math.sqrt(sideEnergy / Math.max(midEnergy, 1e-20))).toFixed(2));
 
-  // 2. Standard ITU-R BS.1770-4 Gated LUFS Calculation
+  // 2. Standard ITU-R BS.1770-4 Gated LUFS & EBU Tech 3342 LRA Calculation
   const kCoeffs = getKWeightingCoefficients(sampleRate);
   const leftK = filterKWeightingChannel(leftChannel, kCoeffs);
   const rightK = filterKWeightingChannel(rightChannel, kCoeffs);
 
-  const { integratedLufs, shortTermLufs, momentaryLufs } = computeLufsMeasures(leftK, rightK, sampleRate);
+  const {
+    integratedLufs,
+    shortTermLufs,
+    momentaryLufs,
+    lra,
+    shortTermProfile
+  } = computeLoudnessAndLra(leftK, rightK, sampleRate);
+
+  const samplePeak = Number(peakDbfs.toFixed(2));
+  const plr = Number((truePeak - integratedLufs).toFixed(1));
+  const clippingEvents = countClippingEvents(leftChannel, rightChannel);
+  const shortTermCrestMedian = calculateShortTermCrestMedian(leftChannel, rightChannel, sampleRate);
+  const hfDropDb = calculateHighFrequencyDrop(leftChannel, rightChannel, sampleRate);
+  const { firstSampleDbfs, lastSampleDbfs } = calculateStartEndLevels(leftChannel, rightChannel);
 
   // 3. Spectral Energy Estimation across 8 Acoustic Bands
   // Representative band-energy sampling distributed across the full song.
@@ -492,28 +518,68 @@ export function analyzeAudioBuffer(buffer: AudioBuffer): AudioAnalysis {
     simpleSummary = 'Your mix demonstrates solid balance across the spectrum with good transient definition and appropriate headroom for mastering.';
   }
 
+  const effectiveMetadata: TrackMetadata = metadata || {
+    name: 'Audio Track',
+    format: 'WAV',
+    sampleRate,
+    bitDepth: 24,
+    duration,
+    fileSize: length * numChannels * 3,
+    channels: numChannels
+  };
+
+  const gateEvaluation = evaluateMixGate(
+    {
+      integratedLufs,
+      truePeak: Number(truePeak.toFixed(2)),
+      samplePeak,
+      plr,
+      lra,
+      clippingEvents,
+      shortTermCrestMedian,
+      stereoCorrelation,
+      dcOffsetRaw,
+      hfDropDb,
+      firstSampleDbfs,
+      lastSampleDbfs
+    },
+    effectiveMetadata
+  );
+
   return {
     integratedLufs,
     shortTermLufs,
     momentaryLufs,
     truePeak: Number(truePeak.toFixed(2)),
     peakDbfs: Number(peakDbfs.toFixed(2)),
+    samplePeak,
     rmsDbfs: Number(rmsDbfs.toFixed(2)),
     dynamicRange,
     crestFactor: Number(crestFactor.toFixed(2)),
+    plr,
+    lra,
+    shortTermProfile,
+    clippingEvents,
+    shortTermCrestMedian,
+    hfDropDb,
     stereoWidth,
     phaseCorrelation: Number(phaseCorrelation.toFixed(2)),
+    stereoCorrelation,
     lowEnergyPct,
     midEnergyPct,
     highEnergyPct,
     spectralBands,
     dcOffset: Number(dcOffset.toFixed(3)),
+    dcOffsetRaw,
     clippingSamples: clippingCount,
+    firstSampleDbfs,
+    lastSampleDbfs,
     intersamplePeaksPossible: truePeak > -0.5,
     channelBalanceDb,
     detectedIssues,
     simpleSummary,
-    waveformOverview
+    waveformOverview,
+    gateEvaluation
   };
 }
 

@@ -1,16 +1,18 @@
 import { AudioAnalysis, DynamicEQBand, MasteringPlan } from '../types';
 import { analyzeAudioBuffer } from './analyzer';
+import { CONFIG } from './config';
 
 /**
  * High-Precision Web Audio DSP Mastering Engine
  * 
  * Implements linear-phase & minimum-phase DSP architectures:
+ * - Cold-start 3 ms raised cosine fade-in (Section 7.5)
  * - Mid/Side Elliptical High-Pass (sub mono-summing with zero center-channel phase alteration)
  * - True Biquad Dynamic Peaking Bell Filter (phase-pure dynamic resonance suppression)
  * - Phase-Aligned Linkwitz-Riley 4th-Order (LR4) Multiband Dynamics Crossover
  * - 4x Linear-Phase Oversampled Harmonic Saturation with Exact Group-Delay Latency Compensation
- * - True Lookahead Brickwall Limiter with Soft-Knee Saturation (no hard clipping)
- * - Iterative Loudness QC Loop
+ * - True-Peak Limiter with >= 4x Oversampled Detection and 2 dB Gain Reduction Cap (Section 7.3)
+ * - Section 7.6 Output Verification & Re-analysis
  */
 
 export interface RenderResult {
@@ -22,6 +24,21 @@ export interface RenderResult {
   qcIterations: number;
 }
 
+export function applyColdStartFadeIn(buffer: AudioBuffer, durationMs = 3.0): void {
+  const numChannels = buffer.numberOfChannels;
+  const length = buffer.length;
+  const sampleRate = buffer.sampleRate;
+  const fadeSamples = Math.min(length, Math.max(1, Math.round((sampleRate * durationMs) / 1000)));
+
+  for (let c = 0; c < numChannels; c++) {
+    const data = buffer.getChannelData(c);
+    for (let i = 0; i < fadeSamples; i++) {
+      const factor = 0.5 * (1.0 - Math.cos((Math.PI * i) / fadeSamples));
+      data[i] *= factor;
+    }
+  }
+}
+
 export async function processMasteringDSP(
   sourceBuffer: AudioBuffer,
   plan: MasteringPlan,
@@ -31,24 +48,36 @@ export async function processMasteringDSP(
   const numChannels = sourceBuffer.numberOfChannels;
   const length = sourceBuffer.length;
 
-  onProgress?.('Preparing DSP Signal Chain...', 15);
+  onProgress?.('Preparing DSP Signal Chain...', 10);
+
+  // Initial source analysis
+  const sourceAnalysis = analyzeAudioBuffer(sourceBuffer);
 
   // 1. Render Analog EQ & Bus Compression in OfflineAudioContext at pristine 64-bit float precision
   const offlineCtx = new OfflineAudioContext(numChannels, length, sampleRate);
+  const workBuffer = offlineCtx.createBuffer(numChannels, length, sampleRate);
+  for (let c = 0; c < numChannels; c++) {
+    workBuffer.copyToChannel(sourceBuffer.getChannelData(c), c);
+  }
+
+  // Section 7.5: Cold-start fade-in (3 ms raised cosine, on by default)
+  const hasColdStart = sourceAnalysis.firstSampleDbfs !== undefined
+    ? sourceAnalysis.firstSampleDbfs > CONFIG.info.coldStartDbfs
+    : false;
+  if (plan.applyColdStartFade !== false && hasColdStart) {
+    applyColdStartFadeIn(workBuffer, CONFIG.processing.coldStartFadeInMs);
+  }
 
   const sourceNode = offlineCtx.createBufferSource();
-  sourceNode.buffer = sourceBuffer;
+  sourceNode.buffer = workBuffer;
 
   let lastNode: AudioNode = sourceNode;
 
-  // Pre-Gain Staging: normalize every usable upload to -5 dBFS before the
-  // mastering processors. This gives fixed-threshold compressors and dynamic
-  // processors a consistent operating level whether the source arrives very
-  // quiet or already too loud. The gain is bounded for malformed or nearly
-  // silent files, and final LUFS calibration still happens after processing.
-  const sourceAnalysis = analyzeAudioBuffer(sourceBuffer);
-  const inputNormalizationTargetDbfs = -5.0;
-  const inputNormalizationGainDb = sourceAnalysis.truePeak > -80
+  // Pre-Gain Staging: normalize usable upload to consistent operating level (-5 dBFS)
+  // unless source is already louder than or equal to target
+  const isInputAlreadyLoud = sourceAnalysis.integratedLufs >= plan.targetLufs;
+  const inputNormalizationTargetDbfs = isInputAlreadyLoud ? sourceAnalysis.truePeak : -5.0;
+  const inputNormalizationGainDb = !isInputAlreadyLoud && sourceAnalysis.truePeak > -80
     ? Math.max(-24, Math.min(24, inputNormalizationTargetDbfs - sourceAnalysis.truePeak))
     : 0;
   const preGain = offlineCtx.createGain();
@@ -71,7 +100,7 @@ export async function processMasteringDSP(
     }
   }
 
-  // Dynamic Bus Compression Stage (Optional, transparent glue)
+  // Dynamic Bus Compression Stage
   if (plan.compressionApplied) {
     const compressor = offlineCtx.createDynamicsCompressor();
     compressor.threshold.value = plan.compression.thresholdDb;
@@ -87,32 +116,33 @@ export async function processMasteringDSP(
   lastNode.connect(offlineCtx.destination);
   sourceNode.start(0);
 
-  onProgress?.('Rendering Analog EQ & Bus Dynamics...', 32);
+  onProgress?.('Rendering Analog EQ & Bus Dynamics...', 28);
   let conditionedBuffer = await offlineCtx.startRendering();
 
   // 2. 4-Band Downward Multiband Compressor (Linkwitz-Riley LR4 phase-matched crossovers)
   if (plan.multibandApplied && plan.multiband && plan.multiband.bands && plan.multiband.bands.length > 0) {
-    onProgress?.(`Applying 4-Band Multiband Compression (${plan.multiband.circuitType.toUpperCase()})...`, 38);
+    onProgress?.(`Applying 4-Band Multiband Compression (${plan.multiband.circuitType.toUpperCase()})...`, 35);
     conditionedBuffer = apply4BandMultibandCompression(conditionedBuffer, plan.multiband);
   }
 
   // 3. Multi-Band Dynamic EQ & Resonance Suppression (True Minimum-Phase Peaking Bells)
   if (plan.dynamicEQApplied && plan.dynamicEQBands && plan.dynamicEQBands.length > 0) {
-    onProgress?.('Executing Multi-Band Dynamic Resonance Suppression...', 44);
+    onProgress?.('Executing Multi-Band Dynamic Resonance Suppression...', 42);
     conditionedBuffer = applyDynamicResonanceEQ(conditionedBuffer, plan.dynamicEQBands);
   }
 
   // 4. Analog Harmonic Saturation Stage (4x Linear-Phase Oversampled with Delay Compensation)
   if (plan.saturationApplied && plan.saturation && plan.saturation.flavor !== 'none') {
-    onProgress?.(`Applying Analog Harmonic Saturation (${plan.saturation.flavor.toUpperCase()} • 4x Oversampled)...`, 50);
+    onProgress?.(`Applying Analog Harmonic Saturation (${plan.saturation.flavor.toUpperCase()} • 4x Oversampled)...`, 48);
     conditionedBuffer = applyAnalogHarmonicSaturationWithOversampling(conditionedBuffer, plan.saturation);
   }
 
-  // 5. Mid/Side Elliptical Sub Mono-Summing & Stereo Width (Zero phase alteration on center Mid channel)
-  if (numChannels >= 2 && (plan.subMonoCutoffHz > 0 || plan.stereoWidthFactor !== 1.0)) {
+  // 5. Mid/Side Elliptical Sub Mono-Summing (Section 7.2: Side channel low cut below ~100 Hz)
+  const subCutoff = plan.subMonoCutoffHz || CONFIG.processing.monoLowEndCutoffHz;
+  if (numChannels >= 2 && subCutoff > 0) {
     conditionedBuffer = applySubMonoAndStereoWidth(
       conditionedBuffer,
-      plan.subMonoCutoffHz || 85,
+      subCutoff,
       plan.stereoWidthFactor || 1.0
     );
   }
@@ -121,41 +151,44 @@ export async function processMasteringDSP(
   const preAnalysis = analyzeAudioBuffer(conditionedBuffer);
   const preLufs = preAnalysis.integratedLufs;
 
-  // Calculate requested make-up gain, then cap it by the maximum permitted
-  // limiter reduction. Loudness targets are subordinate to clean, undistorted audio.
-  const requestedLimiterGainDb = plan.actualAchievedLufs - preLufs;
+  // Section 7.3 & 7.4: Loudness Policy & Limiter Cap
+  // - Ceiling: -1.0 dBTP (configured with slight reserve to ensure reconstruction <= -1.0 dBTP)
+  const limiterCeilingDb = CONFIG.processing.truePeakCeilingDb - 0.05; // -1.05 dBTP
+  const ceilingLinear = Math.pow(10, limiterCeilingDb / 20);
+
+  // - Cap limiter gain reduction at 2 dB peak
+  const maxLimiterReductionDb = CONFIG.processing.maxLimiterGainReductionDb; // 2.0 dB
+  const maxSafeLimiterGainDb = Math.max(
+    -6,
+    limiterCeilingDb - preAnalysis.truePeak + maxLimiterReductionDb
+  );
+
+  let requestedLimiterGainDb = plan.actualAchievedLufs - preLufs;
+
+  // Section 7.4: If input is already at or louder than the target, don't add gain.
+  // Apply only the true-peak ceiling and mono low end.
+  if (isInputAlreadyLoud) {
+    requestedLimiterGainDb = Math.min(0, limiterCeilingDb - preAnalysis.truePeak);
+  }
+
+  let currentLimiterGain = Math.max(
+    -6,
+    Math.min(requestedLimiterGainDb, maxSafeLimiterGainDb)
+  );
+
+  if (requestedLimiterGainDb > maxSafeLimiterGainDb) {
+    plan.isLimiterCapped = true;
+  }
 
   let qcPassed = false;
   let qcIterations = 0;
   let finalBuffer: AudioBuffer = conditionedBuffer;
   let finalAnalysis: AudioAnalysis = preAnalysis;
 
-  const ceilingDb = plan.limiter.ceilingDb;
-  const reconstructionReserveDb = 1.0;
-  const limiterCeilingDb = ceilingDb - reconstructionReserveDb;
-  const ceilingLinear = Math.pow(10, limiterCeilingDb / 20);
-
-  // Dynamic commercial targets need slightly more transient control than
-  // streaming-oriented targets. Keep the budget conservative, but do not let
-  // a fixed 4 dB ceiling silently miss a user-selected -11, -10, or -9 LUFS
-  // target after the input has been gain-staged correctly.
-  const maxLimiterReductionDb = plan.actualAchievedLufs >= -11
-    ? Math.min(8.5, 6.5 + Math.max(0, plan.actualAchievedLufs + 11))
-    : 4.0;
-  const maxSafeLimiterGainDb = Math.max(
-    -6,
-    Math.min(14, limiterCeilingDb - preAnalysis.truePeak + maxLimiterReductionDb)
-  );
-  let currentLimiterGain = Math.max(
-    -6,
-    Math.min(requestedLimiterGainDb, maxSafeLimiterGainDb)
-  );
-
-  // 7. Iterative Quality Control (QC) Loop:
-  // Calibrates make-up gain so the rendered master lands precisely on target LUFS without over-limiting
+  // 7. Iterative Quality Control (QC) Loop
   while (!qcPassed && qcIterations < 5) {
     qcIterations++;
-    onProgress?.(`Applying Mastering Limiter & Loudness Calibration (Pass ${qcIterations})...`, 55 + qcIterations * 12);
+    onProgress?.(`Applying True-Peak Limiter & Loudness Calibration (Pass ${qcIterations})...`, 55 + qcIterations * 7);
 
     const processedBuffer = applyLookaheadLimiter(
       conditionedBuffer,
@@ -164,25 +197,19 @@ export async function processMasteringDSP(
     );
 
     const analysis = analyzeAudioBuffer(processedBuffer);
-
-    // Difference between target and measured master loudness
     const lufsDiscrepancy = plan.actualAchievedLufs - analysis.integratedLufs;
     const isLoudnessAccurate = Math.abs(lufsDiscrepancy) <= 0.2;
-    const isPeakCompliant = analysis.truePeak <= limiterCeilingDb + 0.05;
+    const isPeakCompliant = analysis.truePeak <= -1.0;
 
-    if (isLoudnessAccurate && isPeakCompliant) {
+    if ((isLoudnessAccurate && isPeakCompliant) || isInputAlreadyLoud) {
       qcPassed = true;
       finalBuffer = processedBuffer;
       finalAnalysis = analysis;
     } else if (qcIterations >= 5) {
-      // Keep the safest render after the last calibration pass. Never override a
-      // failed peak check merely because the iteration budget has been exhausted.
       finalBuffer = processedBuffer;
       finalAnalysis = analysis;
       qcPassed = isPeakCompliant;
     } else {
-      // Damped adjustment with a strict safety cap. If the requested LUFS
-      // cannot be reached cleanly, preserve the safer master instead.
       currentLimiterGain = Math.max(
         -6,
         Math.min(maxSafeLimiterGainDb, currentLimiterGain + lufsDiscrepancy * 0.65)
@@ -192,9 +219,55 @@ export async function processMasteringDSP(
     }
   }
 
-  onProgress?.('Encoding Master Audio Files...', 95);
+  // If limiter had to be capped to preserve transients, record notice
+  if (plan.isLimiterCapped || finalAnalysis.integratedLufs < plan.actualAchievedLufs - 0.25) {
+    plan.isLimiterCapped = true;
+    plan.limiterCapNotice = `We stopped at ${finalAnalysis.integratedLufs.toFixed(1)} LUFS to keep your transients intact.`;
+  }
 
-  // Encode WAV deliverables. MP3 is encoded on demand after payment.
+  // Section 7.6: Mandatory Post-Output Reanalysis and Output Verification
+  onProgress?.('Verifying Output Compliance (BS.1770-4 / EBU R128)...', 90);
+  let postAnalysis = analyzeAudioBuffer(finalBuffer);
+
+  let verificationPasses = 0;
+  while (verificationPasses < 3) {
+    const truePeakPass = postAnalysis.truePeak <= -0.99; // <= -1.0 dBTP
+    const clippingPass = (postAnalysis.clippingEvents ?? 0) === 0;
+    const sampleRatePass = finalBuffer.sampleRate === sampleRate;
+    const inputCrest = sourceAnalysis.shortTermCrestMedian ?? sourceAnalysis.crestFactor;
+    const outputCrest = postAnalysis.shortTermCrestMedian ?? postAnalysis.crestFactor;
+    const crestPass = outputCrest >= inputCrest - 1.05; // crest hasn't fallen > 1 dB
+
+    if (truePeakPass && clippingPass && sampleRatePass && crestPass) {
+      break;
+    }
+
+    // Safety trim
+    verificationPasses++;
+    const trimGainDb = -0.2 * verificationPasses;
+    finalBuffer = applyLookaheadLimiter(finalBuffer, trimGainDb, Math.pow(10, -1.05 / 20));
+    postAnalysis = analyzeAudioBuffer(finalBuffer);
+  }
+
+  // Final verification check: Never deliver a file that fails these checks
+  const finalTruePeakPass = postAnalysis.truePeak <= -0.99;
+  const finalClippingPass = (postAnalysis.clippingEvents ?? 0) === 0;
+  const finalSampleRatePass = finalBuffer.sampleRate === sampleRate;
+  const inputCrest = sourceAnalysis.shortTermCrestMedian ?? sourceAnalysis.crestFactor;
+  const outputCrest = postAnalysis.shortTermCrestMedian ?? postAnalysis.crestFactor;
+  const finalCrestPass = outputCrest >= inputCrest - 1.05;
+
+  if (!finalTruePeakPass || !finalClippingPass || !finalSampleRatePass || !finalCrestPass) {
+    throw new Error(
+      `Mastering output verification failed: Output did not meet safety criteria (True Peak: ${postAnalysis.truePeak} dBTP, Clipping: ${postAnalysis.clippingEvents}, Crest: ${outputCrest} dB).`
+    );
+  }
+
+  finalAnalysis = postAnalysis;
+
+  onProgress?.('Encoding 24-bit PCM Audio with TPDF Dither...', 96);
+
+  // Encode 24-bit WAV deliverable with TPDF dither (Section 7.1)
   const wav24Blob = audioBufferToWavBlob(finalBuffer, 24);
   const wav16Blob = audioBufferToWavBlob(finalBuffer, 16);
   const mp3Blob = new Blob([], { type: 'audio/mpeg' });
@@ -872,6 +945,30 @@ function applyLookaheadLimiter(
     conditioned.push(channel);
   }
 
+  // 4x oversampled intersample peak detection for lookahead envelope (Section 7.3)
+  const candidateThreshold = ceilingLinear * 0.707;
+  for (let c = 0; c < numChannels; c++) {
+    const ch = conditioned[c];
+    for (let i = 1; i < length - 2; i++) {
+      if (Math.abs(ch[i]) >= candidateThreshold) {
+        const y0 = ch[i - 1];
+        const y1 = ch[i];
+        const y2 = ch[i + 1];
+        const y3 = ch[i + 2];
+        const a = -0.5 * y0 + 1.5 * y1 - 1.5 * y2 + 0.5 * y3;
+        const b = y0 - 2.5 * y1 + 2.0 * y2 - 0.5 * y3;
+        const cCoeff = -0.5 * y0 + 0.5 * y2;
+        const d = y1;
+        for (const frac of [0.25, 0.5, 0.75]) {
+          const interp = Math.abs(a * frac * frac * frac + b * frac * frac + cCoeff * frac + d);
+          if (interp > linkedPeak[i]) {
+            linkedPeak[i] = interp;
+          }
+        }
+      }
+    }
+  }
+
   // Exact future-window peak using a monotonic deque. This is a true offline
   // lookahead detector: reduction begins before a peak and never depends on a
   // discontinuous waveshaper.
@@ -912,8 +1009,6 @@ function applyLookaheadLimiter(
     const src = conditioned[c];
     for (let i = 0; i < length; i++) {
       const value = src[i] * gainEnvelope[i];
-      // Numerical safety only. The lookahead envelope should already guarantee
-      // compliance, so this clamp should not shape ordinary program material.
       dest[i] = Math.max(-ceilingLinear, Math.min(ceilingLinear, value));
     }
   }
@@ -927,6 +1022,7 @@ function applyLookaheadLimiter(
 
 /**
  * Convert AudioBuffer to Broadcast Wave Format (WAV) Blob (16-bit or 24-bit PCM).
+ * Applies TPDF dither when reducing float to 24-bit or 16-bit PCM (Section 7.1).
  */
 export function audioBufferToWavBlob(buffer: AudioBuffer, bitDepth: 16 | 24 = 24): Blob {
   const numChannels = buffer.numberOfChannels;
@@ -970,8 +1066,7 @@ export function audioBufferToWavBlob(buffer: AudioBuffer, bitDepth: 16 | 24 = 24
   if (bitDepth === 16) {
     for (let i = 0; i < numSamples; i++) {
       for (let c = 0; c < numChannels; c++) {
-        // One LSB peak-to-peak TPDF dither prevents correlated truncation
-        // distortion when reducing the floating-point master to 16-bit PCM.
+        // TPDF dither: 1 LSB of 16-bit PCM
         const dither = (Math.random() - Math.random()) / 0x8000;
         const s = Math.max(-1, Math.min(1, channels[c][i] + dither));
         const int16 = s < 0 ? Math.round(s * 0x8000) : Math.round(s * 0x7FFF);
@@ -980,11 +1075,13 @@ export function audioBufferToWavBlob(buffer: AudioBuffer, bitDepth: 16 | 24 = 24
       }
     }
   } else {
-    // 24-bit PCM
+    // 24-bit PCM with TPDF dither (Section 7.1)
     for (let i = 0; i < numSamples; i++) {
       for (let c = 0; c < numChannels; c++) {
-        const s = Math.max(-1, Math.min(1, channels[c][i]));
-        const int24 = Math.floor(s < 0 ? s * 0x800000 : s * 0x7FFFFF);
+        // TPDF dither: 1 LSB of 24-bit PCM
+        const dither = (Math.random() - Math.random()) / 0x800000;
+        const s = Math.max(-1, Math.min(1, channels[c][i] + dither));
+        const int24 = Math.round(s < 0 ? s * 0x800000 : s * 0x7fffff);
         view.setUint8(offset, int24 & 0xff);
         view.setUint8(offset + 1, (int24 >> 8) & 0xff);
         view.setUint8(offset + 2, (int24 >> 16) & 0xff);

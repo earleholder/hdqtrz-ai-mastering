@@ -53,11 +53,12 @@ export default function App() {
 
   // Directives
   const [selectedGenre, setSelectedGenre] = useState<Genre>('Hip Hop / Rap');
-  const [selectedLufs, setSelectedLufs] = useState<LoudnessTarget>(-11);
+  const [selectedLufs, setSelectedLufs] = useState<LoudnessTarget>(-14);
   const [selectedCharacter, setSelectedCharacter] = useState<MasteringCharacter>('transparent');
   const [selectedDynamicEQMode, setSelectedDynamicEQMode] = useState<DynamicEQMode>('auto');
   const [selectedSaturationFlavor, setSelectedSaturationFlavor] = useState<SaturationFlavor>('none');
   const [selectedSaturationIntensity, setSelectedSaturationIntensity] = useState<SaturationIntensity>('subtle');
+  const [applyColdStartFade, setApplyColdStartFade] = useState<boolean>(true);
 
   // Processing state
   const [isProcessing, setIsProcessing] = useState(false);
@@ -144,10 +145,13 @@ export default function App() {
 
     setTimeout(() => {
       try {
-        const analysis = analyzeAudioBuffer(buffer);
+        const analysis = analyzeAudioBuffer(buffer, metadata);
         setActiveBuffer(buffer);
         setActiveMetadata(metadata);
         setCurrentAnalysis(analysis);
+        setApplyColdStartFade(
+          analysis.firstSampleDbfs !== undefined ? analysis.firstSampleDbfs > -40.0 : false
+        );
         setIsProcessing(false);
         setCurrentStep('analysis');
       } catch (err) {
@@ -187,7 +191,10 @@ export default function App() {
 
     try {
       // 1. Generate surgical decision plan based on Earle Holder philosophy
-      const plan = generateMasteringPlan(currentAnalysis, genre, targetLufs, character, directives);
+      const plan = generateMasteringPlan(currentAnalysis, genre, targetLufs, character, {
+        ...directives,
+        applyColdStartFade
+      });
 
       // 2. Execute precision DSP pipeline using OfflineAudioContext with QC loop
       const result = await executeDspMastering(activeBuffer, plan, (stage, progress) => {
@@ -424,8 +431,11 @@ export default function App() {
               <AnalysisView
                 analysis={currentAnalysis}
                 metadata={activeMetadata}
+                applyColdStartFade={applyColdStartFade}
+                onToggleColdStartFade={setApplyColdStartFade}
                 onProceed={() => setCurrentStep('preferences')}
                 onReUpload={handleMasterNew}
+                onOpenHumanStudio={() => setShowHumanStudioModal(true)}
               />
             )}
 

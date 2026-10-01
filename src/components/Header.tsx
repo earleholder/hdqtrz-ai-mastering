@@ -50,7 +50,7 @@ export const Header: React.FC<HeaderProps> = ({
               HDQTRZ
             </span>
             <span className="text-xs uppercase tracking-widest text-slate-200 font-medium">
-              AI Mastering
+              AI Preview
             </span>
           </div>
 

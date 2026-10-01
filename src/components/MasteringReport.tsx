@@ -12,9 +12,13 @@ import {
   SlidersHorizontal,
   Cpu,
   FileAudio,
-  Target
+  Target,
+  AlertCircle,
+  ExternalLink,
+  ShieldCheck
 } from 'lucide-react';
 import { MasterRecord } from '../types';
+import { CONFIG } from '../audio/config';
 
 interface MasteringReportProps {
   record: MasterRecord;
@@ -374,6 +378,107 @@ export const MasteringReport: React.FC<MasteringReportProps> = ({ record }) => {
           )}
         </div>
       )}
+
+      {/* Limiter Notice & Cold-Start Transition Flags */}
+      {(plan.isLimiterCapped || report.limiterNotice || report.coldStartFadeApplied) && (
+        <div className="space-y-2">
+          {(plan.isLimiterCapped || report.limiterNotice) && (
+            <div className="p-3.5 rounded-lg bg-amber-950/40 border border-amber-500/40 flex items-start gap-3 text-xs text-amber-200 font-light">
+              <AlertCircle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
+              <div>
+                <strong className="font-medium text-amber-300 block">Transient Protection Cap Active</strong>
+                <span>{report.limiterNotice || `We stopped at ${record.masteredAnalysis.integratedLufs.toFixed(1)} LUFS to keep your transients intact.`}</span>
+              </div>
+            </div>
+          )}
+          {report.coldStartFadeApplied && (
+            <div className="p-3 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 flex items-center gap-2.5 text-xs text-slate-200 font-light">
+              <Sparkles className="w-3.5 h-3.5 text-[#57E6FF] shrink-0" />
+              <span>An inaudible 3 ms raised cosine fade-in was applied to eliminate start click.</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Customer Mix Diagnostic Notes (Section 6.4) */}
+      {report.mixNotes && report.mixNotes.length > 0 && (
+        <div className="p-4 rounded-lg bg-[#1B3C5C] border border-cyan-100/20 space-y-2.5">
+          <h5 className="text-[10px] uppercase tracking-wider text-slate-200 font-medium flex items-center gap-2">
+            <AlertCircle className="w-3.5 h-3.5 text-[#57E6FF]" />
+            <span>Mix Diagnostic Notes</span>
+          </h5>
+          <div className="space-y-1.5">
+            {report.mixNotes.map((note, idx) => (
+              <div key={idx} className="text-xs text-slate-200 font-light flex items-start gap-2">
+                <span className="text-[#57E6FF] font-mono text-[10px] mt-0.5">•</span>
+                <span>{note}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Output Verification Compliance Grid (Section 7.6) */}
+      <div className="p-4 rounded-lg bg-[#132A42] border border-emerald-500/30 space-y-3">
+        <div className="flex items-center justify-between border-b border-cyan-100/10 pb-2">
+          <div className="flex items-center gap-2 text-emerald-400 text-xs font-medium">
+            <ShieldCheck className="w-4 h-4" />
+            <span className="uppercase tracking-wider text-[10px]">Mandatory Post-Output Verification Passed</span>
+          </div>
+          <span className="text-[9px] font-mono text-slate-300">BS.1770-4 / EBU R128</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px]">
+          <div className="bg-[#173653] p-2.5 rounded border border-cyan-100/10">
+            <span className="text-[10px] text-slate-300 block">4x True-Peak</span>
+            <span className="text-emerald-400 font-mono font-medium block">
+              {record.masteredAnalysis.truePeak.toFixed(2)} dBTP
+            </span>
+            <span className="text-[9px] text-slate-400 block">&le; -1.00 dBTP safe</span>
+          </div>
+          <div className="bg-[#173653] p-2.5 rounded border border-cyan-100/10">
+            <span className="text-[10px] text-slate-300 block">Waveform Clipping</span>
+            <span className="text-emerald-400 font-mono font-medium block">
+              {record.masteredAnalysis.clippingEvents ?? 0} events
+            </span>
+            <span className="text-[9px] text-slate-400 block">0 clipping runs</span>
+          </div>
+          <div className="bg-[#173653] p-2.5 rounded border border-cyan-100/10">
+            <span className="text-[10px] text-slate-300 block">Sample Rate</span>
+            <span className="text-white font-mono font-medium block">
+              {record.sampleRate} Hz
+            </span>
+            <span className="text-[9px] text-slate-400 block">Native lossless</span>
+          </div>
+          <div className="bg-[#173653] p-2.5 rounded border border-cyan-100/10">
+            <span className="text-[10px] text-slate-300 block">Crest Preservation</span>
+            <span className="text-emerald-400 font-mono font-medium block">
+              {record.masteredAnalysis.crestFactor.toFixed(1)} dB
+            </span>
+            <span className="text-[9px] text-slate-400 block">&le; 1.0 dB crest loss</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Earle Holder Studio Human Master Booking CTA (Section 6.1 & 8) */}
+      <div className="rounded-xl bg-gradient-to-r from-[#173653] to-[#1E4263] border border-[#57E6FF]/40 p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="space-y-1 text-center sm:text-left">
+          <span className="text-[10px] uppercase tracking-widest text-[#57E6FF] font-medium block">
+            Earle Holder Studio Master
+          </span>
+          <p className="text-xs sm:text-sm text-white font-light">
+            {CONFIG.wording.cta}
+          </p>
+        </div>
+        <a
+          href={CONFIG.wording.bookingUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-5 py-2.5 rounded-lg bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-semibold text-xs uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 shadow-md"
+        >
+          <span>Book HDQTRZ</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      </div>
     </div>
   );
 };

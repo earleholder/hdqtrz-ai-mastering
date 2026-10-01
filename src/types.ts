@@ -1,4 +1,4 @@
-export type AudioFormat = 'WAV' | 'MP3' | 'AIFF' | 'FLAC';
+export type AudioFormat = 'WAV' | 'MP3' | 'AIFF' | 'FLAC' | 'AAC' | 'OGG';
 
 export interface TrackMetadata {
   name: string;
@@ -8,6 +8,7 @@ export interface TrackMetadata {
   duration: number; // in seconds
   fileSize: number; // in bytes
   channels: number;
+  isLossy?: boolean;
   file?: File;
 }
 
@@ -36,7 +37,28 @@ export type Genre =
   | 'World Music'
   | 'Other';
 
-export type LoudnessTarget = -9 | -10 | -11 | -12 | -13 | -14;
+export type GateSeverity = 'PASS' | 'WARN' | 'BLOCK' | 'INFO';
+
+export interface GateRuleResult {
+  check: string;
+  severity: GateSeverity;
+  valueDisplay: string;
+  note?: string;
+}
+
+export interface GateEvaluationResult {
+  status: 'PASS' | 'WARN' | 'BLOCK';
+  primaryBlockReason?: string;
+  blockedMessage?: {
+    headline: string;
+    body: string;
+    primaryReason: string;
+  };
+  rules: GateRuleResult[];
+  notes: string[];
+}
+
+export type LoudnessTarget = -9 | -10 | -11 | -12 | -13 | -14 | -16;
 
 export type MasteringCharacter =
   | 'transparent'
@@ -134,22 +156,34 @@ export interface AudioAnalysis {
   momentaryLufs: number;
   truePeak: number; // dBTP
   peakDbfs: number;
+  samplePeak?: number; // dBFS
   rmsDbfs: number;
   dynamicRange: number; // dB
   crestFactor: number; // dB
+  plr?: number; // dB (True Peak - Integrated LUFS)
+  lra?: number; // LU (EBU Tech 3342)
+  shortTermProfile?: { timeSec: number; lufs: number }[];
+  clippingEvents?: number; // Runs of >=3 consecutive samples >= -0.01 dBFS
+  shortTermCrestMedian?: number; // dB median of 50ms windows
+  hfDropDb?: number; // dB Welch PSD 10-14k vs 16-19k
   stereoWidth: number; // 0 (mono) to 1.0 (normal) to >1.0 (wide)
   phaseCorrelation: number; // -1 to +1
+  stereoCorrelation?: number; // Pearson correlation
   lowEnergyPct: number;
   midEnergyPct: number;
   highEnergyPct: number;
   spectralBands: SpectralBands;
   dcOffset: number; // percentage
+  dcOffsetRaw?: { left: number; right: number; max: number };
   clippingSamples: number;
+  firstSampleDbfs?: number;
+  lastSampleDbfs?: number;
   intersamplePeaksPossible: boolean;
   channelBalanceDb: number; // Left vs Right balance in dB
   detectedIssues: MixIssue[];
   simpleSummary: string;
   waveformOverview: number[]; // 100 points for miniature waveform display
+  gateEvaluation?: GateEvaluationResult;
 }
 
 export interface EQAdjustment {
@@ -169,6 +203,9 @@ export interface MasteringPlan {
   character: MasteringCharacter;
   isDynamicProtected: boolean;
   protectiveNotice?: string;
+  isLimiterCapped?: boolean;
+  limiterCapNotice?: string;
+  applyColdStartFade?: boolean;
   eqApplied: boolean;
   eqFilters: EQAdjustment[];
   dynamicEQApplied: boolean;
@@ -206,11 +243,12 @@ export interface MasteringPlan {
   };
   stereoApplied: boolean;
   stereoWidthFactor: number; // 1.0 = unchanged, 0.95 = tightened, 1.1 = subtle open
-  subMonoCutoffHz: number; // e.g. 85 Hz for mono compatibility
+  subMonoCutoffHz: number; // e.g. 85-100 Hz for mono compatibility
   limiter: {
     inputGainDb: number;
     ceilingDb: number; // -1.0 dBTP
     estimatedGainReductionDb: number;
+    maxLimiterReductionDb?: number;
   };
   decisionLog: string[];
 }
@@ -242,6 +280,21 @@ export interface MasteringReport {
   multibandPlan?: MultibandPlan;
   referenceProfile?: ReferenceTrackProfile;
   aiAssessment: string;
+  gateStatus?: 'PASS' | 'WARN' | 'BLOCK';
+  mixNotes?: string[];
+  limiterNotice?: string;
+  coldStartFadeApplied?: boolean;
+  outputVerification?: {
+    passed: boolean;
+    truePeakPass: boolean;
+    clippingPass: boolean;
+    sampleRatePass: boolean;
+    crestPass: boolean;
+    measuredTruePeak: number;
+    measuredClipping: number;
+    measuredSampleRate: number;
+    measuredCrestDrop: number;
+  };
 }
 
 export interface MasterRecord {

@@ -87,35 +87,25 @@ const ALL_GENRES: { genre: Genre; tag: string }[] = [
 
 const LOUDNESS_OPTIONS: { lufs: LoudnessTarget; title: string; desc: string; isDefault?: boolean }[] = [
   {
-    lufs: -9,
-    title: '-9 LUFS',
-    desc: 'Loud and energetic. High density for competitive club, trap, and heavy modern commercial genres.'
-  },
-  {
-    lufs: -10,
-    title: '-10 LUFS',
-    desc: 'Modern and powerful. Sits right at the forefront of contemporary pop and hip hop releases.'
-  },
-  {
-    lufs: -11,
-    title: '-11 LUFS',
-    desc: 'Balanced modern master. Recommended standard for optimal translation across all playback systems.',
+    lufs: -14,
+    title: '-14 LUFS',
+    desc: 'Streaming standard (Default). Preserves complete punch and micro-dynamics without limiter squashing.',
     isDefault: true
+  },
+  {
+    lufs: -16,
+    title: '-16 LUFS',
+    desc: 'Wide acoustic dynamics. Ideal for classical, jazz, and audiophile releases with maximum crest factor.'
   },
   {
     lufs: -12,
     title: '-12 LUFS',
-    desc: 'Dynamic and polished. Healthy transient headroom for rock, electronic, and dynamic pop.'
+    desc: 'Dynamic and polished. Healthy transient headroom for modern rock, electronic, and dynamic pop.'
   },
   {
-    lufs: -13,
-    title: '-13 LUFS',
-    desc: 'More dynamic. Preserves greater micro-dynamics, breathing room, and snare snap.'
-  },
-  {
-    lufs: -14,
-    title: '-14 LUFS',
-    desc: 'Streaming-friendly dynamic master. Closest to standard digital distribution normalization targets.'
+    lufs: -11,
+    title: '-11 LUFS',
+    desc: 'Competitive commercial loudness with conservative limiter transient protection.'
   }
 ];
 
@@ -155,7 +145,7 @@ const CHARACTER_OPTIONS: { character: MasteringCharacter; title: string; desc: s
 
 export const PreferencesView: React.FC<PreferencesViewProps> = ({
   initialGenre = 'Hip Hop / Rap',
-  initialLufs = -11,
+  initialLufs = -14,
   initialCharacter = 'transparent',
   initialDynamicEQMode = 'auto',
   initialSaturationFlavor = 'none',
