@@ -30,7 +30,7 @@ import {
   TrackMetadata,
   UserProfile
 } from './types';
-import { analyzeAudioBuffer } from './audio/analyzer';
+import { analyzeAudioBuffer, analyzeAudioBufferAsync } from './audio/analyzer';
 import { generateMasteringPlan, generateMasteringReport } from './audio/decisionEngine';
 import { executeDspMastering } from './audio/dspEngine';
 import { findAuditionWindow } from './audio/auditionWindow';
@@ -138,27 +138,30 @@ export default function App() {
     }
   }), []);
 
-  // Handle uploaded audio
-  const handleAudioReady = (buffer: AudioBuffer, metadata: TrackMetadata) => {
+  // Handle uploaded audio with Web Worker (Section 8.2)
+  const handleAudioReady = async (buffer: AudioBuffer, metadata: TrackMetadata) => {
     setIsProcessing(true);
-    setProcessingStage('Analyzing dynamic range, LUFS, and spectral frequencies...');
+    setProcessingStage('Starting Web Worker audio analysis...');
+    setProcessingProgress(5);
 
-    setTimeout(() => {
-      try {
-        const analysis = analyzeAudioBuffer(buffer, metadata);
-        setActiveBuffer(buffer);
-        setActiveMetadata(metadata);
-        setCurrentAnalysis(analysis);
-        setApplyColdStartFade(
-          analysis.firstSampleDbfs !== undefined ? analysis.firstSampleDbfs > -40.0 : false
-        );
-        setIsProcessing(false);
-        setCurrentStep('analysis');
-      } catch (err) {
-        console.error(err);
-        setIsProcessing(false);
-      }
-    }, 200);
+    try {
+      const analysis = await analyzeAudioBufferAsync(buffer, metadata, (stage, progress) => {
+        setProcessingStage(stage);
+        setProcessingProgress(progress);
+      });
+      setActiveBuffer(buffer);
+      setActiveMetadata(metadata);
+      setCurrentAnalysis(analysis);
+      setApplyColdStartFade(
+        analysis.firstSampleDbfs !== undefined ? analysis.firstSampleDbfs > -40.0 : false
+      );
+      setIsProcessing(false);
+      setCurrentStep('analysis');
+    } catch (err) {
+      console.error(err);
+      setIsProcessing(false);
+      alert('Audio analysis error occurred. Please try a different audio file.');
+    }
   };
 
   // Start DSP mastering pipeline
@@ -176,6 +179,12 @@ export default function App() {
     }
   ) => {
     if (!activeBuffer || !currentAnalysis || !activeMetadata) return;
+
+    // Hard block check: blocked mix has no process-anyway path and produces no file (Item 4)
+    if (currentAnalysis.gateEvaluation?.status === 'BLOCK') {
+      alert("This mix is blocked from automated mastering because it exceeds safe tolerances. Please export with the mix-bus limiter and clipper bypassed.");
+      return;
+    }
 
     setSelectedGenre(genre);
     setSelectedLufs(targetLufs);
@@ -423,6 +432,8 @@ export default function App() {
               <UploadSection
                 onAudioReady={handleAudioReady}
                 isAnalyzing={isProcessing}
+                analysisStage={processingStage}
+                analysisProgress={processingProgress}
                 onOpenInstructions={() => setShowInstructionsModal(true)}
               />
             )}

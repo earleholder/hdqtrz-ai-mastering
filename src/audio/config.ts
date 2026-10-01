@@ -72,3 +72,21 @@ export const CONFIG = {
 } as const;
 
 export type LoudnessTargetOption = typeof CONFIG.processing.allowedLoudnessTargets[number];
+
+/**
+ * Exact filename rule per Section 2:
+ * <original base>_AI_Preview_<bitdepth>bit.wav
+ * Strips existing extension and guarantees absence of 'HDQTRZ' or 'Master' in the deliverable name.
+ */
+export function getAiPreviewFilename(originalFilename: string, bitDepth: 16 | 24 = 24): string {
+  const base = originalFilename.replace(/\.[^/.]+$/, '').trim();
+  return `${base}_AI_Preview_${bitDepth}bit.wav`;
+}
+
+/**
+ * High-bitrate MP3 reference deliverable filename.
+ */
+export function getAiPreviewMp3Filename(originalFilename: string): string {
+  const base = originalFilename.replace(/\.[^/.]+$/, '').trim();
+  return `${base}_AI_Preview_320kbps.mp3`;
+}

@@ -587,7 +587,7 @@ export function analyzeAudioBuffer(buffer: AudioBuffer, metadata?: TrackMetadata
  * Accurate 8-band spectral distribution using 2nd-order IIR bandpass filters
  * calibrated against standard pink-noise commercial mastering balance (equal energy per octave).
  */
-function estimateSpectralBands(left: Float32Array, right: Float32Array, sampleRate: number): SpectralBands {
+export function estimateSpectralBands(left: Float32Array, right: Float32Array, sampleRate: number): SpectralBands {
   const fs = sampleRate || 44100;
 
   function makeBiquadBP(f0: number, Q: number) {
@@ -744,3 +744,74 @@ export function computeReferenceMatchingEQ(
 
   return adjustments;
 }
+
+/**
+ * Asynchronously analyze AudioBuffer using a Web Worker (Section 8.2)
+ * keeping UI completely responsive and reporting progress.
+ * Falls back to synchronous analyzeAudioBuffer if Worker is unavailable.
+ */
+export async function analyzeAudioBufferAsync(
+  buffer: AudioBuffer,
+  metadata?: TrackMetadata,
+  onProgress?: (stage: string, progressPct: number) => void
+): Promise<AudioAnalysis> {
+  const numChannels = buffer.numberOfChannels;
+  const sampleRate = buffer.sampleRate;
+  const duration = buffer.duration;
+  const leftChannel = buffer.getChannelData(0);
+  const rightChannel = numChannels > 1 ? buffer.getChannelData(1) : leftChannel;
+
+  if (typeof window !== 'undefined' && typeof Worker !== 'undefined') {
+    return new Promise<AudioAnalysis>((resolve, reject) => {
+      try {
+        const worker = new Worker(new URL('./analysisWorker.ts', import.meta.url), { type: 'module' });
+
+        worker.onmessage = (e) => {
+          const msg = e.data;
+          if (msg.type === 'progress') {
+            onProgress?.(msg.stage, msg.progressPct);
+          } else if (msg.type === 'complete') {
+            worker.terminate();
+            resolve(msg.analysis);
+          } else if (msg.type === 'error') {
+            worker.terminate();
+            reject(new Error(msg.error));
+          }
+        };
+
+        worker.onerror = (err) => {
+          worker.terminate();
+          console.warn('[Analysis Worker Error, falling back to main thread]', err);
+          try {
+            resolve(analyzeAudioBuffer(buffer, metadata));
+          } catch (e) {
+            reject(e);
+          }
+        };
+
+        const leftCopy = new Float32Array(leftChannel);
+        const rightCopy = new Float32Array(rightChannel);
+
+        worker.postMessage(
+          {
+            left: leftCopy,
+            right: rightCopy,
+            sampleRate,
+            duration,
+            metadata
+          },
+          [leftCopy.buffer, rightCopy.buffer]
+        );
+      } catch (err) {
+        console.warn('[Web Worker Instantiation failed, using synchronous fallback]', err);
+        resolve(analyzeAudioBuffer(buffer, metadata));
+      }
+    });
+  }
+
+  onProgress?.('Analyzing audio dynamics...', 50);
+  const analysis = analyzeAudioBuffer(buffer, metadata);
+  onProgress?.('Analysis complete', 100);
+  return Promise.resolve(analysis);
+}
+

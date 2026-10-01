@@ -112,12 +112,16 @@ function createPolyphaseFIR4x(): Float64Array[] {
   });
 }
 
-const POLYPHASE_FIR_4X = createPolyphaseFIR4x();
+export const POLYPHASE_FIR_4X = createPolyphaseFIR4x();
 
 /**
  * Precision BS.1770-4 Annex 2 True Peak calculation (dBTP)
  */
-export function calculateTruePeak4x(left: Float32Array, right: Float32Array): number {
+export function calculateTruePeak4x(
+  left: Float32Array,
+  right: Float32Array,
+  onProgress?: (progressPct: number) => void
+): number {
   const len = left.length;
   if (len === 0) return -100.0;
 
@@ -137,9 +141,16 @@ export function calculateTruePeak4x(left: Float32Array, right: Float32Array): nu
   const halfTaps = 6;
   let peakInterp = maxLinear;
 
-  const checkChannel = (ch: Float32Array) => {
+  const progressInterval = Math.max(50000, Math.floor(len / 10));
+
+  const checkChannel = (ch: Float32Array, channelOffsetPct: number) => {
     const end = len - halfTaps;
     for (let i = halfTaps; i < end; i++) {
+      if (i % progressInterval === 0 && onProgress) {
+        const subFraction = (i / end) * 50;
+        onProgress(channelOffsetPct + subFraction);
+      }
+
       if (Math.abs(ch[i]) < candidateThreshold) continue;
 
       // Evaluate 4 polyphase branches
@@ -158,8 +169,9 @@ export function calculateTruePeak4x(left: Float32Array, right: Float32Array): nu
     }
   };
 
-  checkChannel(left);
-  checkChannel(right);
+  checkChannel(left, 0);
+  checkChannel(right, 50);
+  onProgress?.(100);
 
   return Number((20 * Math.log10(Math.max(1e-5, peakInterp))).toFixed(2));
 }

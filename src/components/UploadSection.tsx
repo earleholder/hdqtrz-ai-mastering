@@ -6,10 +6,18 @@ import { robustDecodeAudio } from '../audio/audioDecoder';
 interface UploadSectionProps {
   onAudioReady: (buffer: AudioBuffer, metadata: TrackMetadata) => void;
   isAnalyzing: boolean;
+  analysisStage?: string;
+  analysisProgress?: number;
   onOpenInstructions?: () => void;
 }
 
-export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAnalyzing, onOpenInstructions }) => {
+export const UploadSection: React.FC<UploadSectionProps> = ({
+  onAudioReady,
+  isAnalyzing,
+  analysisStage,
+  analysisProgress,
+  onOpenInstructions
+}) => {
   const [isDragging, setIsDragging] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [metadata, setMetadata] = useState<TrackMetadata | null>(null);
@@ -191,10 +199,10 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAn
           <span>01 / Audio Ingest & Pre-Master Diagnostic</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-light tracking-tight text-white">
-          Upload Stereo Mix
+          Upload Mix
         </h1>
         <p className="text-slate-200 text-xs sm:text-sm max-w-xl mx-auto font-light leading-relaxed">
-          Upload your stereo mix for intelligent spectral and dynamic evaluation.
+          Upload your mix (stereo or mono) for intelligent spectral and dynamic evaluation.
           <br className="hidden sm:inline" />
           <span className="text-slate-300 italic"> "Less is best. Preserve the soul of the song."</span>
         </p>
@@ -216,7 +224,7 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAn
           <input
             ref={fileInputRef}
             type="file"
-            accept=".wav,.aiff,.aif,.flac,audio/wav,audio/x-wav,audio/aiff,audio/x-aiff,audio/flac"
+            accept=".wav,.aiff,.aif,.flac,.mp3,.aac,.ogg,audio/*"
             onChange={handleFileChange}
             className="hidden"
           />
@@ -228,22 +236,22 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAn
 
             <div className="space-y-1">
               <p className="text-sm sm:text-base font-light text-white group-hover:text-[#57E6FF] transition-colors">
-                Drop your stereo mix here, or <span className="text-[#57E6FF] underline underline-offset-4">browse filesystem</span>
+                Drop your mix here (stereo or mono), or <span className="text-[#57E6FF] underline underline-offset-4">browse files</span>
               </p>
               <p className="text-xs text-slate-200 font-light">
                 Uncompressed <strong className="text-white font-medium">24-bit WAV</strong>, <strong className="text-white font-medium">AIFF</strong>, or lossless <strong className="text-white font-medium">FLAC</strong>
               </p>
-              <p className="text-[11px] text-[#57E6FF]/80 font-mono tracking-tight pt-0.5">
-                (MP3 files not permitted for mastering to preserve audio fidelity)
+              <p className="text-[11px] text-slate-300 font-mono tracking-tight pt-0.5">
+                (16-bit or lossy files will trigger diagnostic recommendations)
               </p>
             </div>
 
             {/* Technical Specs Tags */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-1 text-[10px] uppercase tracking-wider text-slate-200">
-              <span className="px-2 py-0.5 rounded bg-[#1E4263] border border-cyan-100/20 text-white">Lossless Only</span>
+              <span className="px-2 py-0.5 rounded bg-[#1E4263] border border-cyan-100/20 text-white">Stereo or Mono</span>
               <span className="px-2 py-0.5 rounded bg-[#1E4263] border border-cyan-100/20">Max 250 MB</span>
               <span className="px-2 py-0.5 rounded bg-[#1E4263] border border-cyan-100/20">Max 15 min</span>
-              <span className="px-2 py-0.5 rounded bg-[#1E4263] border border-cyan-100/20">Stereo 2.0</span>
+              <span className="px-2 py-0.5 rounded bg-[#1E4263] border border-cyan-100/20">1-2 Channels</span>
             </div>
           </div>
         </div>
@@ -439,10 +447,21 @@ export const UploadSection: React.FC<UploadSectionProps> = ({ onAudioReady, isAn
               className="w-full bg-[#57E6FF] hover:bg-[#41CBE8] text-black font-bold py-3.5 sm:py-4 px-6 rounded-md transition-colors uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {isAnalyzing ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
-                  <span>Analyzing Audio Dynamics & Spectrum...</span>
-                </>
+                <div className="w-full space-y-1.5 py-1">
+                  <div className="flex items-center justify-between text-[11px] font-semibold tracking-wider">
+                    <span className="flex items-center gap-2">
+                      <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+                      <span>{analysisStage || 'Analyzing Audio with Web Worker...'}</span>
+                    </span>
+                    <span className="font-mono text-black">{Math.round(analysisProgress || 0)}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-black/20 rounded overflow-hidden">
+                    <div
+                      className="h-full bg-black transition-all duration-200 rounded"
+                      style={{ width: `${Math.max(5, analysisProgress || 0)}%` }}
+                    />
+                  </div>
+                </div>
               ) : (
                 <>
                   <Wand2 className="w-4 h-4 text-black" />
